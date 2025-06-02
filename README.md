@@ -98,6 +98,7 @@ payload = {
 - rd_plus__topdown_map
 - rd_plus__topdown_asset
 - rd_plus__isometric
+- rd_plus__isometric_asset
 
 ## Animations
 
