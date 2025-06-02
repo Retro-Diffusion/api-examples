@@ -60,7 +60,7 @@ payload = {
     "height": 256,
     "prompt": "A really cool corgi wearing sunglasses and a party hat",
     "num_images": 1,
-    "prompt_style": "simple"
+    "prompt_style": "rd_fast__simple"
 }
 ```
 
@@ -136,7 +136,7 @@ Spritesheet output payload:
 	"height": 48,
 	"num_images": 1,
 	"seed": 123,
-	"prompt_style": "animation_four_angle_walking",
+	"prompt_style": "animation__four_angle_walking",
 	"return_spritesheet": true
 }
 ```
@@ -156,7 +156,7 @@ In your prompt you can include a brief description of your reference image.
 	"height": 48,
 	"num_images": 1,
 	"seed": 1234,
-	"prompt_style": "animation_four_angle_walking",
+	"prompt_style": "animation__four_angle_walking",
 	"return_spritesheet": true,
 	"input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
 }
