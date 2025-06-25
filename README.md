@@ -102,13 +102,15 @@ payload = {
 
 ## Animations
 
-We now support animations using the `animation__four_angle_walking` style.
+We support the following animation styles:
+- animation__four_angle_walking
+- animation__vfx
 
 Some important notes:
 
-- Animations currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
+- `animation__four_angle_walking` currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
 - Animations only support generating one image at a time.
-- Outputs are 48x48 transparent GIF images also encoded in base64.
+- Outputs are transparent GIF images encoded in base64.
 
 Example payload:
 
