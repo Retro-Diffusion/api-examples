@@ -105,6 +105,7 @@ payload = {
 We support the following animation styles:
 - animation__four_angle_walking
 - animation__vfx
+- animation__walking_and_idle
 
 Some important notes:
 
@@ -142,6 +143,12 @@ Spritesheet output payload:
 	"return_spritesheet": true
 }
 ```
+
+### Walking and Idle format
+
+The walking and idle animation format is similar to the four angle walking format, but has some changes. Below is an example:
+
+<img src="resources/walk_idle_format.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
 
 ### Image reference for animations
 
