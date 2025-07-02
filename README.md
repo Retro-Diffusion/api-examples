@@ -110,6 +110,7 @@ We support the following animation styles:
 Some important notes:
 
 - `animation__four_angle_walking` currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
+- `animation__vfx` supports sizes between 32x32 and 96x96, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
 
