@@ -80,6 +80,7 @@ payload = {
 - rd_fast__mc_item
 - rd_fast__character_turnaround
 - rd_fast__1_bit
+- rd_fast__low_res
 - rd_fast__no_style
 
 ### RD_PLUS
@@ -99,6 +100,9 @@ payload = {
 - rd_plus__topdown_asset
 - rd_plus__isometric
 - rd_plus__isometric_asset
+- rd_plus__mc_item
+- rd_plus__mc_texture
+- rd_plus__low_res
 
 ## Animations
 
