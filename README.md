@@ -103,6 +103,7 @@ payload = {
 - rd_plus__mc_item
 - rd_plus__mc_texture
 - rd_plus__low_res
+- rd_plus__classic
 
 ## Animations
 
