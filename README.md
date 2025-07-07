@@ -245,6 +245,28 @@ payload = {
 }
 ```
 
+## Image editing
+- You can use the `/v1/edit` endpoint to edit images.
+- The request should be a POST request with the following parameters:
+
+```json
+{
+    "prompt": "add a hat",
+    "inputImageBase64": "iVBORw0KGgoAAAANSUhEUgAAAUA...",
+}
+```
+
+- We support sizes between 32x32 and 256x256
+- The cost is 5 credits per image edit
+- We have the following response format:
+
+```json
+{
+  "outputImageBase64": "iVBORw0KGgoAAAANSUhEUgAAAUA...",
+  "remaining_credits": 999
+}
+```
+
 ## FAQ
 
 - **How much does it cost?**
