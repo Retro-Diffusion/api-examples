@@ -64,6 +64,7 @@ payload = {
 }
 ```
 
+**Default size range is 64x64 <-> 512x512 unless otherwise specified.**
 #### Available styles:
 
 - rd_fast__default
@@ -76,11 +77,11 @@ payload = {
 - rd_fast__texture
 - rd_fast__ui
 - rd_fast__item_sheet
-- rd_fast__mc_texture
-- rd_fast__mc_item
 - rd_fast__character_turnaround
 - rd_fast__1_bit
-- rd_fast__low_res
+- rd_fast__low_res (16x16 <-> 128x128)
+- rd_fast__mc_item (16x16 <-> 128x128)
+- rd_fast__mc_texture (16x16 <-> 128x128)
 - rd_fast__no_style
 
 ### RD_PLUS
@@ -100,21 +101,21 @@ payload = {
 - rd_plus__topdown_asset
 - rd_plus__isometric
 - rd_plus__isometric_asset
-- rd_plus__mc_item
-- rd_plus__mc_texture
-- rd_plus__low_res
-- rd_plus__classic
+- rd_plus__classic (32x32 <-> 192x192)
+- rd_plus__low_res (16x16 <-> 128x128)
+- rd_plus__mc_item (16x16 <-> 128x128)
+- rd_plus__mc_texture (16x16 <-> 128x128)
 
 ## Animations
 
 We support the following animation styles:
-- animation__four_angle_walking
-- animation__vfx
-- animation__walking_and_idle
+- animation__four_angle_walking (48x48 only)
+- animation__walking_and_idle (48x48 only)
+- animation__vfx (32x32 <-> 96x96, 1:1 aspect ratio)
 
 Some important notes:
 
-- `animation__four_angle_walking` currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
+- `animation__four_angle_walking` and `animation__walking_and_idle` currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
 - `animation__vfx` supports sizes between 32x32 and 96x96, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
