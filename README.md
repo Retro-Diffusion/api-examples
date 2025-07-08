@@ -247,7 +247,9 @@ payload = {
 ```
 
 ## Image editing
-- You can use the `/v1/edit` endpoint to edit images.
+![Progressive editing](https://github.com/user-attachments/assets/c787cd05-b464-4a66-a3e8-423aadf1ee1f)
+
+- You can use the `https://api.retrodiffusion.ai/v1/edit` endpoint to edit images.
 - The request should be a POST request with the following parameters:
 
 ```json
@@ -257,7 +259,9 @@ payload = {
 }
 ```
 
-- We support sizes between 32x32 and 256x256
+- We support sizes between 16x16 and 256x256
+- You can send any image within the size limits to be edited
+- Progressive editing is possible by sending the response you get from one task as the input for a new task
 - The cost is 5 credits per image edit
 - We have the following response format:
 
@@ -273,7 +277,7 @@ payload = {
 - **How much does it cost?**
   - Cost is calculated based on the model and resolution you choose. You can check the cost of each request in our [web app](https://www.retrodiffusion.ai/)
 - **How can I check my remaining credits?**
-  - You can make a GET request to the `/v1/inferences/credits` endpoint, with the header `X-RD-Token` set to your API key. The response will include the remaining credits in the following format:
+  - You can make a GET request to the `https://api.retrodiffusion.ai/v1/inferences/credits` endpoint, with the header `X-RD-Token` set to your API key. The response will include the remaining credits in the following format:
 
 ```json
 {
