@@ -67,51 +67,51 @@ payload = {
 **Default size range is 64x64 <-> 512x512 unless otherwise specified.**
 #### Available styles:
 
-- rd_fast__default    Simple clean pixel art, with Anime illustration influences
-- rd_fast__retro    A classic arcade game aesthetic inspired by early PC games
-- rd_fast__simple    Simple shading with minimalist shapes and designs
-- rd_fast__detailed    Pixel art with lots of shading and details
-- rd_fast__anime    Simple clean pixel art, with Anime illustration influences
-- rd_fast__game_asset    Distinct assets set on a simple background
-- rd_fast__portrait    Character portrait focused images with high detail
-- rd_fast__texture    Flat game textures like stones, bricks, or wood
-- rd_fast__ui    User interface boxes and buttons
-- rd_fast__item_sheet    Sheets of objects placed on a simple background
-- rd_fast__character_turnaround    Character sprites viewed from different angles
-- rd_fast__1_bit    Two color black and white only images
-- rd_fast__low_res    (16x16 <-> 128x128)    General low resolution pixel art images
-- rd_fast__mc_item    (16x16 <-> 128x128)    Minecraft-styled items with automatic transparency
-- rd_fast__mc_texture    (16x16 <-> 128x128)    Minecraft-styled flat textures, like grass, stones, or wood
-- rd_fast__no_style    Pixel art with no style influence applied
+- rd_fast__default	`Simple clean pixel art, with Anime illustration influences`
+- rd_fast__retro	`A classic arcade game aesthetic inspired by early PC games`
+- rd_fast__simple	`Simple shading with minimalist shapes and designs`
+- rd_fast__detailed	`Pixel art with lots of shading and details`
+- rd_fast__anime	`Simple clean pixel art, with Anime illustration influences`
+- rd_fast__game_asset	`Distinct assets set on a simple background`
+- rd_fast__portrait	`Character portrait focused images with high detail`
+- rd_fast__texture	`Flat game textures like stones, bricks, or wood`
+- rd_fast__ui	`User interface boxes and buttons`
+- rd_fast__item_sheet	`Sheets of objects placed on a simple background`
+- rd_fast__character_turnaround	`Character sprites viewed from different angles`
+- rd_fast__1_bit	`Two color black and white only images`
+- rd_fast__low_res	`(16x16 <-> 128x128)	General low resolution pixel art images`
+- rd_fast__mc_item	`(16x16 <-> 128x128)	Minecraft-styled items with automatic transparency`
+- rd_fast__mc_texture	`(16x16 <-> 128x128)	Minecraft-styled flat textures, like grass, stones, or wood`
+- rd_fast__no_style	`Pixel art with no style influence applied`
 
 ### RD_PLUS
 - `RD_PLUS` supports several styles, and it's passed as a parameter named `prompt_style`:
 - `RD_PLUS` is more expensive than `RD_FAST`, please confirm the cost in our [web app](https://www.retrodiffusion.ai) selecting the model and style and settings you want to use.
 
 #### Available styles:
-- rd_plus__default    Clean pixel art style with bold colors and outlines
-- rd_plus__retro    Classic pixel art style inspired by PC98 games
-- rd_plus__watercolor    Pixel art mixed with a watercolor painting aesthetic
-- rd_plus__textured    Semi-realistic pixel art style with lots of shading and texture
-- rd_plus__cartoon    Simple shapes and shading, with bold outlines
-- rd_plus__ui_element    User interface boxes and buttons
-- rd_plus__item_sheet    Sheets of objects placed on a simple background
-- rd_plus__character_turnaround    Character sprites viewed from different angles
-- rd_plus__topdown_map    Video game map style pixel art with a 3/4 top down perspective
-- rd_plus__topdown_asset    3/4 top down perspective game assets on a simple background
-- rd_plus__isometric    45 degree isometric perspective, with consistent outlines
-- rd_plus__isometric_asset    45 degree isometric objects or assets, on a neutral background
-- rd_plus__classic    (32x32 <-> 192x192)    Strongly outlined medium-resolution pixel art with a focus on simple shading and clear design
-- rd_plus__low_res    (16x16 <-> 128x128)    High quality, low resolution pixel art assets and backgrounds
-- rd_plus__mc_item    (16x16 <-> 128x128)    High quality Minecraft-styled items and game assets
-- rd_plus__mc_texture    (16x16 <-> 128x128)    Detailed Minecraft-style flat block textures, with enhanced prompt following
+- rd_plus__default	`Clean pixel art style with bold colors and outlines`
+- rd_plus__retro	`Classic pixel art style inspired by PC98 games`
+- rd_plus__watercolor	`Pixel art mixed with a watercolor painting aesthetic`
+- rd_plus__textured	`Semi-realistic pixel art style with lots of shading and texture`
+- rd_plus__cartoon	`Simple shapes and shading, with bold outlines`
+- rd_plus__ui_element	`User interface boxes and buttons`
+- rd_plus__item_sheet	`Sheets of objects placed on a simple background`
+- rd_plus__character_turnaround	`Character sprites viewed from different angles`
+- rd_plus__topdown_map	`Video game map style pixel art with a 3/4 top down perspective`
+- rd_plus__topdown_asset	`3/4 top down perspective game assets on a simple background`
+- rd_plus__isometric	`45 degree isometric perspective, with consistent outlines`
+- rd_plus__isometric_asset	`45 degree isometric objects or assets, on a neutral background`
+- rd_plus__classic	`(32x32 <-> 192x192)	Strongly outlined medium-resolution pixel art with a focus on simple shading and clear design`
+- rd_plus__low_res	`(16x16 <-> 128x128)	High quality, low resolution pixel art assets and backgrounds`
+- rd_plus__mc_item	`(16x16 <-> 128x128)	High quality Minecraft-styled items and game assets`
+- rd_plus__mc_texture	`(16x16 <-> 128x128)	Detailed Minecraft-style flat block textures, with enhanced prompt following`
 
 ## Animations
 
 We support the following animation styles:
-- animation__four_angle_walking    (48x48 only)    Consistent 4 direction, 4 frame long walking animations of humanoid characters
-- animation__walking_and_idle    (48x48 only)    Consistent 4 direction walking and idle animations of humanoid characters
-- animation__vfx    (32x32 <-> 96x96, 1:1 aspect ratio)    Eye-catching animations for fire, explosions, lightning, or other simple effects
+- animation__four_angle_walking	`(48x48 only)	Consistent 4 direction, 4 frame long walking animations of humanoid characters`
+- animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
+- animation__vfx	`(32x32 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
 
 Some important notes:
 
