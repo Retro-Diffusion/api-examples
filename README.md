@@ -232,6 +232,20 @@ payload = {
 }
 ```
 
+- Optionally, you can also receive the original image before background removal by setting `return_non_bg_removed` to `true`:
+
+```python
+payload = {
+    "prompt": "a raven with a glowing green eye",
+    "width": 128,
+    "height": 128,
+    "remove_bg": True,
+    "return_non_bg_removed": True
+}
+```
+
+When `return_non_bg_removed` is enabled, the response will include an additional string in the `base64_images` array, which is the original image before background removal.
+
 ## Using seamless tiling
 
 - Simply add `tile_x` and `tile_y` both as booleans
