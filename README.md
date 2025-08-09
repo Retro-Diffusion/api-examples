@@ -219,6 +219,22 @@ payload = {
 }
 ```
 
+- Optionally, you can also receive the original image before palette is applied by setting `return_pre_palette` to `true`:
+
+```python
+{
+  "prompt": "a raven with a glowing green eye",
+  "width": 256,
+  "height": 256,
+  "num_images": 1,
+  "seed": 1234,
+  "input_palette": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
+  "return_pre_palette": true
+}
+```
+
+When `return_pre_palette` is enabled, the response will include an additional string in the `base64_images` array, which is the original image before the palette is applied.
+
 ## Using background removal for transparent images
 
 - Simply `remove_bg` as a boolean
