@@ -105,6 +105,7 @@ payload = {
 - rd_plus__low_res	`(16x16 <-> 128x128)	High quality, low resolution pixel art assets and backgrounds`
 - rd_plus__mc_item	`(16x16 <-> 128x128)	High quality Minecraft-styled items and game assets`
 - rd_plus__mc_texture	`(16x16 <-> 128x128)	Detailed Minecraft-style flat block textures, with enhanced prompt following`
+- rd_plus__topdown_item	`(16x16 <-> 128x128)	Top-down view of items and objects, with a simple background`
 
 ## Animations
 
