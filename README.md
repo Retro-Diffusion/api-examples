@@ -113,12 +113,12 @@ payload = {
 We support the following animation styles:
 - animation__four_angle_walking	`(48x48 only)	Consistent 4 direction, 4 frame long walking animations of humanoid characters`
 - animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
-- animation__vfx	`(32x32 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
+- animation__vfx	`(24x24 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
 
 Some important notes:
 
 - `animation__four_angle_walking` and `animation__walking_and_idle` currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
-- `animation__vfx` supports sizes between 32x32 and 96x96, square aspect ratios only.
+- `animation__vfx` supports sizes between 24x24 and 96x96, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
 
