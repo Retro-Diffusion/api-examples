@@ -121,7 +121,7 @@ Some important notes:
 - `animation__vfx` supports sizes between 24x24 and 96x96, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
-
+bypass_prompt_expansion
 Example payload:
 
 > This payload will generate a 48x48 transparent GIF, if you want the spritesheet, look below
@@ -277,6 +277,9 @@ payload = {
     "tile_y": true
 }
 ```
+
+## Ignoring prompt expansion
+- You can use the `bypass_prompt_expansion` parameter to disable prompt expansion for your request.
 
 ## Image editing
 ![Progressive editing](https://github.com/user-attachments/assets/c787cd05-b464-4a66-a3e8-423aadf1ee1f)
