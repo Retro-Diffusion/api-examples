@@ -288,6 +288,14 @@ payload = {
 
 ## Ignoring prompt expansion
 - You can use the `bypass_prompt_expansion` parameter to disable prompt expansion for your request.
+```json
+payload = {
+    "prompt": "a raven with a glowing green eye",
+    "width": 128,
+    "height": 128,
+    "bypass_prompt_expansion": True
+}
+```
 
 ## Image editing
 ![Progressive editing](https://github.com/user-attachments/assets/c787cd05-b464-4a66-a3e8-423aadf1ee1f)
