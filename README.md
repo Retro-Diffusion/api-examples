@@ -288,7 +288,7 @@ payload = {
 
 ## Ignoring prompt expansion
 - You can use the `bypass_prompt_expansion` parameter to disable prompt expansion for your request.
-```json
+```python
 payload = {
     "prompt": "a raven with a glowing green eye",
     "width": 128,
