@@ -307,6 +307,74 @@ payload = {
 }
 ```
 
+## Tilesets
+<img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+- You can generate tilesets using the following styles:
+  - rd_tile__tileset
+  - rd_tile__tileset_advanced
+
+- `rd_tile__tileset` supports an inspiration image via the `input_image` parameter
+- `rd_tile__tileset_advanced` supports inside and outside textures via the `input_image` and `extra_input_image` parameters. Advanced tilesets require the inside texture description in the `prompt` parameter and the outside texture description in the `extra_prompt` parameter.
+- The `width` and `height` parameters specify the size of each tile in the tileset. Values can range between 16 and 32.
+
+Advanced tileset example payload:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "grey stones with gravel and dirt",
+  "extra_prompt": "lush green grass",
+  "num_images": 1,
+  "prompt_style": "rd_tile__tileset_advanced",
+  "seed": 123,
+  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
+  "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
+}
+```
+
+### Single tiles
+<img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+- You can generate single tiles using the `rd_tile__single_tile` style.
+- The `width` and `height` parameters specify the size of the tile and can range between 16 and 64.
+
+Example:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "volcanic rock with cracks",
+  "num_images": 1,
+  "prompt_style": "rd_tile__single_tile"
+}
+```
+
+### Tile variation
+- You can generate variations of a tile using the `rd_tile__tile_variation` style.
+- The `input_image` parameter is **required** and should be a base64 encoded image of the tile you want to create variations from.
+- Use the `prompt` parameter to describe the changes you want to see in the variations.
+
+Example:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "add moss and cracks",
+  "num_images": 1,
+  "prompt_style": "rd_tile__tile_variation",
+  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
+}
+```
+
+### Auxiliary tileset styles
+- `rd_tile__tile_object` can generate small assets for placing on tile sections
+- `rd_tile__scene_object` can generate large assets for placing on tileset maps
+
+
 ## FAQ
 
 - **How much does it cost?**
