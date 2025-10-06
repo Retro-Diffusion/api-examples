@@ -113,11 +113,13 @@ payload = {
 We support the following animation styles:
 - animation__four_angle_walking	`(48x48 only)	Consistent 4 direction, 4 frame long walking animations of humanoid characters`
 - animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
+- animation__small_sprites `(32x32 only)	Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
 - animation__vfx	`(24x24 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
 
 Some important notes:
 
 - `animation__four_angle_walking` and `animation__walking_and_idle` currently only support 48x48 resolution. (Bigger or smaller resolutions will be ignored and default to 48x48)
+- `animation__small_sprites` only supports 32x32 resolution.
 - `animation__vfx` supports sizes between 24x24 and 96x96, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
@@ -157,7 +159,13 @@ Spritesheet output payload:
 
 The walking and idle animation format is similar to the four angle walking format, but has some changes. Below is an example:
 
-<img src="resources/walk_idle_format.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+<img width="896" height="1024" alt="Idle_example" src="https://github.com/user-attachments/assets/b38c0770-5e41-4066-89e2-c0e226f984f9" />
+
+### Small sprites format
+
+The small sprites animation sheets are broken down like the example below:
+
+<img width="768" height="768" alt="Small_example" src="https://github.com/user-attachments/assets/07e9c827-7495-4a7e-9d6a-a104c777126e" />
 
 ### Image reference for animations
 
@@ -280,6 +288,14 @@ payload = {
 
 ## Ignoring prompt expansion
 - You can use the `bypass_prompt_expansion` parameter to disable prompt expansion for your request.
+```python
+payload = {
+    "prompt": "a raven with a glowing green eye",
+    "width": 128,
+    "height": 128,
+    "bypass_prompt_expansion": True
+}
+```
 
 ## Image editing
 ![Progressive editing](https://github.com/user-attachments/assets/c787cd05-b464-4a66-a3e8-423aadf1ee1f)
