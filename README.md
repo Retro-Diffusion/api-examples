@@ -349,6 +349,8 @@ Advanced tileset example payload:
   "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
 }
 ```
+Tileset format:
+<img width="644" height="544" alt="Format" src="https://github.com/user-attachments/assets/ada60887-e11d-479f-83fe-9f888b0bbf25" />
 
 ### Single tiles
 <img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
