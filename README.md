@@ -188,6 +188,79 @@ In your prompt you can include a brief description of your reference image.
 }
 ```
 
+## Tilesets
+<img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+### All tileset styles
+- `rd_tile__tileset` generates full tilesets from one prompt or reference image
+- `rd_tile__tileset_advanced` generates full tilesets from multiple prompts or exact textures
+- `rd_tile__single_tile` can generate single tile texture images
+- `rd_tile__tile_variation` can generate variations of provided textures guided by the prompt
+- `rd_tile__tile_object` can generate small assets for placing on tile sections
+- `rd_tile__scene_object` can generate large assets for placing on tileset maps
+
+- You can generate full tilesets using the following styles:
+  - rd_tile__tileset
+  - rd_tile__tileset_advanced
+
+- `rd_tile__tileset` supports an inspiration image via the `input_image` parameter
+- `rd_tile__tileset_advanced` supports inside and outside textures via the `input_image` and `extra_input_image` parameters. Advanced tilesets require the inside texture description in the `prompt` parameter and the outside texture description in the `extra_prompt` parameter.
+- The `width` and `height` parameters specify the size of each tile in the tileset. Values can range between 16 and 32.
+
+Advanced tileset example payload:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "grey stones with gravel and dirt",
+  "extra_prompt": "lush green grass",
+  "num_images": 1,
+  "prompt_style": "rd_tile__tileset_advanced",
+  "seed": 123,
+  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
+  "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
+}
+```
+### Tileset format:
+<img src="https://github.com/user-attachments/assets/ada60887-e11d-479f-83fe-9f888b0bbf25" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+### Single tiles
+<img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+- You can generate single tiles using the `rd_tile__single_tile` style.
+- The `width` and `height` parameters specify the size of the tile and can range between 16 and 64.
+
+Example:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "volcanic rock with cracks",
+  "num_images": 1,
+  "prompt_style": "rd_tile__single_tile"
+}
+```
+
+### Tile variation
+- You can generate variations of a tile using the `rd_tile__tile_variation` style.
+- The `input_image` parameter is **required** and should be a base64 encoded image of the tile you want to create variations from.
+- Use the `prompt` parameter to describe the changes you want to see in the variations.
+
+Example:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "add moss and cracks",
+  "num_images": 1,
+  "prompt_style": "rd_tile__tile_variation",
+  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
+}
+```
+
 ## Using img2img
 
 - Just send a **base64** image in the `input_image` parameter and adjust `strength` to your likinng. Strength is a value between 0 and 1 and represents how much the image should be modified.
@@ -322,76 +395,6 @@ payload = {
   "remaining_credits": 999
 }
 ```
-
-## Tilesets
-<img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-- You can generate tilesets using the following styles:
-  - rd_tile__tileset
-  - rd_tile__tileset_advanced
-
-- `rd_tile__tileset` supports an inspiration image via the `input_image` parameter
-- `rd_tile__tileset_advanced` supports inside and outside textures via the `input_image` and `extra_input_image` parameters. Advanced tilesets require the inside texture description in the `prompt` parameter and the outside texture description in the `extra_prompt` parameter.
-- The `width` and `height` parameters specify the size of each tile in the tileset. Values can range between 16 and 32.
-
-Advanced tileset example payload:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "grey stones with gravel and dirt",
-  "extra_prompt": "lush green grass",
-  "num_images": 1,
-  "prompt_style": "rd_tile__tileset_advanced",
-  "seed": 123,
-  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
-  "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-### Tileset format:
-<img src="https://github.com/user-attachments/assets/ada60887-e11d-479f-83fe-9f888b0bbf25" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-### Single tiles
-<img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-- You can generate single tiles using the `rd_tile__single_tile` style.
-- The `width` and `height` parameters specify the size of the tile and can range between 16 and 64.
-
-Example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "volcanic rock with cracks",
-  "num_images": 1,
-  "prompt_style": "rd_tile__single_tile"
-}
-```
-
-### Tile variation
-- You can generate variations of a tile using the `rd_tile__tile_variation` style.
-- The `input_image` parameter is **required** and should be a base64 encoded image of the tile you want to create variations from.
-- Use the `prompt` parameter to describe the changes you want to see in the variations.
-
-Example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "add moss and cracks",
-  "num_images": 1,
-  "prompt_style": "rd_tile__tile_variation",
-  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-### Auxiliary tileset styles
-- `rd_tile__tile_object` can generate small assets for placing on tile sections
-- `rd_tile__scene_object` can generate large assets for placing on tileset maps
-
 
 ## FAQ
 
