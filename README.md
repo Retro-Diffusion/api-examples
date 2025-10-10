@@ -192,12 +192,12 @@ In your prompt you can include a brief description of your reference image.
 <img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
 
 ### All tileset styles
-- `rd_tile__tileset` generates full tilesets from one prompt or reference image
-- `rd_tile__tileset_advanced` generates full tilesets from multiple prompts or exact textures
-- `rd_tile__single_tile` can generate single tile texture images
-- `rd_tile__tile_variation` can generate variations of provided textures guided by the prompt
-- `rd_tile__tile_object` can generate small assets for placing on tile sections
-- `rd_tile__scene_object` can generate large assets for placing on tileset maps
+- rd_tile__tileset `(16x16 <-> 32x32)	Create full tilesets from a simple prompt describing the textures or environment, using a simple set of "wang" style combinations`
+- rd_tile__tileset_advanced `(16x16 <-> 32x32)	Full tilesets from two prompts and/or textures, using a simple set of "wang" style combinations`
+- rd_tile__single_tile `(16x16 <-> 64x64)	Detailed single tile texture for creating full tilesets or surfaces`
+- rd_tile__tile_variation `(16x16 <-> 128x128)	Texture variations of the provided tile image`
+- rd_tile__tile_object `(16x16 <-> 96x96)	Small assets for placing on sections of tiles`
+- rd_tile__scene_object `(64x64 <-> 512x512) Large assets for placing on tileset maps`
 
 ### Full tilesets
 - You can generate full tilesets using the following styles:
