@@ -404,17 +404,21 @@ payload = {
     These formulas can be used as a guide for automated cost calculations:
     **Standard image model pricing**
 	`rd_fast` styles:
+
 	Credit cost = `max(1, round((width * height) / 51200)) * number of images`
 	
 	`rd_plus` styles:
+
 	Credit cost = `max(1, round((width * height) / 17066)) * number of images`
 	
 	**Low resolution model pricing**
 	`rd_plus__mc_texture`, `rd_plus__mc_item`, `rd_plus__low_res`, `rd_plus__classic`, `rd_plus__topdown_item`, `rd_plus__skill_icon`, `rd_tile__tile_variation`, `rd_tile__single_tile`, `rd_tile__tile_object`:
+
 	Credit cost = `max(1, round((width * height) / 8533)) * number of images`
 	
 	**Unique model pricing:**
 	`animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`, `rd_tile__tileset`, `rd_tile__tileset_advanced`:
+
 	Credit cost = `10`
 - **How can I check my remaining credits?**
   - You can make a GET request to the `https://api.retrodiffusion.ai/v1/inferences/credits` endpoint, with the header `X-RD-Token` set to your API key. The response will include the remaining credits in the following format:
