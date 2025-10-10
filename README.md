@@ -199,6 +199,7 @@ In your prompt you can include a brief description of your reference image.
 - `rd_tile__tile_object` can generate small assets for placing on tile sections
 - `rd_tile__scene_object` can generate large assets for placing on tileset maps
 
+### Full tilesets
 - You can generate full tilesets using the following styles:
   - rd_tile__tileset
   - rd_tile__tileset_advanced
