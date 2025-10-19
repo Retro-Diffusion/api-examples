@@ -97,6 +97,7 @@ payload = {
 - rd_plus__ui_element	`User interface boxes and buttons`
 - rd_plus__item_sheet	`Sheets of objects placed on a simple background`
 - rd_plus__character_turnaround	`Character sprites viewed from different angles`
+- rd_plus__environment `One-point perspective scenes with outlines and strong shapes`
 - rd_plus__topdown_map	`Video game map style pixel art with a 3/4 top down perspective`
 - rd_plus__topdown_asset	`3/4 top down perspective game assets on a simple background`
 - rd_plus__isometric	`45 degree isometric perspective, with consistent outlines`
