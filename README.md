@@ -48,6 +48,48 @@ print(response.text)
 }
 ```
 
+## Check credit cost before generating
+
+You can check how much a request will cost before actually generating images by adding the `check_cost` parameter set to `true`:
+
+```python
+import requests
+
+url = "https://api.retrodiffusion.ai/v1/inferences"
+method = "POST"
+
+headers = {
+    "X-RD-Token": "YOUR_API_KEY",
+}
+
+payload = {
+    "width": 256,
+    "height": 256,
+    "prompt": "A really cool corgi",
+    "num_images": 1,
+    "check_cost": true
+}
+
+response = requests.request(method, url, headers=headers, json=payload)
+print(response.text)
+```
+
+The response will show the credit cost without generating any images:
+
+```json
+{
+  "created_at": 1761299395,
+  "credit_cost": 1,
+  "output_images": [],
+  "base64_images": [],
+  "output_urls": [],
+  "model": "check_cost",
+  "remaining_credits": 0
+}
+```
+
+Note: When using `check_cost`, the `remaining_credits` will always be `0` and no images will be generated.
+
 ## Using styles
 
 ### RD_FAST
