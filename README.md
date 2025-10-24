@@ -139,6 +139,7 @@ payload = {
 - rd_plus__ui_element	`User interface boxes and buttons`
 - rd_plus__item_sheet	`Sheets of objects placed on a simple background`
 - rd_plus__character_turnaround	`Character sprites viewed from different angles`
+- rd_plus__environment `One-point perspective scenes with outlines and strong shapes`
 - rd_plus__topdown_map	`Video game map style pixel art with a 3/4 top down perspective`
 - rd_plus__topdown_asset	`3/4 top down perspective game assets on a simple background`
 - rd_plus__isometric	`45 degree isometric perspective, with consistent outlines`
@@ -227,6 +228,80 @@ In your prompt you can include a brief description of your reference image.
 	"prompt_style": "animation__four_angle_walking",
 	"return_spritesheet": true,
 	"input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
+}
+```
+
+## Tilesets
+<img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+### All tileset styles
+- rd_tile__tileset `(16x16 <-> 32x32)	Create full tilesets from a simple prompt describing the textures or environment, using a simple set of "wang" style combinations`
+- rd_tile__tileset_advanced `(16x16 <-> 32x32)	Full tilesets from two prompts and/or textures, using a simple set of "wang" style combinations`
+- rd_tile__single_tile `(16x16 <-> 64x64)	Detailed single tile texture for creating full tilesets or surfaces`
+- rd_tile__tile_variation `(16x16 <-> 128x128)	Texture variations of the provided tile image`
+- rd_tile__tile_object `(16x16 <-> 96x96)	Small assets for placing on sections of tiles`
+- rd_tile__scene_object `(64x64 <-> 512x512) Large assets for placing on tileset maps`
+
+### Full tilesets
+- You can generate full tilesets using the following styles:
+  - rd_tile__tileset
+  - rd_tile__tileset_advanced
+
+- `rd_tile__tileset` supports an inspiration image via the `input_image` parameter
+- `rd_tile__tileset_advanced` supports inside and outside textures via the `input_image` and `extra_input_image` parameters. Advanced tilesets require the inside texture description in the `prompt` parameter and the outside texture description in the `extra_prompt` parameter.
+- The `width` and `height` parameters specify the size of each tile in the tileset. Values can range between 16 and 32.
+
+Advanced tileset example payload:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "grey stones with gravel and dirt",
+  "extra_prompt": "lush green grass",
+  "num_images": 1,
+  "prompt_style": "rd_tile__tileset_advanced",
+  "seed": 123,
+  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
+  "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
+}
+```
+### Tileset format:
+<img src="https://github.com/user-attachments/assets/ada60887-e11d-479f-83fe-9f888b0bbf25" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+### Single tiles
+<img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
+
+- You can generate single tiles using the `rd_tile__single_tile` style.
+- The `width` and `height` parameters specify the size of the tile and can range between 16 and 64.
+
+Example:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "volcanic rock with cracks",
+  "num_images": 1,
+  "prompt_style": "rd_tile__single_tile"
+}
+```
+
+### Tile variation
+- You can generate variations of a tile using the `rd_tile__tile_variation` style.
+- The `input_image` parameter is **required** and should be a base64 encoded image of the tile you want to create variations from.
+- Use the `prompt` parameter to describe the changes you want to see in the variations.
+
+Example:
+
+```python
+{
+  "width": 32,
+  "height": 32,
+  "prompt": "add moss and cracks",
+  "num_images": 1,
+  "prompt_style": "rd_tile__tile_variation",
+  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
 }
 ```
 
@@ -365,78 +440,29 @@ payload = {
 }
 ```
 
-## Tilesets
-<img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-- You can generate tilesets using the following styles:
-  - rd_tile__tileset
-  - rd_tile__tileset_advanced
-
-- `rd_tile__tileset` supports an inspiration image via the `input_image` parameter
-- `rd_tile__tileset_advanced` supports inside and outside textures via the `input_image` and `extra_input_image` parameters. Advanced tilesets require the inside texture description in the `prompt` parameter and the outside texture description in the `extra_prompt` parameter.
-- The `width` and `height` parameters specify the size of each tile in the tileset. Values can range between 16 and 32.
-
-Advanced tileset example payload:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "grey stones with gravel and dirt",
-  "extra_prompt": "lush green grass",
-  "num_images": 1,
-  "prompt_style": "rd_tile__tileset_advanced",
-  "seed": 123,
-  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
-  "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-### Single tiles
-<img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-- You can generate single tiles using the `rd_tile__single_tile` style.
-- The `width` and `height` parameters specify the size of the tile and can range between 16 and 64.
-
-Example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "volcanic rock with cracks",
-  "num_images": 1,
-  "prompt_style": "rd_tile__single_tile"
-}
-```
-
-### Tile variation
-- You can generate variations of a tile using the `rd_tile__tile_variation` style.
-- The `input_image` parameter is **required** and should be a base64 encoded image of the tile you want to create variations from.
-- Use the `prompt` parameter to describe the changes you want to see in the variations.
-
-Example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "add moss and cracks",
-  "num_images": 1,
-  "prompt_style": "rd_tile__tile_variation",
-  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-### Auxiliary tileset styles
-- `rd_tile__tile_object` can generate small assets for placing on tile sections
-- `rd_tile__scene_object` can generate large assets for placing on tileset maps
-
-
 ## FAQ
 
 - **How much does it cost?**
   - Cost is calculated based on the model and resolution you choose. You can check the cost of each request in our [web app](https://www.retrodiffusion.ai/)
+    These formulas can be used as a guide for automated cost calculations:
+    **Standard image model pricing**
+	`rd_fast` styles:
+
+	Credit cost = `max(1, round((width * height) / 51200)) * number of images`
+	
+	`rd_plus` styles:
+
+	Credit cost = `max(1, round((width * height) / 17066)) * number of images`
+	
+	**Low resolution model pricing**
+	`rd_plus__mc_texture`, `rd_plus__mc_item`, `rd_plus__low_res`, `rd_plus__classic`, `rd_plus__topdown_item`, `rd_plus__skill_icon`, `rd_tile__tile_variation`, `rd_tile__single_tile`, `rd_tile__tile_object`:
+
+	Credit cost = `max(2, round((width * height) / 8533)) * number of images`
+	
+	**Unique model pricing:**
+	`animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`, `rd_tile__tileset`, `rd_tile__tileset_advanced`:
+
+	Credit cost = `10`
 - **How can I check my remaining credits?**
   - You can make a GET request to the `https://api.retrodiffusion.ai/v1/inferences/credits` endpoint, with the header `X-RD-Token` set to your API key. The response will include the remaining credits in the following format:
 
