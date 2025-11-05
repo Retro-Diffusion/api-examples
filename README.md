@@ -106,7 +106,7 @@ payload = {
 }
 ```
 
-**Default size range is 64x64 <-> 512x512 unless otherwise specified.**
+**Default size range is 64x64 <-> 384x384 unless otherwise specified.**
 #### Available styles:
 
 - rd_fast__default	`Simple clean pixel art, with Anime illustration influences`
@@ -240,7 +240,7 @@ In your prompt you can include a brief description of your reference image.
 - rd_tile__single_tile `(16x16 <-> 64x64)	Detailed single tile texture for creating full tilesets or surfaces`
 - rd_tile__tile_variation `(16x16 <-> 128x128)	Texture variations of the provided tile image`
 - rd_tile__tile_object `(16x16 <-> 96x96)	Small assets for placing on sections of tiles`
-- rd_tile__scene_object `(64x64 <-> 512x512) Large assets for placing on tileset maps`
+- rd_tile__scene_object `(64x64 <-> 384x384) Large assets for placing on tileset maps`
 
 ### Full tilesets
 - You can generate full tilesets using the following styles:
