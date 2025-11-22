@@ -158,6 +158,7 @@ We support the following animation styles:
 - animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
 - animation__small_sprites `(32x32 only)	Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
 - animation__vfx	`(24x24 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
+- animation__any_animation  `(64x64 only)	General purpose custom animation sheets with optional first frame input`
 
 Some important notes:
 
