@@ -232,6 +232,13 @@ In your prompt you can include a brief description of your reference image.
 }
 ```
 
+### Tips for using any_animation
+
+Due to this model's open-ended nature, its a good idea to include a detailed prompt about the content and action in the sequence.
+It can also be used for more general sprite sheet objectives, like creating variations of character portraits, sprite sheets of items, and many more creative uses.
+
+Use a 64x64 input image to get near perfect subject adherence.
+
 ## Tilesets
 <img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
 
