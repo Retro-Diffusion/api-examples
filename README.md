@@ -92,6 +92,37 @@ Note: When using `check_cost`, the `remaining_credits` will always be `0` and no
 
 ## Using styles
 
+### RD_PRO
+- `RD_PRO` is our newest and most advanced model, it supports several styles, and it's passed as a parameter named `prompt_style`.
+
+#### Available styles:
+- rd_pro__default	`Clean modern pixel art style model that allows multiple reference images and extremely detailed prompting.`
+- rd_pro__painterly	`Almost brush-like style with minimal outlines or anti-aliasing. Clean vibrant color palettes and beautiful details`
+- rd_pro__fantasy `Bright colors, soft transitions, detailed textures, light dithering, and outlines.`
+- rd_pro__horror `Dark, gritty style with chaotic details and harsh shapes and shading.`
+- rd_pro__scifi	`High contrast with glowing details, clean outlines, and beautiful lighting.`
+- rd_pro__simple `Simple pixel art with minimal shading or texturing, but strong outlines and shapes.`
+- rd_pro__isometric `Pixel art rotated at a 45 degree angle. Clean lines and shapes.`
+- rd_pro__topdown	`Pixel art viewed from a 2/3 downwards angle, with simple shapes and shading.`
+- rd_pro__platformer `Side-scroller style platformer perspective, with modern styling and outlines.`
+- rd_pro__dungeon_map	`Dungeon-crawler style game levels with connected rooms filled with objects and enemies.`
+
+#### Using reference images with RD_PRO
+- You can use up to 5 reference images with RD_PRO by passing base64 encoded images in the `reference_images` parameter.
+
+```json
+{
+	"width": 256,
+	"height": 256,
+	"prompt": "corgi",
+	"num_images": 1,
+	"prompt_style": "rd_pro__default",
+	"check_cost": false,
+	"reference_images": [
+		"iVBORw0KGgoAAA..."
+	]
+}```
+
 ### RD_FAST
 
 - `RD_FAST` only support one style at a time, and it's passed as a parameter named `prompt_style`:
