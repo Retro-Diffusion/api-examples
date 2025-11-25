@@ -121,7 +121,8 @@ Note: When using `check_cost`, the `remaining_credits` will always be `0` and no
 	"reference_images": [
 		"iVBORw0KGgoAAA..."
 	]
-}```
+}
+```
 
 ### RD_FAST
 
