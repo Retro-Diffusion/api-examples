@@ -106,6 +106,8 @@ Note: When using `check_cost`, the `remaining_credits` will always be `0` and no
 - rd_pro__topdown	`Pixel art viewed from a 2/3 downwards angle, with simple shapes and shading.`
 - rd_pro__platformer `Side-scroller style platformer perspective, with modern styling and outlines.`
 - rd_pro__dungeon_map	`Dungeon-crawler style game levels with connected rooms filled with objects and enemies.`
+- rd_pro__spritesheet	`Collections of assets on a simple background with the same style.`
+- rd_pro__pixelate	`Convert input images into pixel art.`
 
 #### Using reference images with RD_PRO
 - You can use up to 5 reference images with RD_PRO by passing base64 encoded images in the `reference_images` parameter.
@@ -186,6 +188,8 @@ payload = {
 ## Animations
 
 We support the following animation styles:
+- animation__any_animation	`(64x64 only)	Describe an animation and bring pixel art to life`
+- animation__8_dir_rotation	`(80x80 only)	 Create 8 direction rotations of anything`
 - animation__four_angle_walking	`(48x48 only)	Consistent 4 direction, 4 frame long walking animations of humanoid characters`
 - animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
 - animation__small_sprites `(32x32 only)	Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
@@ -486,23 +490,45 @@ payload = {
   - Cost is calculated based on the model and resolution you choose. You can check the cost of each request in our [web app](https://www.retrodiffusion.ai/)
     These formulas can be used as a guide for automated cost calculations:
     **Standard image model pricing**
+    All costs are rounded to three decimal places.
 	`rd_fast` styles:
 
-	Credit cost = `max(1, round((width * height) / 51200)) * number of images`
+	Balance cost = `max(0.015, ((width * height) + 100000) / 6000000) * number of images`
 	
 	`rd_plus` styles:
 
-	Credit cost = `max(1, round((width * height) / 17066)) * number of images`
+	Balance cost = `max(0.025, ((width * height) + 50000) / 2000000) * number of images`
 	
 	**Low resolution model pricing**
 	`rd_plus__mc_texture`, `rd_plus__mc_item`, `rd_plus__low_res`, `rd_plus__classic`, `rd_plus__topdown_item`, `rd_plus__skill_icon`, `rd_tile__tile_variation`, `rd_tile__single_tile`, `rd_tile__tile_object`:
 
-	Credit cost = `max(2, round((width * height) / 8533)) * number of images`
+	Balance cost = `max(0.02, ((width * height) + 13700) / 600000) * number of images`
+
+	`rd_pro` styles:
+
+	Balance cost = `0.22 * number of images`
+
+	**Editing class styles**
+	`rd_pro__pixelate`
+
+	Balance cost = `0.25 * number of images`
 	
 	**Unique model pricing:**
-	`animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`, `rd_tile__tileset`, `rd_tile__tileset_advanced`:
+	`animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`:
 
-	Credit cost = `10`
+	Balance cost = `0.07`
+
+	`rd_tile__tileset`, `rd_tile__tileset_advanced`:
+
+	Balance cost = `0.10`
+
+	`animation__any_animation`, `animation__8_dir_rotation`:
+
+	Balance cost = `0.25`
+
+
+
+	
 - **How can I check my remaining credits?**
   - You can make a GET request to the `https://api.retrodiffusion.ai/v1/inferences/credits` endpoint, with the header `X-RD-Token` set to your API key. The response will include the remaining credits in the following format:
 
