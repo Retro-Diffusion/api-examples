@@ -110,7 +110,7 @@ Note: When using `check_cost`, the `remaining_credits` will always be `0` and no
 - rd_pro__pixelate	`Convert input images into pixel art.`
 
 #### Using reference images with RD_PRO
-- You can use up to 5 reference images with RD_PRO by passing base64 encoded images in the `reference_images` parameter.
+- You can use up to 9 reference images with RD_PRO by passing base64 encoded images in the `reference_images` parameter.
 
 ```json
 {
