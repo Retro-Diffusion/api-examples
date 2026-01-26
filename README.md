@@ -98,16 +98,22 @@ Note: When using `check_cost`, the `remaining_credits` will always be `0` and no
 #### Available styles:
 - rd_pro__default	`Clean modern pixel art style model that allows multiple reference images and extremely detailed prompting.`
 - rd_pro__painterly	`Almost brush-like style with minimal outlines or anti-aliasing. Clean vibrant color palettes and beautiful details`
-- rd_pro__fantasy `Bright colors, soft transitions, detailed textures, light dithering, and outlines.`
-- rd_pro__horror `Dark, gritty style with chaotic details and harsh shapes and shading.`
+- rd_pro__fantasy	`Bright colors, soft transitions, detailed textures, light dithering, and outlines.`
+- rd_pro__ui_panel	`Consistent arrangements of UI elements, split into buttons, sliders, panels, and knobs.`
+- rd_pro__horror	`Dark, gritty style with chaotic details and harsh shapes and shading.`
 - rd_pro__scifi	`High contrast with glowing details, clean outlines, and beautiful lighting.`
-- rd_pro__simple `Simple pixel art with minimal shading or texturing, but strong outlines and shapes.`
-- rd_pro__isometric `Pixel art rotated at a 45 degree angle. Clean lines and shapes.`
+- rd_pro__simple	`Simple pixel art with minimal shading or texturing, but strong outlines and shapes.`
+- rd_pro__isometric	`Pixel art rotated at a 45 degree angle. Clean lines and shapes.`
 - rd_pro__topdown	`Pixel art viewed from a 2/3 downwards angle, with simple shapes and shading.`
-- rd_pro__platformer `Side-scroller style platformer perspective, with modern styling and outlines.`
+- rd_pro__platformer	`Side-scroller style platformer perspective, with modern styling and outlines.`
 - rd_pro__dungeon_map	`Dungeon-crawler style game levels with connected rooms filled with objects and enemies.`
-- rd_pro__spritesheet	`Collections of assets on a simple background with the same style.`
+- rd_pro__edit	`Upload an image and describe the changes you want. You can use up to 9 references.`
 - rd_pro__pixelate	`Convert input images into pixel art.`
+- rd_pro__spritesheet	`Collections of assets on a simple background with the same style.`
+- rd_pro__typography	`Generate logos, buttons, or any other element using text as the central focus.`
+- rd_pro__hexagonal_tiles	`Small collection of hexagonal tiles for game maps.`
+- rd_pro__fps_weapon	`First person perspective weapons, items, and objects.`
+- rd_pro__inventory_items	`Creates a spritesheet of grid aligned inventory items (like for Diablo or Path of Exile)`
 
 #### Using reference images with RD_PRO
 - You can use up to 9 reference images with RD_PRO by passing base64 encoded images in the `reference_images` parameter.
