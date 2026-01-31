@@ -191,6 +191,37 @@ payload = {
 - rd_plus__topdown_item	`(16x16 <-> 128x128)	Top-down view of items and objects, with a simple background`
 - rd_plus__skill_icon  `(16x16 <-> 128x128)	Icons for skills, abilities, or spells`
 
+### User Created Styles
+
+- You can use your own custom created styles (or the ones you imported from other users) by passing their ID in the `prompt_style` parameter.
+- You can find your style IDs (and generate sample code for different languages) by clicking the **Show API Code** button located at the top left corner of the canvas in the web app.
+
+```python
+import requests
+
+url = "https://api.retrodiffusion.ai/v1/inferences"
+method = "POST"
+
+headers = {
+    "X-RD-Token": "YOUR_API_KEY",
+}
+
+payload = {
+    "prompt": "life and mana flasks",
+    "width": 256,
+    "height": 256,
+    "num_images": 4,
+    "seed": 1105683575,
+    "prompt_style": "user__flasks_586",
+    "tile_x": False,
+    "tile_y": False,
+    "remove_bg": True
+}
+
+response = requests.request(method, url, headers=headers, json=payload)
+print(response.text)
+```
+
 ## Animations
 
 We support the following animation styles:
