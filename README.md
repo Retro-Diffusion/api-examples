@@ -225,13 +225,14 @@ print(response.text)
 ## Animations
 
 We support the following animation styles:
-- animation__any_animation	`(64x64 only)	Describe an animation and bring pixel art to life`
-- animation__8_dir_rotation	`(80x80 only)	 Create 8 direction rotations of anything`
-- animation__four_angle_walking	`(48x48 only)	Consistent 4 direction, 4 frame long walking animations of humanoid characters`
-- animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
-- animation__small_sprites `(32x32 only)	Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
-- animation__vfx	`(24x24 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
-- animation__any_animation  `(64x64 only)	General purpose custom animation sheets with optional first frame input`
+- rd_animation__any_animation	`(64x64 only)	Describe an animation and bring pixel art to life`
+- rd_animation__8_dir_rotation	`(80x80 only)	 Create 8 direction rotations of anything`
+- rd_animation__four_angle_walking	`(48x48 only)	Consistent 4 direction, 4 frame long walking animations of humanoid characters`
+- rd_animation__walking_and_idle	`(48x48 only)	Consistent 4 direction walking and idle animations of humanoid characters`
+- rd_animation__small_sprites `(32x32 only)	Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
+- rd_animation__battle_sprites `(48x48 only)	Characters with walking, jumping, attacking, and idle animations`
+- rd_animation__vfx	`(24x24 <-> 96x96, 1:1 aspect ratio)	Eye-catching animations for fire, explosions, lightning, or other simple effects`
+- rd_animation__any_animation  `(64x64 only)	General purpose custom animation sheets with optional first frame input`
 
 Some important notes:
 
