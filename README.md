@@ -94,6 +94,7 @@ Cost-only response example:
 
 - `RD_PRO` is our newest and most advanced model.
 - It supports several styles passed in the `prompt_style` parameter.
+- Default size range is `96x96 <-> 256x256` unless otherwise specified.
 
 Available `RD_PRO` styles:
 - `rd_pro__default` - `Clean modern pixel art style model that allows multiple reference images and extremely detailed prompting.`
