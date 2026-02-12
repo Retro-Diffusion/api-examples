@@ -2,21 +2,6 @@
   <img src="resources/wordmark.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
 </p>
 
-> **ℹ️ Info:**  
-> We just migrated to a new server infrastructure!  
-> All current workflows should continue to work with the existing endpoint and no changes are needed from you.  
-> If you experience any issues, you can temporarily use our legacy endpoint at `https://api.retrodiffusion.ai/v1/inferences/legacy`.
-
-## API Overview
-
-This guide keeps all existing API capabilities, but is organized by real-world tasks:
-- Generate images
-- Check cost before generation
-- Use model/style families (`RD_PRO`, `RD_FAST`, `RD_PLUS`, user styles)
-- Request animations
-- Build tilesets and tile assets
-- Run img2img and image-editing workflows
-
 Main generation endpoint:
 - `POST https://api.retrodiffusion.ai/v1/inferences`
 - Header: `X-RD-Token: YOUR_API_KEY`
@@ -24,9 +9,9 @@ Main generation endpoint:
 ## Quick start: generate an image
 
 1. Generate an API key from your [RetroDiffusion account](https://www.retrodiffusion.ai/app/devtools).
-2. Make sure you have available credits in your account.
+2. Make sure you have available balance in your account.
    Take in mind that each model supports different styles.
-3. Send a request. This example generates one image using `RD_FAST` with no style override:
+3. Send a request. This example generates one image using `RD_PRO` using the default style:
 
 ```python
 import requests
@@ -42,6 +27,7 @@ payload = {
     "width": 256,
     "height": 256,
     "prompt": "A really cool corgi",
+    "prompt_style": "rd_pro__default"
     "num_images": 1
 }
 
@@ -54,10 +40,10 @@ Response format example:
 ```json
 {
   "created_at": 1733425519,
-  "credit_cost": 1,
+  "balance_cost": 0.25,
   "base64_images": ["..."],
-  "type": "txt2img",
-  "remaining_credits": 999
+  "model": "rd_pro",
+  "remaining_balance": 100.75
 }
 ```
 
@@ -79,6 +65,7 @@ payload = {
     "width": 256,
     "height": 256,
     "prompt": "A really cool corgi",
+    "prompt_style": "rd_pro__default"
     "num_images": 1,
     "check_cost": true
 }
@@ -91,17 +78,15 @@ Cost-only response example:
 
 ```json
 {
-  "created_at": 1761299395,
-  "credit_cost": 1,
-  "output_images": [],
-  "base64_images": [],
-  "output_urls": [],
-  "model": "check_cost",
-  "remaining_credits": 0
+	"created_at": 1770893613,
+	"balance_cost": 0.25,
+	"output_images": [],
+	"base64_images": [],
+	"output_urls": [],
+	"model": "check_cost",
+	"remaining_balance": 100.75
 }
 ```
-
-Note: When using `check_cost`, `remaining_credits` will always be `0` and no images will be generated.
 
 ## Model and style selection
 
@@ -185,7 +170,6 @@ Available `RD_FAST` styles:
 ### Using RD_PLUS models
 
 - `RD_PLUS` supports several styles passed in the `prompt_style` parameter.
-- `RD_PLUS` is more expensive than `RD_FAST`; confirm cost in the [web app](https://www.retrodiffusion.ai) with your model/style/settings.
 
 Available `RD_PLUS` styles:
 - `rd_plus__default` - `Clean pixel art style with bold colors and outlines`
@@ -256,7 +240,6 @@ Important notes:
 - `animation__vfx` supports sizes between `24x24` and `96x96`, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
-- `bypass_prompt_expansion`
 
 Example animation payload:
 
@@ -536,7 +519,7 @@ Notes:
 - Supported sizes are between `16x16` and `256x256`.
 - You can send any image within the size limits to be edited.
 - Progressive editing is supported by using the output of one task as input for a new task.
-- Cost is `5 credits` per image edit.
+- Cost is **0.06 USD** per image edit.
 
 Response format:
 
@@ -592,25 +575,13 @@ Response format:
 
 ```json
 {
-  "credits": 999
+  "balance": 100.75
 }
 ```
 
 ### Can I buy credits from the API?
 
 No. To keep balance topped up automatically, use **auto refills** in [Payment Methods](https://www.retrodiffusion.ai/app/payment-methods).
-
-### What happened to RD_CLASSIC?
-
-We just dropped support for `RD_CLASSIC`.
-
-### What happened to RD_FLUX?
-
-`RD_FLUX` was renamed to `RD_FAST` and can be used as before.
-
-### What happened to the model parameter?
-
-`model` is no longer required; model choice is determined by `prompt_style`.
 
 ### How to get images at native resolution?
 
