@@ -501,6 +501,65 @@ payload = {
 }
 ```
 
+## Including downloadable data
+
+- Use `include_downloadable_data: true` to include generated downloadable artifacts in the response.
+- This is useful for styles that return structured assets (for example `rd_pro__inventory_items`).
+
+Example payload:
+
+```json
+{
+	"width": 256,
+	"height": 256,
+	"prompt": "item set for a paladin",
+	"num_images": 1,
+	"prompt_style": "rd_pro__inventory_items",
+	"check_cost": false,
+	"include_downloadable_data": true
+}
+```
+
+Example response excerpt:
+
+```json
+{
+	"downloadable_data": {
+		"downloadable_json": {
+			"data": {
+				"meta": {
+					"count": 10,
+					"mask_h": 128,
+					"mask_w": 128,
+					"image_h": 256,
+					"image_w": 256
+				},
+				"sprites": [
+					{
+						"h": 152,
+						"w": 48,
+						"x": 16,
+						"y": 16,
+						"id": 0,
+						"name": "Holy sword, lion shield, enchanted armor, healing potion, blessed amulet, warhorse figurine, prayer book, golden chalice",
+						"mask_h": 76,
+						"mask_w": 24,
+						"mask_x": 8,
+						"mask_y": 8
+					},
+					...
+					...
+					...
+				]
+			},
+			"type": "item_atlas",
+			"filename": "item_atlas.json",
+			"description": "Sprite atlas with item positions and names"
+		}
+	}
+}
+```
+
 ## Image editing endpoint
 
 ![Progressive editing](https://github.com/user-attachments/assets/c787cd05-b464-4a66-a3e8-423aadf1ee1f)
