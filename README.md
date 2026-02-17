@@ -648,3 +648,90 @@ No. To keep balance topped up automatically, use **auto refills** in [Payment Me
 Use `upscale_output_factor`:
 - Set to `1` for native resolution.
 - Set to `null` for regular size.
+
+## MCP (Model Context Protocol)
+
+You can connect to RetroDiffusion through MCP to call tools like:
+- `get_balance`
+- `list_available_styles`
+- `create_inference`
+
+### Codex setup (`~/.codex/config.toml`)
+
+1. Export your API key in the shell where Codex runs:
+
+```bash
+export RD_API_KEY="YOUR_API_KEY"
+```
+
+2. Add this MCP server block:
+
+```toml
+[mcp_servers.retrodiffusion]
+url = "https://mcp.retrodiffusion.ai/mcp"
+bearer_token_env_var = "RD_API_KEY"
+startup_timeout_sec = 20
+tool_timeout_sec = 120
+enabled = true
+```
+
+3. Restart Codex so it reloads MCP config and environment variables.
+
+### Cursor setup (`~/.cursor/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "retrodiffusion": {
+      "url": "https://mcp.retrodiffusion.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:RD_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+### Antigravity setup (`mcp_config.json`)
+
+```json
+{
+  "mcpServers": {
+    "retrodiffusion": {
+      "serverUrl": "https://mcp.retrodiffusion.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+### VS Code setup (`.vscode/mcp.json`)
+
+```json
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "rd_api_key",
+      "description": "RetroDiffusion API key",
+      "password": true
+    }
+  ],
+  "servers": {
+    "retrodiffusion": {
+      "type": "http",
+      "url": "https://mcp.retrodiffusion.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:rd_api_key}"
+      }
+    }
+  }
+}
+```
+
+Docs:
+- Cursor: `https://cursor.com/docs/context/mcp`
+- Antigravity: `https://antigravity.google/docs/mcp`
+- VS Code: `https://code.visualstudio.com/docs/copilot/customization/mcp-servers`
