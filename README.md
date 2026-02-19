@@ -224,6 +224,166 @@ response = requests.request(method, url, headers=headers, json=payload)
 print(response.text)
 ```
 
+### Create user styles via API (RD Pro template)
+
+Endpoint:
+- `POST https://api.retrodiffusion.ai/v1/styles`
+- Header: `X-RD-Token: YOUR_API_KEY`
+
+This endpoint currently supports only the **RD Pro** user template.
+All non-template fields are rejected.
+
+Allowed request fields:
+- `name` (required)
+- `description`
+- `style_icon`
+- `reference_images` (max 1)
+- `reference_caption`
+- `apply_prompt_fixer`
+- `llm_instructions`
+- `expanded_llm_instructions`
+- `user_prompt_template`
+- `force_palette`
+- `force_bg_removal`
+- `min_width` and `min_height` (optional forced dimensions, both required together, range `96..256`)
+
+Valid `style_icon` values:
+
+```text
+sparkles, fire, bolt, star, heart, cube, globe, sun, moon, cloud, beaker, command, cpu, brush, photo, film, music, rocket, puzzle, cube-transparent, swatch, eyedropper, grid, stack, viewfinder, adjustments, crystal, magic-swirl, swordman, dragon, castle, forest, mountain, water-drop, flame, snowflake, lightning, stone, mineral, gem, diamonds, wizard-staff, portal, sunrise, moon-bats, night-sky, galaxy, planet, abstract-1, abstract-2, gamepad, dice, skull, crown, wizard-hat, ghost, robot, shuttle, fa-star, fa-heart, leaf, tree, fa-mountain, fa-water, fa-sun, fa-moon, tb-sparkles, wand, palette, tb-brush, tb-photo, movie, user, user-gear, user-friends, users-viewfinder, walking, person, child-reaching, grin-beam, hand-back-fist
+```
+
+Notes:
+- Use the returned `prompt_style` as the value for `prompt_style` in `/v1/inferences`.
+
+Example:
+
+```python
+import requests
+
+url = "https://api.retrodiffusion.ai/v1/styles"
+method = "POST"
+
+headers = {
+    "X-RD-Token": "YOUR_API_KEY",
+}
+
+payload = {
+    "name": "My RD Pro Style",
+    "description": "A polished pixel art look for item art",
+    "style_icon": "sparkles",
+    "reference_images": ["iVBORw0KGgoAAA..."],
+    "apply_prompt_fixer": True,
+    "llm_instructions": "Push clean outlines and rich material contrast.",
+    "user_prompt_template": "Pixel art styled {prompt}, with 1px outlines and detailed textures.",
+    "force_palette": False,
+    "force_bg_removal": False,
+    "min_width": 192,
+    "min_height": 192
+}
+
+response = requests.request(method, url, headers=headers, json=payload)
+print(response.text)
+```
+
+Response excerpt:
+
+```json
+{
+  "id": "user_style_3f05d16f5f2e4cbf9d99f2f9df25b2cb",
+  "prompt_style": "user__my_pro_style_1a2b3c4d",
+  "name": "My Pro Style",
+  "description": "A polished pixel art look for item art",
+  "type": "user",
+  "created_at": 1771557653,
+  "updated_at": 1771557653
+}
+```
+
+Use returned `prompt_style` for inference:
+
+```python
+payload = {
+    "prompt": "life and mana flasks",
+    "width": 192,
+    "height": 192,
+    "num_images": 1,
+    "prompt_style": "user__my_pro_style_1a2b3c4d"
+}
+```
+
+### Update user style (RD Pro template)
+
+Endpoint:
+- `PATCH https://api.retrodiffusion.ai/v1/styles/{style_id}`
+- Header: `X-RD-Token: YOUR_API_KEY`
+
+Notes:
+- Request body accepts the same RD Pro editable fields as create, but all optional
+
+Example:
+
+```python
+import requests
+
+style_id = "user__my_pro_style_1a2b3c4d"  # or internal id
+url = f"https://api.retrodiffusion.ai/v1/styles/{style_id}"
+
+headers = {"X-RD-Token": "YOUR_API_KEY"}
+payload = {
+    "description": "Updated description",
+    "llm_instructions": "Use clean outlines and higher local contrast.",
+    "min_width": 256,
+    "min_height": 256
+}
+
+response = requests.patch(url, headers=headers, json=payload)
+print(response.text)
+```
+
+Response excerpt:
+
+```json
+{
+  "id": "user_style_3f05d16f5f2e4cbf9d99f2f9df25b2cb",
+  "prompt_style": "user__my_pro_style_1a2b3c4d",
+  "name": "My Pro Style",
+  "description": "Updated description",
+  "type": "user",
+  "created_at": 1771557653,
+  "updated_at": 1771559999
+}
+```
+
+### Delete user style
+
+Endpoint:
+- `DELETE https://api.retrodiffusion.ai/v1/styles/{style_id}`
+- Header: `X-RD-Token: YOUR_API_KEY`
+
+Example:
+
+```python
+import requests
+
+style_id = "user__my_pro_style_1a2b3c4d"
+url = f"https://api.retrodiffusion.ai/v1/styles/{style_id}"
+headers = {"X-RD-Token": "YOUR_API_KEY"}
+
+response = requests.delete(url, headers=headers)
+print(response.text)
+```
+
+Response:
+
+```json
+{
+  "id": "user_style_3f05d16f5f2e4cbf9d99f2f9df25b2cb",
+  "prompt_style": "user__my_pro_style_1a2b3c4d",
+  "deleted": true
+}
+```
+
 ## Requesting an animation
 
 Animation styles:
