@@ -467,7 +467,7 @@ Tips for `animation__any_animation`:
 
 ## Advanced animations
 
-These styles use the same `POST /v1/inferences` endpoint, but they are designed for animating an uploaded starting frame.
+These styles are designed for animating an uploaded starting frame.
 
 We currently support the following advanced animation styles:
 - `rd_advanced_animation__attack` - `Animates a character attack sequence from a starting frame. Best results come from a neutral pose.`
