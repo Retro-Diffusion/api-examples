@@ -465,6 +465,58 @@ Tips for `animation__any_animation`:
 - It can also be used for broader spritesheet tasks (character portrait variations, item sheets, and other creative uses).
 - Use a `64x64` input image for near-perfect subject adherence.
 
+## Advanced animations
+
+These styles use the same `POST /v1/inferences` endpoint, but they are designed for animating an uploaded starting frame.
+
+We currently support the following advanced animation styles:
+- `rd_advanced_animation__attack` - `Animates a character attack sequence from a starting frame. Best results come from a neutral pose.`
+- `rd_advanced_animation__crouch` - `Animates a character crouching sequence from a starting frame. Best results come from a neutral pose.`
+- `rd_advanced_animation__custom_action` - `Use a starting frame plus a prompt to describe any custom action or motion.`
+- `rd_advanced_animation__destroy` - `Animates the content being destroyed. Add a description to specify how it breaks apart.`
+- `rd_advanced_animation__idle` - `Animates a character idle sequence from a starting frame. Best results come from a neutral pose.`
+- `rd_advanced_animation__jump` - `Animates a character jump sequence from a starting frame. Best results come from a neutral pose.`
+- `rd_advanced_animation__subtle_motion` - `Adds subtle motion such as rain, leaf movement, or environmental ambience to a starting frame.`
+- `rd_advanced_animation__walking` - `Animates a character walking cycle from a starting frame. Best results come from a neutral pose.`
+
+Important notes:
+- `input_image` is required.
+- Set `width` and `height` to match the size of your starting frame.
+- Current styles are configured for frame sizes from `32x32` to `256x256`.
+- `frames_duration` supports `4`, `6`, `8`, `10`, `12`, or `16`.
+- By default, API responses return an animated GIF in base64. Add `return_spritesheet: true` if you want a PNG spritesheet instead.
+- For character actions like walking, idle, crouch, jump, and attack, a neutral starting pose usually works best.
+- Do not include `data:image/png;base64,` in the `input_image` string.
+
+Example payload:
+
+```json
+{
+  "width": 96,
+  "height": 96,
+  "prompt": "slow, big steps",
+  "num_images": 1,
+  "prompt_style": "rd_advanced_animation__walking",
+  "frames_duration": 4,
+  "input_image": "iVBORw0KGgoAAA..."
+}
+```
+
+Spritesheet output example:
+
+```json
+{
+  "width": 96,
+  "height": 96,
+  "prompt": "slow, big steps",
+  "num_images": 1,
+  "prompt_style": "rd_advanced_animation__walking",
+  "frames_duration": 4,
+  "return_spritesheet": true,
+  "input_image": "iVBORw0KGgoAAA..."
+}
+```
+
 ## Working with tilesets
 
 <img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
