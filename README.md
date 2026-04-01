@@ -821,11 +821,16 @@ Low-resolution model pricing:
   - Balance cost = `max(0.02, ((width * height) + 13700) / 600000) * number of images`
 
 `rd_pro` styles:
-- Balance cost = `0.22 * number of images`
+- Balance cost = `0.18 * number of images`
 
-Editing class styles:
-- `rd_pro__pixelate`
-  - Balance cost = `0.25 * number of images`
+Advanced Animation model pricing:
+
+`rd_advanced_animation` styles:
+- Balance cost = `0.14 * number of images`
+
+- `rd_advanced_animation__custom_action`, `rd_advanced_animation__subtle_motion`
+  - Balance cost = `0.25`
+
 
 Unique model pricing:
 - `animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`
