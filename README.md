@@ -47,6 +47,25 @@ Response format example:
 }
 ```
 
+## Error responses
+
+Stable application errors use this shape:
+
+```json
+{
+  "detail": {
+    "code": "inference_failed",
+    "message": "Unable to run inference."
+  }
+}
+```
+
+Common statuses:
+- `400`: invalid input, insufficient credits, or insufficient balance.
+- `401`: missing or invalid `X-RD-Token`.
+- `403`: valid token that cannot access the requested resource.
+- `500`: temporary server-side failure.
+
 ## Check cost before generating
 
 Use `check_cost: true` to estimate credit cost without generating images:
