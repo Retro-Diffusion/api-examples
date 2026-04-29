@@ -113,7 +113,7 @@ Cost-only response example:
 
 - `RD_PRO` is our newest and most advanced model.
 - It supports several styles passed in the `prompt_style` parameter.
-- Default size range is `96x96 <-> 256x256` unless otherwise specified.
+- Default size range is `64x64 <-> 256x256` unless otherwise specified.
 
 Available `RD_PRO` styles:
 - `rd_pro__default` - `Clean modern pixel art style model that allows multiple reference images and extremely detailed prompting.`
@@ -406,18 +406,18 @@ Response:
 ## Requesting an animation
 
 Animation styles:
-- `animation__any_animation` - `(64x64 only) Describe an animation and bring pixel art to life`
-- `animation__8_dir_rotation` - `(80x80 only) Create 8 direction rotations of anything`
-- `animation__four_angle_walking` - `(48x48 only) Consistent 4 direction, 4 frame long walking animations of humanoid characters`
-- `animation__walking_and_idle` - `(48x48 only) Consistent 4 direction walking and idle animations of humanoid characters`
-- `animation__small_sprites` - `(32x32 only) Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
-- `animation__vfx` - `(24x24 <-> 96x96, 1:1 aspect ratio) Eye-catching animations for fire, explosions, lightning, or other simple effects`
-- `animation__any_animation` - `(64x64 only) General purpose custom animation sheets with optional first frame input`
+- `rd_animation__any_animation` - `(64x64 only) Describe an animation and bring pixel art to life`
+- `rd_animation__8_dir_rotation` - `(80x80 only) Create 8 direction rotations of anything`
+- `rd_animation__four_angle_walking` - `(48x48 only) Consistent 4 direction, 4 frame long walking animations of humanoid characters`
+- `rd_animation__walking_and_idle` - `(48x48 only) Consistent 4 direction walking and idle animations of humanoid characters`
+- `rd_animation__small_sprites` - `(32x32 only) Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
+- `rd_animation__vfx` - `(24x24 <-> 96x96, 1:1 aspect ratio) Eye-catching animations for fire, explosions, lightning, or other simple effects`
+- `rd_animation__any_animation` - `(64x64 only) General purpose custom animation sheets with optional first frame input`
 
 Important notes:
-- `animation__four_angle_walking` and `animation__walking_and_idle` currently only support `48x48`. Bigger or smaller resolutions will be ignored and default to `48x48`.
-- `animation__small_sprites` only supports `32x32`.
-- `animation__vfx` supports sizes between `24x24` and `96x96`, square aspect ratios only.
+- `rd_animation__four_angle_walking` and `rd_animation__walking_and_idle` currently only support `48x48`. Bigger or smaller resolutions will be ignored and default to `48x48`.
+- `rd_animation__small_sprites` only supports `32x32`.
+- `rd_animation__vfx` supports sizes between `24x24` and `96x96`, square aspect ratios only.
 - Animations only support generating one image at a time.
 - Outputs are transparent GIF images encoded in base64.
 
@@ -432,7 +432,7 @@ Example animation payload:
 	"height": 48,
 	"num_images": 1,
 	"seed": 123,
-	"prompt_style": "animation__four_angle_walking"
+	"prompt_style": "rd_animation__four_angle_walking"
 }
 ```
 
@@ -447,7 +447,7 @@ Spritesheet output:
 	"height": 48,
 	"num_images": 1,
 	"seed": 123,
-	"prompt_style": "animation__four_angle_walking",
+	"prompt_style": "rd_animation__four_angle_walking",
 	"return_spritesheet": true
 }
 ```
@@ -473,13 +473,13 @@ Animation reference image input:
 	"height": 48,
 	"num_images": 1,
 	"seed": 1234,
-	"prompt_style": "animation__four_angle_walking",
+	"prompt_style": "rd_animation__four_angle_walking",
 	"return_spritesheet": true,
 	"input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
 }
 ```
 
-Tips for `animation__any_animation`:
+Tips for `rd_animation__any_animation`:
 - Because it is open-ended, include a detailed prompt about both content and action sequence.
 - It can also be used for broader spritesheet tasks (character portrait variations, item sheets, and other creative uses).
 - Use a `64x64` input image for near-perfect subject adherence.
@@ -840,11 +840,16 @@ Low-resolution model pricing:
   - Balance cost = `max(0.02, ((width * height) + 13700) / 600000) * number of images`
 
 `rd_pro` styles:
-- Balance cost = `0.22 * number of images`
+- Balance cost = `0.18 * number of images`
 
-Editing class styles:
-- `rd_pro__pixelate`
-  - Balance cost = `0.25 * number of images`
+Advanced Animation model pricing:
+
+`rd_advanced_animation` styles:
+- Balance cost = `0.14 * number of images`
+
+- `rd_advanced_animation__custom_action`, `rd_advanced_animation__subtle_motion`
+  - Balance cost = `0.25`
+
 
 Unique model pricing:
 - `animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`
