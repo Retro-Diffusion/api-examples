@@ -212,6 +212,35 @@ Available `RD_PLUS` styles:
 - `rd_plus__topdown_item` - `(16x16 <-> 128x128) Top-down view of items and objects, with a simple background`
 - `rd_plus__skill_icon` - `(16x16 <-> 128x128) Icons for skills, abilities, or spells`
 
+### Using RD Mini styles
+
+Example:
+
+```python
+payload = {
+    "width": 32,
+    "height": 32,
+    "prompt": "blue diamond gem, faceted",
+    "num_images": 1,
+    "prompt_style": "rd_mini__mc_item",
+    "remove_bg": True
+}
+```
+
+RD Mini routing:
+
+| RD Mini `prompt_style` | Routed style | Response `model` |
+| --- | --- | --- |
+| `rd_mini__mc_item` or `rd_minimc_item` | `rd_plus__mc_item` | `rd_plus` |
+| `rd_mini__mc_texture` | `rd_plus__mc_texture` | `rd_plus` |
+| `rd_mini__low_res` | `rd_plus__low_res` | `rd_plus` |
+| `rd_mini__classic` | `rd_plus__classic` | `rd_plus` |
+| `rd_mini__skill_icon` | `rd_plus__skill_icon` | `rd_plus` |
+| `rd_mini__topdown_item` | `rd_plus__topdown_item` | `rd_plus` |
+| `rd_mini__fast_mc_item` | `rd_fast__mc_item` | `rd_fast` |
+| `rd_mini__fast_mc_texture` | `rd_fast__mc_texture` | `rd_fast` |
+| `rd_mini__fast_low_res` | `rd_fast__low_res` | `rd_fast` |
+
 ### User-created styles
 
 - You can pass your own style IDs (or imported user styles) in `prompt_style`.
