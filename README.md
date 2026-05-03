@@ -107,6 +107,72 @@ Cost-only response example:
 }
 ```
 
+## Async mode
+
+Use `async_process: true` when you want the API to accept the job immediately and poll for the result later. The API also accepts `"async": true` for clients that prefer that field name.
+
+```python
+import time
+import requests
+
+headers = {"X-RD-Token": "YOUR_API_KEY"}
+
+payload = {
+    "width": 256,
+    "height": 256,
+    "prompt": "A really cool corgi",
+    "prompt_style": "rd_pro__default",
+    "num_images": 1,
+    "async_process": True
+}
+
+start = requests.post(
+    "https://api.retrodiffusion.ai/v1/inferences",
+    headers=headers,
+    json=payload,
+)
+start.raise_for_status()
+task_id = start.json()["task_id"]
+
+while True:
+    task = requests.get(
+        f"https://api.retrodiffusion.ai/v1/inferences/tasks/{task_id}",
+        headers=headers,
+    )
+    task.raise_for_status()
+    data = task.json()
+
+    if data["status"] in ("pending", "running"):
+        time.sleep(2)
+        continue
+
+    print(data)
+    break
+```
+
+Accepted response:
+
+```json
+{
+  "status": "accepted",
+  "task_id": "8d24e990-6c4c-4e42-a0a8-1f052fd2d029",
+  "message": "Inference accepted. Poll GET /v1/inferences/tasks/{task_id} for status."
+}
+```
+
+Polling `GET /v1/inferences/tasks/{task_id}` returns:
+- `pending` or `running`: the task is still processing.
+- `succeeded`: includes `result`, using the same response shape as synchronous generation.
+- `failed`: includes `error` with the HTTP status code and public error detail.
+
+You can run the local async-mode smoke test script against a local server:
+
+```bash
+RD_API_KEY=YOUR_API_KEY python async_mode_test.py
+```
+
+By default, it targets `http://127.0.0.1:8000/v1` and uses forced-failure async jobs so it can verify task creation, polling, and failed-task responses without spending a real generation. Add `--live-success` to also submit one real async generation and verify the successful task path. If you want to exercise the live path but keep local provider failures as warnings, use `--live-success --allow-live-failure`.
+
 ## Model and style selection
 
 ### Using RD_PRO models
@@ -821,33 +887,163 @@ Example response excerpt:
 }
 ```
 
-## Image editing endpoint
+## Edit tools API
 
-![Progressive editing](https://github.com/user-attachments/assets/c787cd05-b464-4a66-a3e8-423aadf1ee1f)
+Edit tools process an uploaded image and return one edited image.
 
-- Endpoint: `POST https://api.retrodiffusion.ai/v1/edit`
-- Request body:
+Endpoints:
+- `GET https://api.retrodiffusion.ai/v1/edit/tools`
+- `POST https://api.retrodiffusion.ai/v1/edit/tools/{tool_id}`
 
-```json
-{
-    "prompt": "add a hat",
-    "inputImageBase64": "iVBORw0KGgoAAAANSUhEUgAAAUA...",
-}
+Header:
+- `X-RD-Token: YOUR_API_KEY`
+
+Important notes:
+- Send image fields as plain base64 strings. Do not include `data:image/png;base64,`.
+- Paid tools deduct balance before work starts. If execution fails, the charge is refunded.
+- Free tools do not deduct balance, but the account must have at least `$0.01` balance.
+- Progressive editing is supported by using `outputImageBase64` from one tool as `inputImageBase64` for the next tool.
+
+Tool summary:
+
+| Tool ID | Inputs | Cost |
+| --- | --- | --- |
+| `image_edit` | input image, prompt, optional seed | `$0.18` |
+| `background_remover` | input image | `$0.01` |
+| `color_reducer` | input image, optional color count, dithering boolean | Free, requires minimum account value |
+| `palette_converter` | input image, palette image, dithering boolean | Free, requires minimum account value |
+| `color_style_transfer` | input image, reference image | `$0.01` |
+| `k_centroid_downscale` | input image, width, height | Free, requires minimum account value |
+
+Python helper:
+
+```python
+import base64
+import requests
+from pathlib import Path
+
+api_key = "YOUR_API_KEY"
+base_url = "https://api.retrodiffusion.ai/v1"
+
+def image_to_base64(path):
+    return base64.b64encode(Path(path).read_bytes()).decode("utf-8")
+
+def save_base64_image(image_base64, path):
+    Path(path).write_bytes(base64.b64decode(image_base64))
+
+def run_tool(tool_id, payload):
+    response = requests.post(
+        f"{base_url}/edit/tools/{tool_id}",
+        headers={"X-RD-Token": api_key},
+        json=payload,
+        timeout=120,
+    )
+    response.raise_for_status()
+    return response.json()
 ```
 
-Notes:
-- Supported sizes are between `16x16` and `256x256`.
-- You can send any image within the size limits to be edited.
-- Progressive editing is supported by using the output of one task as input for a new task.
-- Cost is **0.06 USD** per image edit.
+### Image edit
 
-Response format:
+Edits the uploaded image with a text prompt. The input image must be `256x256` or smaller.
 
-```json
-{
-  "outputImageBase64": "iVBORw0KGgoAAAANSUhEUgAAAUA...",
-  "remaining_credits": 999
-}
+```python
+input_image = image_to_base64("input.png")
+
+result = run_tool("image_edit", {
+    "inputImageBase64": input_image,
+    "prompt": "add a tiny wizard hat",
+    "seed": 123
+})
+
+save_base64_image(result["outputImageBase64"], "output_image_edit.png")
+```
+
+### Background remover
+
+Removes the image background and returns a transparent image when possible.
+
+```python
+input_image = image_to_base64("input.png")
+
+result = run_tool("background_remover", {
+    "inputImageBase64": input_image
+})
+
+save_base64_image(result["outputImageBase64"], "output_background_removed.png")
+```
+
+### Color reducer
+
+Reduces an image to fewer colors. Leave `colorCount` out for automatic reduction.
+
+```python
+input_image = image_to_base64("input.png")
+
+result = run_tool("color_reducer", {
+    "inputImageBase64": input_image,
+    "colorCount": 16,
+    "dithering": True
+})
+
+save_base64_image(result["outputImageBase64"], "output_color_reduced.png")
+```
+
+Automatic color count:
+
+```python
+result = run_tool("color_reducer", {
+    "inputImageBase64": input_image,
+    "dithering": False
+})
+```
+
+### Palette converter
+
+Maps an image to the colors from a supplied palette image.
+
+```python
+input_image = image_to_base64("input.png")
+palette_image = image_to_base64("palette.png")
+
+result = run_tool("palette_converter", {
+    "inputImageBase64": input_image,
+    "paletteImageBase64": palette_image,
+    "dithering": True
+})
+
+save_base64_image(result["outputImageBase64"], "output_palette_converted.png")
+```
+
+### Color style transfer
+
+Transfers the color style from a reference image to the input image.
+
+```python
+input_image = image_to_base64("input.png")
+reference_image = image_to_base64("reference.png")
+
+result = run_tool("color_style_transfer", {
+    "inputImageBase64": input_image,
+    "referenceImageBase64": reference_image
+})
+
+save_base64_image(result["outputImageBase64"], "output_color_style_transfer.png")
+```
+
+### K-centroid downscale
+
+Downscales an image to the requested dimensions using local block color centroids.
+
+```python
+input_image = image_to_base64("input.png")
+
+result = run_tool("k_centroid_downscale", {
+    "inputImageBase64": input_image,
+    "width": 64,
+    "height": 64
+})
+
+save_base64_image(result["outputImageBase64"], "output_k_centroid_downscale.png")
 ```
 
 ## FAQ
@@ -887,6 +1083,11 @@ Unique model pricing:
   - Balance cost = `0.10`
 - `animation__any_animation`, `animation__8_dir_rotation`
   - Balance cost = `0.25`
+- Edit tools:
+  - `image_edit`: `0.18`
+  - `background_remover`: `0.01`
+  - `color_style_transfer`: `0.01`
+  - `color_reducer`, `palette_converter`, and `k_centroid_downscale`: free, with minimum account value required
 
 ### How can I check my remaining credits?
 
