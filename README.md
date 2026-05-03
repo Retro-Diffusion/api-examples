@@ -165,14 +165,6 @@ Polling `GET /v1/inferences/tasks/{task_id}` returns:
 - `succeeded`: includes `result`, using the same response shape as synchronous generation.
 - `failed`: includes `error` with the HTTP status code and public error detail.
 
-You can run the local async-mode smoke test script against a local server:
-
-```bash
-RD_API_KEY=YOUR_API_KEY python async_mode_test.py
-```
-
-By default, it targets `http://127.0.0.1:8000/v1` and uses forced-failure async jobs so it can verify task creation, polling, and failed-task responses without spending a real generation. Add `--live-success` to also submit one real async generation and verify the successful task path. If you want to exercise the live path but keep local provider failures as warnings, use `--live-success --allow-live-failure`.
-
 ## Model and style selection
 
 ### Using RD_PRO models
