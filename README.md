@@ -28,7 +28,6 @@ Response example:
     "rd_fast": "ok",
     "rd_pro": "ok",
     "rd_plus": "ok",
-    "minecraft": "ok",
     "animations": "degraded",
     "background_removal": "ok"
   },
