@@ -6,6 +6,36 @@ Main generation endpoint:
 - `POST https://api.retrodiffusion.ai/v1/inferences`
 - Header: `X-RD-Token: YOUR_API_KEY`
 
+Status endpoint:
+- `GET https://api.retrodiffusion.ai/v1/status`
+- No API key required.
+
+Use this endpoint to check the current public model status before sending generation traffic.
+
+```python
+import requests
+
+response = requests.get("https://api.retrodiffusion.ai/v1/status")
+response.raise_for_status()
+print(response.json())
+```
+
+Response example:
+
+```json
+{
+  "status": {
+    "rd_fast": "ok",
+    "rd_pro": "ok",
+    "rd_plus": "ok",
+    "minecraft": "ok",
+    "animations": "degraded",
+    "background_removal": "ok"
+  },
+  "updated_at": 1770893613
+}
+```
+
 ## Quick start: generate an image
 
 1. Generate an API key from your [RetroDiffusion account](https://www.retrodiffusion.ai/app/devtools).
