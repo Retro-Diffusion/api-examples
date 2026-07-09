@@ -2,1223 +2,434 @@
   <img src="resources/wordmark.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
 </p>
 
-Main generation endpoint:
-- `POST https://api.retrodiffusion.ai/v1/inferences`
-- Header: `X-RD-Token: YOUR_API_KEY`
+# Retro Diffusion API
 
-Status endpoint:
-- `GET https://api.retrodiffusion.ai/v1/status`
-- No API key required.
+Generate pixel art — images, animations, and tilesets — over a simple HTTP API.
 
-Use this endpoint to check the current public model status before sending generation traffic.
+<table>
+  <tr>
+    <td><img src="images/showcase-pro-fantasy.png" width="250" alt="RD Pro fantasy dragon"></td>
+    <td><img src="images/showcase-pro-scifi.png" width="250" alt="RD Pro cyberpunk alley"></td>
+    <td><img src="images/showcase-pro-painterly.png" width="250" alt="RD Pro painterly waterfall"></td>
+  </tr>
+  <tr>
+    <td><img src="images/showcase-isometric.png" width="250" alt="Isometric sky island"></td>
+    <td><img src="images/anim-subtle-motion.gif" width="250" alt="Animated lakeside scene"></td>
+    <td><img src="images/anim-vfx.gif" width="250" alt="Animated explosion effect"></td>
+  </tr>
+</table>
 
-```python
-import requests
+**📖 Full reference:** **https://www.retrodiffusion.ai/app/guide/api** — every endpoint and
+field, an interactive style explorer, live pricing, and MCP setup. This repo holds runnable
+examples and a machine-readable summary; the hosted page is the source of truth.
 
-response = requests.get("https://api.retrodiffusion.ai/v1/status")
-response.raise_for_status()
-print(response.json())
+- **Base URL:** `https://api.retrodiffusion.ai/v1`
+- **Auth:** header `X-RD-Token: YOUR_API_KEY` on every request (keys start with `rdpk-`)
+- **Create a key:** https://www.retrodiffusion.ai/app/devtools (max 5 per account)
+- Usage spends your account's prepaid USD balance; charges are refunded automatically if a generation fails.
+
+## Runnable examples
+
+Everything in [`example-scripts/`](example-scripts) is a small, focused script. Set your key once
+and run any of them:
+
+```bash
+export RD_API_KEY="rdpk-..."          # macOS / Linux  (setx on Windows)
+pip install -r example-scripts/requirements.txt
+python example-scripts/01_generate_image.py
 ```
 
-Response example:
-
-```json
-{
-  "status": {
-    "rd_fast": "ok",
-    "rd_pro": "ok",
-    "rd_plus": "ok",
-    "animations": "degraded",
-    "background_removal": "ok"
-  },
-  "updated_at": 1770893613
-}
-```
-
-## Quick start: generate an image
-
-1. Generate an API key from your [RetroDiffusion account](https://www.retrodiffusion.ai/app/devtools).
-2. Make sure you have available balance in your account.
-   Take in mind that each model supports different styles.
-3. Send a request. This example generates one image using `RD_PRO` using the default style:
-
-```python
-import requests
-
-url = "https://api.retrodiffusion.ai/v1/inferences"
-method = "POST"
-
-headers = {
-    "X-RD-Token": "YOUR_API_KEY",
-}
-
-payload = {
-    "width": 256,
-    "height": 256,
-    "prompt": "A really cool corgi",
-    "prompt_style": "rd_pro__default"
-    "num_images": 1
-}
-
-response = requests.request(method, url, headers=headers, json=payload)
-print(response.text)
-```
-
-Response format example:
-
-```json
-{
-  "created_at": 1733425519,
-  "balance_cost": 0.25,
-  "base64_images": ["..."],
-  "model": "rd_pro",
-  "remaining_balance": 100.75
-}
-```
-
-## Error responses
-
-Stable application errors use this shape:
-
-```json
-{
-  "detail": {
-    "code": "inference_failed",
-    "message": "Unable to run inference."
-  }
-}
-```
-
-Common statuses:
-- `400`: invalid input, insufficient credits, or insufficient balance.
-- `401`: missing or invalid `X-RD-Token`.
-- `403`: valid token that cannot access the requested resource.
-- `500`: temporary server-side failure.
-
-## Check cost before generating
-
-Use `check_cost: true` to estimate credit cost without generating images:
-
-```python
-import requests
-
-url = "https://api.retrodiffusion.ai/v1/inferences"
-method = "POST"
-
-headers = {
-    "X-RD-Token": "YOUR_API_KEY",
-}
-
-payload = {
-    "width": 256,
-    "height": 256,
-    "prompt": "A really cool corgi",
-    "prompt_style": "rd_pro__default"
-    "num_images": 1,
-    "check_cost": true
-}
-
-response = requests.request(method, url, headers=headers, json=payload)
-print(response.text)
-```
-
-Cost-only response example:
-
-```json
-{
-	"created_at": 1770893613,
-	"balance_cost": 0.25,
-	"output_images": [],
-	"base64_images": [],
-	"output_urls": [],
-	"model": "check_cost",
-	"remaining_balance": 100.75
-}
-```
-
-## Async mode
-
-Use `async_process: true` when you want the API to accept the job immediately and poll for the result later. The API also accepts `"async": true` for clients that prefer that field name.
-
-```python
-import time
-import requests
-
-headers = {"X-RD-Token": "YOUR_API_KEY"}
-
-payload = {
-    "width": 256,
-    "height": 256,
-    "prompt": "A really cool corgi",
-    "prompt_style": "rd_pro__default",
-    "num_images": 1,
-    "async_process": True
-}
-
-start = requests.post(
-    "https://api.retrodiffusion.ai/v1/inferences",
-    headers=headers,
-    json=payload,
-)
-start.raise_for_status()
-task_id = start.json()["task_id"]
-
-while True:
-    task = requests.get(
-        f"https://api.retrodiffusion.ai/v1/inferences/tasks/{task_id}",
-        headers=headers,
-    )
-    task.raise_for_status()
-    data = task.json()
-
-    if data["status"] in ("pending", "running"):
-        time.sleep(2)
-        continue
-
-    print(data)
-    break
-```
-
-Accepted response:
-
-```json
-{
-  "status": "accepted",
-  "task_id": "8d24e990-6c4c-4e42-a0a8-1f052fd2d029",
-  "message": "Inference accepted. Poll GET /v1/inferences/tasks/{task_id} for status."
-}
-```
-
-Polling `GET /v1/inferences/tasks/{task_id}` returns:
-- `pending` or `running`: the task is still processing.
-- `succeeded`: includes `result`, using the same response shape as synchronous generation.
-- `failed`: includes `error` with the HTTP status code and public error detail.
-
-## Model and style selection
-
-### Using RD_PRO models
-
-- `RD_PRO` is our newest and most advanced model.
-- It supports several styles passed in the `prompt_style` parameter.
-- Default size range is `64x64 <-> 256x256` unless otherwise specified.
-
-Available `RD_PRO` styles:
-- `rd_pro__default` - `Clean modern pixel art style model that allows multiple reference images and extremely detailed prompting.`
-- `rd_pro__painterly` - `Almost brush-like style with minimal outlines or anti-aliasing. Clean vibrant color palettes and beautiful details`
-- `rd_pro__fantasy` - `Bright colors, soft transitions, detailed textures, light dithering, and outlines.`
-- `rd_pro__ui_panel` - `Consistent arrangements of UI elements, split into buttons, sliders, panels, and knobs.`
-- `rd_pro__horror` - `Dark, gritty style with chaotic details and harsh shapes and shading.`
-- `rd_pro__scifi` - `High contrast with glowing details, clean outlines, and beautiful lighting.`
-- `rd_pro__simple` - `Simple pixel art with minimal shading or texturing, but strong outlines and shapes.`
-- `rd_pro__isometric` - `Pixel art rotated at a 45 degree angle. Clean lines and shapes.`
-- `rd_pro__topdown` - `Pixel art viewed from a 2/3 downwards angle, with simple shapes and shading.`
-- `rd_pro__platformer` - `Side-scroller style platformer perspective, with modern styling and outlines.`
-- `rd_pro__dungeon_map` - `Dungeon-crawler style game levels with connected rooms filled with objects and enemies.`
-- `rd_pro__edit` - `Upload an image and describe the changes you want. You can use up to 9 references.`
-- `rd_pro__pixelate` - `Convert input images into pixel art.`
-- `rd_pro__spritesheet` - `Collections of assets on a simple background with the same style.`
-- `rd_pro__typography` - `Generate logos, buttons, or any other element using text as the central focus.`
-- `rd_pro__hexagonal_tiles` - `Small collection of hexagonal tiles for game maps.`
-- `rd_pro__fps_weapon` - `First person perspective weapons, items, and objects.`
-- `rd_pro__inventory_items` - `Creates a spritesheet of grid aligned inventory items (like for Diablo or Path of Exile)`
-
-`RD_PRO` reference images:
-- You can pass up to 9 base64-encoded images using `reference_images`.
-
-```json
-{
-	"width": 256,
-	"height": 256,
-	"prompt": "corgi",
-	"num_images": 1,
-	"prompt_style": "rd_pro__default",
-	"check_cost": false,
-	"reference_images": [
-		"iVBORw0KGgoAAA..."
-	]
-}
-```
-
-### Using RD_FAST models
-
-- `RD_FAST` only supports one style at a time via `prompt_style`.
-- Default size range is `64x64 <-> 384x384` unless otherwise specified.
-
-Example:
-
-```python
-payload = {
-    "width": 256,
-    "height": 256,
-    "prompt": "A really cool corgi wearing sunglasses and a party hat",
-    "num_images": 1,
-    "prompt_style": "rd_fast__simple"
-}
-```
-
-Available `RD_FAST` styles:
-- `rd_fast__default` - `Simple clean pixel art, with Anime illustration influences`
-- `rd_fast__retro` - `A classic arcade game aesthetic inspired by early PC games`
-- `rd_fast__simple` - `Simple shading with minimalist shapes and designs`
-- `rd_fast__detailed` - `Pixel art with lots of shading and details`
-- `rd_fast__anime` - `Simple clean pixel art, with Anime illustration influences`
-- `rd_fast__game_asset` - `Distinct assets set on a simple background`
-- `rd_fast__portrait` - `Character portrait focused images with high detail`
-- `rd_fast__texture` - `Flat game textures like stones, bricks, or wood`
-- `rd_fast__ui` - `User interface boxes and buttons`
-- `rd_fast__item_sheet` - `Sheets of objects placed on a simple background`
-- `rd_fast__character_turnaround` - `Character sprites viewed from different angles`
-- `rd_fast__1_bit` - `Two color black and white only images`
-- `rd_fast__low_res` - `(16x16 <-> 128x128) General low resolution pixel art images`
-- `rd_fast__mc_item` - `(16x16 <-> 128x128) Minecraft-styled items with automatic transparency`
-- `rd_fast__mc_texture` - `(16x16 <-> 128x128) Minecraft-styled flat textures, like grass, stones, or wood`
-- `rd_fast__no_style` - `Pixel art with no style influence applied`
-
-### Using RD_PLUS models
-
-- `RD_PLUS` supports several styles passed in the `prompt_style` parameter.
-
-Available `RD_PLUS` styles:
-- `rd_plus__default` - `Clean pixel art style with bold colors and outlines`
-- `rd_plus__retro` - `Classic pixel art style inspired by PC98 games`
-- `rd_plus__watercolor` - `Pixel art mixed with a watercolor painting aesthetic`
-- `rd_plus__textured` - `Semi-realistic pixel art style with lots of shading and texture`
-- `rd_plus__cartoon` - `Simple shapes and shading, with bold outlines`
-- `rd_plus__ui_element` - `User interface boxes and buttons`
-- `rd_plus__item_sheet` - `Sheets of objects placed on a simple background`
-- `rd_plus__character_turnaround` - `Character sprites viewed from different angles`
-- `rd_plus__environment` - `One-point perspective scenes with outlines and strong shapes`
-- `rd_plus__topdown_map` - `Video game map style pixel art with a 3/4 top down perspective`
-- `rd_plus__topdown_asset` - `3/4 top down perspective game assets on a simple background`
-- `rd_plus__isometric` - `45 degree isometric perspective, with consistent outlines`
-- `rd_plus__isometric_asset` - `45 degree isometric objects or assets, on a neutral background`
-- `rd_plus__classic` - `(32x32 <-> 192x192) Strongly outlined medium-resolution pixel art with a focus on simple shading and clear design`
-- `rd_plus__low_res` - `(16x16 <-> 128x128) High quality, low resolution pixel art assets and backgrounds`
-- `rd_plus__mc_item` - `(16x16 <-> 128x128) High quality Minecraft-styled items and game assets`
-- `rd_plus__mc_texture` - `(16x16 <-> 128x128) Detailed Minecraft-style flat block textures, with enhanced prompt following`
-- `rd_plus__topdown_item` - `(16x16 <-> 128x128) Top-down view of items and objects, with a simple background`
-- `rd_plus__skill_icon` - `(16x16 <-> 128x128) Icons for skills, abilities, or spells`
-
-### Using RD Mini styles
-
-Example:
-
-```python
-payload = {
-    "width": 32,
-    "height": 32,
-    "prompt": "blue diamond gem, faceted",
-    "num_images": 1,
-    "prompt_style": "rd_mini__mc_item",
-    "remove_bg": True
-}
-```
-
-RD Mini routing:
-
-| RD Mini `prompt_style` | Routed style | Response `model` |
-| --- | --- | --- |
-| `rd_mini__mc_item` or `rd_minimc_item` | `rd_plus__mc_item` | `rd_plus` |
-| `rd_mini__mc_texture` | `rd_plus__mc_texture` | `rd_plus` |
-| `rd_mini__low_res` | `rd_plus__low_res` | `rd_plus` |
-| `rd_mini__classic` | `rd_plus__classic` | `rd_plus` |
-| `rd_mini__skill_icon` | `rd_plus__skill_icon` | `rd_plus` |
-| `rd_mini__topdown_item` | `rd_plus__topdown_item` | `rd_plus` |
-| `rd_mini__fast_mc_item` | `rd_fast__mc_item` | `rd_fast` |
-| `rd_mini__fast_mc_texture` | `rd_fast__mc_texture` | `rd_fast` |
-| `rd_mini__fast_low_res` | `rd_fast__low_res` | `rd_fast` |
-
-### User-created styles
-
-- You can pass your own style IDs (or imported user styles) in `prompt_style`.
-- Find style IDs and language-specific sample code via the **Show API Code** button at the top-left corner of the web app canvas.
-
-```python
-import requests
-
-url = "https://api.retrodiffusion.ai/v1/inferences"
-method = "POST"
-
-headers = {
-    "X-RD-Token": "YOUR_API_KEY",
-}
-
-payload = {
-    "prompt": "life and mana flasks",
-    "width": 256,
-    "height": 256,
-    "num_images": 4,
-    "seed": 1105683575,
-    "prompt_style": "user__flasks_586",
-    "tile_x": False,
-    "tile_y": False,
-    "remove_bg": True
-}
-
-response = requests.request(method, url, headers=headers, json=payload)
-print(response.text)
-```
-
-### Create user styles via API (RD Pro template)
-
-Endpoint:
-- `POST https://api.retrodiffusion.ai/v1/styles`
-- Header: `X-RD-Token: YOUR_API_KEY`
-
-This endpoint currently supports only the **RD Pro** user template.
-All non-template fields are rejected.
-
-Allowed request fields:
-- `name` (required)
-- `description`
-- `style_icon`
-- `reference_images` (max 1)
-- `reference_caption`
-- `apply_prompt_fixer`
-- `llm_instructions`
-- `expanded_llm_instructions`
-- `user_prompt_template`
-- `force_palette`
-- `force_bg_removal`
-- `min_width` and `min_height` (optional forced dimensions, both required together, range `96..256`)
-
-Valid `style_icon` values:
-
-```text
-sparkles, fire, bolt, star, heart, cube, globe, sun, moon, cloud, beaker, command, cpu, brush, photo, film, music, rocket, puzzle, cube-transparent, swatch, eyedropper, grid, stack, viewfinder, adjustments, crystal, magic-swirl, swordman, dragon, castle, forest, mountain, water-drop, flame, snowflake, lightning, stone, mineral, gem, diamonds, wizard-staff, portal, sunrise, moon-bats, night-sky, galaxy, planet, abstract-1, abstract-2, gamepad, dice, skull, crown, wizard-hat, ghost, robot, shuttle, fa-star, fa-heart, leaf, tree, fa-mountain, fa-water, fa-sun, fa-moon, tb-sparkles, wand, palette, tb-brush, tb-photo, movie, user, user-gear, user-friends, users-viewfinder, walking, person, child-reaching, grin-beam, hand-back-fist
-```
-
-Notes:
-- Use the returned `prompt_style` as the value for `prompt_style` in `/v1/inferences`.
-
-Example:
-
-```python
-import requests
-
-url = "https://api.retrodiffusion.ai/v1/styles"
-method = "POST"
-
-headers = {
-    "X-RD-Token": "YOUR_API_KEY",
-}
-
-payload = {
-    "name": "My RD Pro Style",
-    "description": "A polished pixel art look for item art",
-    "style_icon": "sparkles",
-    "reference_images": ["iVBORw0KGgoAAA..."],
-    "apply_prompt_fixer": True,
-    "llm_instructions": "Push clean outlines and rich material contrast.",
-    "user_prompt_template": "Pixel art styled {prompt}, with 1px outlines and detailed textures.",
-    "force_palette": False,
-    "force_bg_removal": False,
-    "min_width": 192,
-    "min_height": 192
-}
-
-response = requests.request(method, url, headers=headers, json=payload)
-print(response.text)
-```
-
-Response excerpt:
-
-```json
-{
-  "id": "user_style_3f05d16f5f2e4cbf9d99f2f9df25b2cb",
-  "prompt_style": "user__my_pro_style_1a2b3c4d",
-  "name": "My Pro Style",
-  "description": "A polished pixel art look for item art",
-  "type": "user",
-  "created_at": 1771557653,
-  "updated_at": 1771557653
-}
-```
-
-Use returned `prompt_style` for inference:
-
-```python
-payload = {
-    "prompt": "life and mana flasks",
-    "width": 192,
-    "height": 192,
-    "num_images": 1,
-    "prompt_style": "user__my_pro_style_1a2b3c4d"
-}
-```
-
-### Update user style (RD Pro template)
-
-Endpoint:
-- `PATCH https://api.retrodiffusion.ai/v1/styles/{style_id}`
-- Header: `X-RD-Token: YOUR_API_KEY`
-
-Notes:
-- Request body accepts the same RD Pro editable fields as create, but all optional
-
-Example:
-
-```python
-import requests
-
-style_id = "user__my_pro_style_1a2b3c4d"  # or internal id
-url = f"https://api.retrodiffusion.ai/v1/styles/{style_id}"
-
-headers = {"X-RD-Token": "YOUR_API_KEY"}
-payload = {
-    "description": "Updated description",
-    "llm_instructions": "Use clean outlines and higher local contrast.",
-    "min_width": 256,
-    "min_height": 256
-}
-
-response = requests.patch(url, headers=headers, json=payload)
-print(response.text)
-```
-
-Response excerpt:
-
-```json
-{
-  "id": "user_style_3f05d16f5f2e4cbf9d99f2f9df25b2cb",
-  "prompt_style": "user__my_pro_style_1a2b3c4d",
-  "name": "My Pro Style",
-  "description": "Updated description",
-  "type": "user",
-  "created_at": 1771557653,
-  "updated_at": 1771559999
-}
-```
-
-### Delete user style
-
-Endpoint:
-- `DELETE https://api.retrodiffusion.ai/v1/styles/{style_id}`
-- Header: `X-RD-Token: YOUR_API_KEY`
-
-Example:
-
-```python
-import requests
-
-style_id = "user__my_pro_style_1a2b3c4d"
-url = f"https://api.retrodiffusion.ai/v1/styles/{style_id}"
-headers = {"X-RD-Token": "YOUR_API_KEY"}
-
-response = requests.delete(url, headers=headers)
-print(response.text)
-```
-
-Response:
-
-```json
-{
-  "id": "user_style_3f05d16f5f2e4cbf9d99f2f9df25b2cb",
-  "prompt_style": "user__my_pro_style_1a2b3c4d",
-  "deleted": true
-}
-```
-
-## Requesting an animation
-
-Animation styles:
-- `rd_animation__any_animation` - `(64x64 only) Describe an animation and bring pixel art to life`
-- `rd_animation__8_dir_rotation` - `(80x80 only) Create 8 direction rotations of anything`
-- `rd_animation__four_angle_walking` - `(48x48 only) Consistent 4 direction, 4 frame long walking animations of humanoid characters`
-- `rd_animation__walking_and_idle` - `(48x48 only) Consistent 4 direction walking and idle animations of humanoid characters`
-- `rd_animation__small_sprites` - `(32x32 only) Consistent 4 direction walking, arm movement, looking, surprised, and laying down animations`
-- `rd_animation__vfx` - `(24x24 <-> 96x96, 1:1 aspect ratio) Eye-catching animations for fire, explosions, lightning, or other simple effects`
-- `rd_animation__any_animation` - `(64x64 only) General purpose custom animation sheets with optional first frame input`
-
-Important notes:
-- `rd_animation__four_angle_walking` and `rd_animation__walking_and_idle` currently only support `48x48`. Bigger or smaller resolutions will be ignored and default to `48x48`.
-- `rd_animation__small_sprites` only supports `32x32`.
-- `rd_animation__vfx` supports sizes between `24x24` and `96x96`, square aspect ratios only.
-- Animations only support generating one image at a time.
-- Outputs are transparent GIF images encoded in base64.
-
-Example animation payload:
-
-> This payload will generate a 48x48 transparent GIF. If you want a spritesheet, see the next example.
-
-```python
-{
-	"prompt": "corgi wearing a party hat",
-	"width": 48,
-	"height": 48,
-	"num_images": 1,
-	"seed": 123,
-	"prompt_style": "rd_animation__four_angle_walking"
-}
-```
-
-Spritesheet output:
-
-> Add `return_spritesheet: true` to output a transparent PNG spritesheet.
-
-```python
-{
-	"prompt": "corgi wearing a party hat",
-	"width": 48,
-	"height": 48,
-	"num_images": 1,
-	"seed": 123,
-	"prompt_style": "rd_animation__four_angle_walking",
-	"return_spritesheet": true
-}
-```
-
-Walking and idle format reference:
-
-<img width="896" height="1024" alt="Idle_example" src="https://github.com/user-attachments/assets/b38c0770-5e41-4066-89e2-c0e226f984f9" />
-
-Small sprites format reference:
-
-<img width="768" height="768" alt="Small_example" src="https://github.com/user-attachments/assets/07e9c827-7495-4a7e-9d6a-a104c777126e" />
-
-Animation reference image input:
-- Use `input_image` to provide a base64 reference.
-- `input_image` should be base64-encoded RGB with no transparency.
-- Include a brief description of the reference image in your prompt.
-- Do not include `data:image/png;base64,` in the base64 string.
-
-```python
-{
-	"prompt": "robot",
-	"width": 48,
-	"height": 48,
-	"num_images": 1,
-	"seed": 1234,
-	"prompt_style": "rd_animation__four_angle_walking",
-	"return_spritesheet": true,
-	"input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-Tips for `rd_animation__any_animation`:
-- Because it is open-ended, include a detailed prompt about both content and action sequence.
-- It can also be used for broader spritesheet tasks (character portrait variations, item sheets, and other creative uses).
-- Use a `64x64` input image for near-perfect subject adherence.
-
-## Advanced animations
-
-These styles are designed for animating an uploaded starting frame.
-
-We currently support the following advanced animation styles:
-- `rd_advanced_animation__attack` - `Animates a character attack sequence from a starting frame. Best results come from a neutral pose.`
-- `rd_advanced_animation__crouch` - `Animates a character crouching sequence from a starting frame. Best results come from a neutral pose.`
-- `rd_advanced_animation__custom_action` - `Use a starting frame plus a prompt to describe any custom action or motion.`
-- `rd_advanced_animation__destroy` - `Animates the content being destroyed. Add a description to specify how it breaks apart.`
-- `rd_advanced_animation__idle` - `Animates a character idle sequence from a starting frame. Best results come from a neutral pose.`
-- `rd_advanced_animation__jump` - `Animates a character jump sequence from a starting frame. Best results come from a neutral pose.`
-- `rd_advanced_animation__subtle_motion` - `Adds subtle motion such as rain, leaf movement, or environmental ambience to a starting frame.`
-- `rd_advanced_animation__walking` - `Animates a character walking cycle from a starting frame. Best results come from a neutral pose.`
-
-Important notes:
-- `input_image` is required.
-- Set `width` and `height` to match the size of your starting frame.
-- Current styles are configured for frame sizes from `32x32` to `256x256`.
-- `frames_duration` supports `4`, `6`, `8`, `10`, `12`, or `16`.
-- By default, API responses return an animated GIF in base64. Add `return_spritesheet: true` if you want a PNG spritesheet instead.
-- For character actions like walking, idle, crouch, jump, and attack, a neutral starting pose usually works best.
-- Do not include `data:image/png;base64,` in the `input_image` string.
-
-Example payload:
-
-```json
-{
-  "width": 96,
-  "height": 96,
-  "prompt": "slow, big steps",
-  "num_images": 1,
-  "prompt_style": "rd_advanced_animation__walking",
-  "frames_duration": 4,
-  "input_image": "iVBORw0KGgoAAA..."
-}
-```
-
-Spritesheet output example:
-
-```json
-{
-  "width": 96,
-  "height": 96,
-  "prompt": "slow, big steps",
-  "num_images": 1,
-  "prompt_style": "rd_advanced_animation__walking",
-  "frames_duration": 4,
-  "return_spritesheet": true,
-  "input_image": "iVBORw0KGgoAAA..."
-}
-```
-
-## Working with tilesets
-
-<img src="resources/tileset.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-All tileset styles:
-- `rd_tile__tileset` - `(16x16 <-> 32x32) Create full tilesets from a simple prompt describing the textures or environment, using a simple set of "wang" style combinations`
-- `rd_tile__tileset_advanced` - `(16x16 <-> 32x32) Full tilesets from two prompts and/or textures, using a simple set of "wang" style combinations`
-- `rd_tile__single_tile` - `(16x16 <-> 64x64) Detailed single tile texture for creating full tilesets or surfaces`
-- `rd_tile__tile_variation` - `(16x16 <-> 128x128) Texture variations of the provided tile image`
-- `rd_tile__tile_object` - `(16x16 <-> 96x96) Small assets for placing on sections of tiles`
-- `rd_tile__scene_object` - `(64x64 <-> 384x384) Large assets for placing on tileset maps`
-
-### Full tilesets
-
-Use:
-- `rd_tile__tileset`
-- `rd_tile__tileset_advanced`
-
-Details:
-- `rd_tile__tileset` supports an inspiration image via `input_image`.
-- `rd_tile__tileset_advanced` supports inside/outside textures:
-  - Inside texture image: `input_image`
-  - Outside texture image: `extra_input_image`
-  - Inside texture text: `prompt`
-  - Outside texture text: `extra_prompt`
-- `width` and `height` specify tile size, from `16` to `32`.
-
-Advanced tileset example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "grey stones with gravel and dirt",
-  "extra_prompt": "lush green grass",
-  "num_images": 1,
-  "prompt_style": "rd_tile__tileset_advanced",
-  "seed": 123,
-  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
-  "extra_input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-Tileset format:
-
-<img src="https://github.com/user-attachments/assets/ada60887-e11d-479f-83fe-9f888b0bbf25" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-### Single tiles
-
-<img src="resources/single_tile.png" style="display: block; margin-left: auto; margin-right: auto; max-width: 50%;" />
-
-- Use `rd_tile__single_tile`.
-- `width` and `height` range from `16` to `64`.
-
-Example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "volcanic rock with cracks",
-  "num_images": 1,
-  "prompt_style": "rd_tile__single_tile"
-}
-```
-
-### Tile variation
-
-- Use `rd_tile__tile_variation`.
-- `input_image` is required and must be a base64 tile image.
-- Use `prompt` to describe desired variation changes.
-
-Example:
-
-```python
-{
-  "width": 32,
-  "height": 32,
-  "prompt": "add moss and cracks",
-  "num_images": 1,
-  "prompt_style": "rd_tile__tile_variation",
-  "input_image": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-## Using img2img
-
-- Send a base64 image in `input_image` and adjust `strength`.
-- `strength` must be between `0` and `1` and controls how much the image is modified.
-- Do not include `data:image/png;base64,` in base64 input.
-- Input image should be RGB with no transparency.
-
-```python
-with Image.open(input_image_path) as img:
-    rgb_img = img.convert('RGB')
-    buffer = BytesIO()
-    rgb_img.save(buffer, format='PNG')
-    base64_input_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
-
-payload = {
-    "prompt": "A really cool corgi wearing sunglasses and a party hat",
-    "width": 256,
-    "height": 256,
-    "input_image": base64_input_image,
-    "strength": 0.8
-}
-```
-
-## Using a palette as reference
-
-- Use `input_palette` to guide output colors.
-- Send `input_palette` as a base64 image.
-- `input_palette` should have no transparency.
-- Keep palette images small (below `1MB`, recommended `200k` characters or less).
-- Do not include `data:image/png;base64,` in base64 input.
-
-```python
-{
-  "prompt": "a raven with a glowing green eye",
-  "width": 256,
-  "height": 256,
-  "num_images": 1,
-  "seed": 1234,
-  "input_palette": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ..."
-}
-```
-
-Optional: set `return_pre_palette: true` to also receive the original image before palette application.
-
-```python
-{
-  "prompt": "a raven with a glowing green eye",
-  "width": 256,
-  "height": 256,
-  "num_images": 1,
-  "seed": 1234,
-  "input_palette": "iVBORw0KGgoAAAANSUhEUgAAAUA... ... ...",
-  "return_pre_palette": true
-}
-```
-
-When `return_pre_palette` is enabled, the response includes an extra string in `base64_images` containing the original pre-palette image.
-
-## Using background removal for transparent images
-
-- Set `remove_bg` as a boolean.
-
-```python
-payload = {
-    "prompt": "a raven with a glowing green eye",
-    "width": 128,
-    "height": 128,
-    "remove_bg": True
-}
-```
-
-Optional: set `return_non_bg_removed: true` to also receive the original image before background removal.
-
-```python
-payload = {
-    "prompt": "a raven with a glowing green eye",
-    "width": 128,
-    "height": 128,
-    "remove_bg": True,
-    "return_non_bg_removed": True
-}
-```
-
-When `return_non_bg_removed` is enabled, the response includes an extra string in `base64_images` containing the non-background-removed image.
-
-## Using seamless tiling
-
-- Set both `tile_x` and `tile_y` as booleans.
-
-```python
-payload = {
-    "prompt": "Stone bricks",
-    "width": 128,
-    "height": 128,
-    "tile_x": true,
-    "tile_y": true
-}
-```
-
-## Ignoring prompt expansion
-
-- Use `bypass_prompt_expansion: true` to disable prompt expansion.
-
-```python
-payload = {
-    "prompt": "a raven with a glowing green eye",
-    "width": 128,
-    "height": 128,
-    "bypass_prompt_expansion": True
-}
-```
-
-## Including downloadable data
-
-- Use `include_downloadable_data: true` to include generated downloadable artifacts in the response.
-- This is useful for styles that return structured assets (for example `rd_pro__inventory_items`).
-
-Example payload:
-
-```json
-{
-	"width": 256,
-	"height": 256,
-	"prompt": "item set for a paladin",
-	"num_images": 1,
-	"prompt_style": "rd_pro__inventory_items",
-	"check_cost": false,
-	"include_downloadable_data": true
-}
-```
-
-Example response excerpt:
-
-```json
-{
-	"downloadable_data": {
-		"downloadable_json": {
-			"data": {
-				"meta": {
-					"count": 10,
-					"mask_h": 128,
-					"mask_w": 128,
-					"image_h": 256,
-					"image_w": 256
-				},
-				"sprites": [
-					{
-						"h": 152,
-						"w": 48,
-						"x": 16,
-						"y": 16,
-						"id": 0,
-						"name": "Holy sword, lion shield, enchanted armor, healing potion, blessed amulet, warhorse figurine, prayer book, golden chalice",
-						"mask_h": 76,
-						"mask_w": 24,
-						"mask_x": 8,
-						"mask_y": 8
-					},
-					...
-					...
-					...
-				]
-			},
-			"type": "item_atlas",
-			"filename": "item_atlas.json",
-			"description": "Sprite atlas with item positions and names"
-		}
-	}
-}
-```
-
-## Edit tools API
-
-Edit tools process an uploaded image and return one edited image.
-
-Endpoints:
-- `GET https://api.retrodiffusion.ai/v1/edit/tools`
-- `POST https://api.retrodiffusion.ai/v1/edit/tools/{tool_id}`
-
-Header:
-- `X-RD-Token: YOUR_API_KEY`
-
-Important notes:
-- Send image fields as plain base64 strings. Do not include `data:image/png;base64,`.
-- Paid tools deduct balance before work starts. If execution fails, the charge is refunded.
-- Free tools do not deduct balance, but the account must have at least `$0.01` balance.
-- Progressive editing is supported by using `outputImageBase64` from one tool as `inputImageBase64` for the next tool.
-
-Tool summary:
-
-| Tool ID | Inputs | Cost |
-| --- | --- | --- |
-| `image_edit` | input image, prompt, optional seed | `$0.18` |
-| `background_remover` | input image | `$0.01` |
-| `color_reducer` | input image, optional color count, dithering boolean | Free, requires minimum account value |
-| `palette_converter` | input image, palette image, dithering boolean | Free, requires minimum account value |
-| `color_style_transfer` | input image, reference image | `$0.01` |
-| `k_centroid_downscale` | input image, width, height | Free, requires minimum account value |
-
-Python helper:
+| Script | What it shows |
+| --- | --- |
+| [`01_generate_image.py`](example-scripts/01_generate_image.py) | The simplest text-to-image request |
+| [`02_check_cost.py`](example-scripts/02_check_cost.py) | Free price check before generating |
+| [`03_img2img.py`](example-scripts/03_img2img.py) | Transform an existing image with `input_image` + `strength` |
+| [`04_reference_images.py`](example-scripts/04_reference_images.py) | Keep a character consistent with RD Pro reference images |
+| [`05_animation.py`](example-scripts/05_animation.py) | Animate a start frame (advanced animations → GIF) |
+| [`06_tileset.py`](example-scripts/06_tileset.py) | Generate a wang-style tileset |
+| [`07_async_batch.py`](example-scripts/07_async_batch.py) | Fan out many generations with async jobs |
+| [`08_list_styles.py`](example-scripts/08_list_styles.py) | Discover every style your account can use |
+| [`09_edit_tools.py`](example-scripts/09_edit_tools.py) | Chain post-processing edit tools |
+| [`generate_image.mjs`](example-scripts/generate_image.mjs) | The basic request from Node.js (no dependencies) |
+
+**Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
+it's a complete, verified plain-text summary of this API. Agents with MCP support can instead
+connect to the hosted MCP server at `https://mcp.retrodiffusion.ai/mcp` (header
+`Authorization: Bearer YOUR_API_KEY`) for typed tools like `create_inference`,
+`list_available_styles`, and `estimate_inference_cost`.
+
+## Quick start
+
+Create a key, make sure you have balance, then send a request:
 
 ```python
 import base64
 import requests
-from pathlib import Path
 
-api_key = "YOUR_API_KEY"
-base_url = "https://api.retrodiffusion.ai/v1"
+url = "https://api.retrodiffusion.ai/v1/inferences"
+headers = {"X-RD-Token": "YOUR_API_KEY"}
+payload = {
+    "prompt": "A really cool corgi wearing sunglasses",  # describe the SUBJECT only
+    "prompt_style": "rd_plus__default",                  # the style handles the pixel-art look
+    "width": 256,
+    "height": 256,
+    "num_images": 1,
+    "seed": 42,                                          # optional; omit for random
+}
 
-def image_to_base64(path):
-    return base64.b64encode(Path(path).read_bytes()).decode("utf-8")
+response = requests.post(url, headers=headers, json=payload)
+response.raise_for_status()
+data = response.json()
 
-def save_base64_image(image_base64, path):
-    Path(path).write_bytes(base64.b64decode(image_base64))
+for i, image in enumerate(data["base64_images"]):
+    with open(f"output_{i}.png", "wb") as f:
+        f.write(base64.b64decode(image))
 
-def run_tool(tool_id, payload):
-    response = requests.post(
-        f"{base_url}/edit/tools/{tool_id}",
-        headers={"X-RD-Token": api_key},
-        json=payload,
-        timeout=120,
-    )
-    response.raise_for_status()
-    return response.json()
+print(f"Cost: ${data['balance_cost']}   Remaining: ${data['remaining_balance']}")
 ```
 
-### Image edit
+Response (null fields are omitted):
 
-Edits the uploaded image with a text prompt. The input image must be `256x256` or smaller.
-
-```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("image_edit", {
-    "inputImageBase64": input_image,
-    "prompt": "add a tiny wizard hat",
-    "seed": 123
-})
-
-save_base64_image(result["outputImageBase64"], "output_image_edit.png")
+```json
+{
+  "created_at": "2026-07-08T15:04:05",
+  "balance_cost": 0.058,
+  "base64_images": ["iVBORw0KGgo..."],
+  "model": "rd_plus",
+  "remaining_balance": 100.75
+}
 ```
 
-### Background remover
+`base64_images` entries are raw base64 — PNG normally, GIF for animation styles. Decode and
+write them to disk. Set `"upload_outputs": true` to receive hosted URLs in `output_urls` instead.
 
-Removes the image background and returns a transparent image when possible.
+## Models
+
+Pass a style id in `prompt_style`; the style also determines the model. Call
+`GET /v1/styles/selector` (see [`08_list_styles.py`](example-scripts/08_list_styles.py)) for the
+live catalog with each style's exact size limits, batch cap, and input requirements.
+
+The same prompt and seed across all four models:
+
+<table>
+  <tr>
+    <td align="center"><img src="images/model-rd-fast.png" width="180" alt="RD Fast output"><br><sub><b>RD Fast</b> · ~$0.03</sub></td>
+    <td align="center"><img src="images/model-rd-plus.png" width="180" alt="RD Plus output"><br><sub><b>RD Plus</b> · ~$0.06</sub></td>
+    <td align="center"><img src="images/model-rd-pro.png" width="180" alt="RD Pro output"><br><sub><b>RD Pro</b> · $0.18</sub></td>
+    <td align="center"><img src="images/model-rd-mini.png" width="120" alt="RD Mini output"><br><sub><b>RD Mini</b> · ~$0.03</sub></td>
+  </tr>
+</table>
+
+**RD Pro — highest quality.** The professional-grade model: the cleanest pixel work, the most
+detailed prompt following, and support for up to **9 reference images** to keep a character or
+art style consistent. Best for hero assets and matching an existing look. `$0.18`/image, 64–256px,
+batch ≤ 4. Styles: `rd_pro__default`, `rd_pro__painterly`, `rd_pro__fantasy`, `rd_pro__horror`,
+`rd_pro__scifi`, `rd_pro__simple`, `rd_pro__isometric`, `rd_pro__topdown`, `rd_pro__platformer`,
+`rd_pro__dungeon_map`, `rd_pro__spritesheet`, `rd_pro__fps_weapon`, `rd_pro__typography`.
+256×256-only: `rd_pro__hexagonal_tiles`, `rd_pro__ui_panel`, `rd_pro__inventory_items`.
+Require an input image: `rd_pro__edit`, `rd_pro__pixelate`.
+
+**RD Plus — quality all-rounder** with the largest style library. 64–384px (low-res variants
+smaller), batch ≤ 16: `rd_plus__default`, `rd_plus__retro`, `rd_plus__watercolor`,
+`rd_plus__textured`, `rd_plus__cartoon`, `rd_plus__ui_element`, `rd_plus__item_sheet`,
+`rd_plus__character_turnaround`, `rd_plus__environment`, `rd_plus__isometric`,
+`rd_plus__isometric_asset`, `rd_plus__topdown_map`, `rd_plus__topdown_asset`, `rd_plus__classic`,
+`rd_plus__skill_icon`, `rd_plus__low_res`, `rd_plus__mc_item`, `rd_plus__mc_texture`,
+`rd_plus__topdown_item`.
+
+**RD Fast — fastest and cheapest**, great for drafting. 64–384px (low-res smaller), batch ≤ 16:
+`rd_fast__default`, `rd_fast__simple`, `rd_fast__detailed`, `rd_fast__retro`,
+`rd_fast__game_asset`, `rd_fast__portrait`, `rd_fast__texture`, `rd_fast__ui`,
+`rd_fast__item_sheet`, `rd_fast__character_turnaround`, `rd_fast__no_style`, `rd_fast__1_bit`,
+`rd_fast__low_res`, `rd_fast__mc_item`, `rd_fast__mc_texture`.
+
+**RD Mini — tiny, low-resolution art.** Aliases that route to Plus/Fast low-res styles (the
+response `model` reflects the routed model): `rd_mini__mc_item`, `rd_mini__mc_texture`,
+`rd_mini__low_res`, `rd_mini__classic`, `rd_mini__skill_icon`, `rd_mini__topdown_item`, and
+`rd_mini__fast_mc_item` / `rd_mini__fast_mc_texture` / `rd_mini__fast_low_res`.
+
+RD Pro spans everything from typography to first-person weapons to full inventory sheets:
+
+<table>
+  <tr>
+    <td align="center"><img src="images/showcase-typography.png" width="240" alt="Typography"><br><sub><code>rd_pro__typography</code></sub></td>
+    <td align="center"><img src="images/showcase-fps-weapon.png" width="240" alt="FPS weapon"><br><sub><code>rd_pro__fps_weapon</code></sub></td>
+    <td align="center"><img src="images/api-inventory.png" width="200" alt="Inventory items"><br><sub><code>rd_pro__inventory_items</code></sub></td>
+  </tr>
+</table>
+
+**Your own styles:** `user__<name>_<id>` — created in
+[My Styles](https://www.retrodiffusion.ai/app/my-styles) or via the [styles API](#user-styles).
+
+## Request fields
+
+`POST /v1/inferences`
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `prompt` | string | **Required.** Describe the subject — never write "pixel art". |
+| `prompt_style` | string | **Required.** A style id (see above). |
+| `width`, `height` | int | **Required.** 16–512 overall; each style enforces tighter limits (most top out at 256 or 384). |
+| `num_images` | int | **Required.** Batch size — up to 16 for most styles, 4 for RD Pro, 1 for animations. |
+| `seed` | int | Optional. Same seed + settings ≈ same image. Omit for random. |
+| `input_image` | base64 | Optional img2img source (raw base64, **no** `data:` prefix, RGB). |
+| `strength` | float | 0–1, default `0.75`. How much `input_image` changes: low = subtle, high = loose. |
+| `reference_images` | base64[] | RD Pro styles only: up to 9 style/content references. |
+| `input_palette` | base64 | Constrain output colors to a palette image. Add `return_pre_palette` to also get the un-quantized image. |
+| `remove_bg` | bool | Transparent output. Add `return_non_bg_removed` to also get the original. |
+| `tile_x`, `tile_y` | bool | Seamless tiling on either axis. |
+| `frames_duration` | int | Animation styles: `4`, `6`, `8`, `10`, `12`, or `16`. |
+| `return_spritesheet` | bool | Animations: return a PNG spritesheet instead of a GIF. |
+| `upscale_output_factor` | int | `1` (default) = native pixel size; higher = nearest-neighbor upscaled PNGs. |
+| `bypass_prompt_expansion` | bool | Skip the automatic LLM prompt enrichment. |
+| `include_downloadable_data` | bool | Include structured extras (e.g. `rd_pro__inventory_items` returns an item-atlas JSON). |
+| `check_cost` | bool | Free dry run — returns the price, generates nothing, charges nothing. |
+| `async` | bool | Queue and poll instead of waiting (see [async](#async-jobs)). |
+
+> A `negative` field is accepted for forward compatibility but is a **placeholder — no current
+> model uses it.** Describe what you *want* in `prompt` instead.
+
+## Check cost before generating
+
+`check_cost: true` runs a free dry run — the API returns the exact price and generates nothing.
 
 ```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("background_remover", {
-    "inputImageBase64": input_image
-})
-
-save_base64_image(result["outputImageBase64"], "output_background_removed.png")
+payload = {
+    "prompt": "A really cool corgi",
+    "prompt_style": "rd_pro__default",
+    "width": 256,
+    "height": 256,
+    "num_images": 2,
+    "check_cost": True,
+}
+# -> {"balance_cost": 0.36, "model": "check_cost", "base64_images": [], "remaining_balance": 100.75}
 ```
 
-### Color reducer
+Check your balance any time: `GET /v1/inferences/credits` → `{"credits": 0, "balance": 100.75}`.
 
-Reduces an image to fewer colors. Leave `colorCount` out for automatic reduction.
+## Async jobs
+
+Add `"async": true` to accept the job immediately and poll for the result — recommended for
+animations and large batches. See [`07_async_batch.py`](example-scripts/07_async_batch.py).
 
 ```python
-input_image = image_to_base64("input.png")
+import time, requests
+headers = {"X-RD-Token": "YOUR_API_KEY"}
 
-result = run_tool("color_reducer", {
-    "inputImageBase64": input_image,
-    "colorCount": 16,
-    "dithering": True
-})
+start = requests.post(
+    "https://api.retrodiffusion.ai/v1/inferences",
+    headers=headers,
+    json={"prompt": "A really cool corgi", "prompt_style": "rd_pro__default",
+          "width": 256, "height": 256, "num_images": 1, "async": True},
+).json()
+# -> {"status": "accepted", "task_id": "8d24...", "message": "Inference accepted. Poll ..."}
 
-save_base64_image(result["outputImageBase64"], "output_color_reduced.png")
+task_id = start["task_id"]
+while True:
+    task = requests.get(
+        f"https://api.retrodiffusion.ai/v1/inferences/tasks/{task_id}", headers=headers
+    ).json()
+    if task["status"] in ("pending", "running"):
+        time.sleep(2)
+        continue
+    if task["status"] == "succeeded":
+        result = task["result"]   # same shape as a synchronous response
+    else:
+        print("failed:", task["error"])
+    break
 ```
 
-Automatic color count:
+## Images in: img2img, references, and palettes
+
+All image inputs are **raw base64 with no `data:image/png;base64,` prefix**, RGB without
+transparency, and palette images should stay well under 1 MB.
+
+- **img2img** — `input_image` + `strength` (0–1): low = subtle restyle, high = loose inspiration.
+  See [`03_img2img.py`](example-scripts/03_img2img.py).
+- **Reference images** — RD Pro styles accept up to 9 `reference_images`. They guide *style and
+  content* without being redrawn — the way to keep a consistent character across images. Generate
+  the character once, then pass that output back as a reference. See
+  [`04_reference_images.py`](example-scripts/04_reference_images.py).
+- **Palette** — `input_palette` constrains output colors to a palette image.
+
+<table>
+  <tr>
+    <td align="center"><img src="images/ref-base.png" width="200" alt="Reference character"><br><sub>1. generate the character</sub></td>
+    <td align="center"><img src="images/ref-variation.png" width="200" alt="Same character, new scene"><br><sub>2. reuse it as a <code>reference_image</code> in a new scene</sub></td>
+  </tr>
+</table>
+
+## Animations
+
+**Advanced animations are the most powerful workflow** — upload *any* pixel-art image as a start
+frame and it comes to life. `input_image` is **required**, `width`/`height` match the frame
+(32–256px), and `frames_duration` accepts 4, 6, 8, 10, 12, or 16. Output is a GIF (add
+`return_spritesheet: true` for a PNG spritesheet). A neutral pose gives the best character
+results. Actions: `walking`, `idle`, `jump`, `crouch`, `attack`, `destroy`, `custom_action`
+(describe any motion), `subtle_motion` (ambient scene motion). See
+[`05_animation.py`](example-scripts/05_animation.py).
+
+<table>
+  <tr>
+    <td align="center"><img src="images/anim-character.png" width="130" alt="Start frame"></td>
+    <td align="center">→</td>
+    <td align="center"><img src="images/anim-walking.gif" width="130" alt="Walking animation"><br><sub><code>rd_advanced_animation__walking</code></sub></td>
+    <td align="center"><img src="images/anim-landscape.png" width="130" alt="Start frame"></td>
+    <td align="center">→</td>
+    <td align="center"><img src="images/anim-subtle-motion.gif" width="130" alt="Subtle motion animation"><br><sub><code>rd_advanced_animation__subtle_motion</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="images/anim-dragon.png" width="130" alt="Start frame"></td>
+    <td align="center">→</td>
+    <td align="center" colspan="4"><img src="images/anim-custom-action.gif" width="130" alt="Custom action animation"><br><sub><code>rd_advanced_animation__custom_action</code> — "flapping its wings and breathing fire"</sub></td>
+  </tr>
+</table>
 
 ```python
-result = run_tool("color_reducer", {
-    "inputImageBase64": input_image,
-    "dithering": False
-})
-```
-
-### Palette converter
-
-Maps an image to the colors from a supplied palette image.
-
-```python
-input_image = image_to_base64("input.png")
-palette_image = image_to_base64("palette.png")
-
-result = run_tool("palette_converter", {
-    "inputImageBase64": input_image,
-    "paletteImageBase64": palette_image,
-    "dithering": True
-})
-
-save_base64_image(result["outputImageBase64"], "output_palette_converted.png")
-```
-
-### Color style transfer
-
-Transfers the color style from a reference image to the input image.
-
-```python
-input_image = image_to_base64("input.png")
-reference_image = image_to_base64("reference.png")
-
-result = run_tool("color_style_transfer", {
-    "inputImageBase64": input_image,
-    "referenceImageBase64": reference_image
-})
-
-save_base64_image(result["outputImageBase64"], "output_color_style_transfer.png")
-```
-
-### K-centroid downscale
-
-Downscales an image to the requested dimensions using local block color centroids.
-
-```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("k_centroid_downscale", {
-    "inputImageBase64": input_image,
+payload = {
+    "prompt": "slow, heavy steps",
+    "prompt_style": "rd_advanced_animation__walking",
     "width": 64,
-    "height": 64
-})
-
-save_base64_image(result["outputImageBase64"], "output_k_centroid_downscale.png")
-```
-
-## FAQ
-
-### How much does it cost?
-
-Cost is based on model and resolution. You can check request cost in the [web app](https://www.retrodiffusion.ai/).
-These formulas can be used as a guide for automated cost calculations.
-
-Standard image model pricing:
-- All costs are rounded to three decimal places.
-- `rd_fast` styles:
-  - Balance cost = `max(0.015, ((width * height) + 100000) / 6000000) * number of images`
-- `rd_plus` styles:
-  - Balance cost = `max(0.025, ((width * height) + 50000) / 2000000) * number of images`
-
-Low-resolution model pricing:
-- `rd_plus__mc_texture`, `rd_plus__mc_item`, `rd_plus__low_res`, `rd_plus__classic`, `rd_plus__topdown_item`, `rd_plus__skill_icon`, `rd_tile__tile_variation`, `rd_tile__single_tile`, `rd_tile__tile_object`
-  - Balance cost = `max(0.02, ((width * height) + 13700) / 600000) * number of images`
-
-`rd_pro` styles:
-- Balance cost = `0.18 * number of images`
-
-Advanced Animation model pricing:
-
-`rd_advanced_animation` styles:
-- Balance cost = `0.14 * number of images`
-
-- `rd_advanced_animation__custom_action`, `rd_advanced_animation__subtle_motion`
-  - Balance cost = `0.25`
-
-
-Unique model pricing:
-- `animation__four_angle_walking`, `animation__walking_and_idle`, `animation__small_sprites`, `animation__vfx`
-  - Balance cost = `0.07`
-- `rd_tile__tileset`, `rd_tile__tileset_advanced`
-  - Balance cost = `0.10`
-- `animation__any_animation`, `animation__8_dir_rotation`
-  - Balance cost = `0.25`
-- Edit tools:
-  - `image_edit`: `0.18`
-  - `background_remover`: `0.01`
-  - `color_style_transfer`: `0.01`
-  - `color_reducer`, `palette_converter`, and `k_centroid_downscale`: free, with minimum account value required
-
-### How can I check my remaining credits?
-
-Send a `GET` request to:
-- `https://api.retrodiffusion.ai/v1/inferences/credits`
-
-With header:
-- `X-RD-Token: YOUR_API_KEY`
-
-Response format:
-
-```json
-{
-  "balance": 100.75
+    "height": 64,
+    "num_images": 1,
+    "frames_duration": 8,
+    "input_image": start_frame_base64,   # required
 }
 ```
 
-### Can I buy credits from the API?
+**Prompt-driven animations** produce ready-made sprite formats from just a prompt (transparent
+GIF output, batch = 1):
 
-No. To keep balance topped up automatically, use **auto refills** in [Payment Methods](https://www.retrodiffusion.ai/app/payment-methods).
+<table>
+  <tr>
+    <td align="center"><img src="images/anim-battle-sprites.gif" width="150" alt="Battle sprites"><br><sub><code>rd_animation__battle_sprites</code><br>idle · walk · jump · attack</sub></td>
+    <td align="center"><img src="images/anim-rotation.gif" width="150" alt="8 direction rotation"><br><sub><code>rd_animation__8_dir_rotation</code></sub></td>
+    <td align="center"><img src="images/anim-vfx.gif" width="150" alt="VFX explosion"><br><sub><code>rd_animation__vfx</code></sub></td>
+  </tr>
+</table>
 
-### How to get images at native resolution?
+More: `rd_animation__four_angle_walking` (48px), `rd_animation__four_angle_walking_idle` (48px),
+`rd_animation__small_sprites` (32px, batch ≤ 16), `rd_animation__any_animation` (64px),
+`rd_animation__big_animation` (128px).
 
-Use `upscale_output_factor`:
-- Set to `1` for native resolution.
-- Set to `null` for regular size.
-
-## MCP (Model Context Protocol)
-
-You can connect to RetroDiffusion through MCP to call tools like:
-- `get_balance`
-- `list_available_styles`
-- `create_inference`
-
-### Codex setup (`~/.codex/config.toml`)
-
-1. Export your API key in the shell where Codex runs:
-
-```bash
-export RD_API_KEY="YOUR_API_KEY"
-```
-
-2. Add this MCP server block:
-
-```toml
-[mcp_servers.retrodiffusion]
-url = "https://mcp.retrodiffusion.ai/mcp"
-bearer_token_env_var = "RD_API_KEY"
-startup_timeout_sec = 20
-tool_timeout_sec = 120
-enabled = true
-```
-
-3. Restart Codex so it reloads MCP config and environment variables.
-
-### Cursor setup (`~/.cursor/mcp.json`)
-
-```json
-{
-  "mcpServers": {
-    "retrodiffusion": {
-      "url": "https://mcp.retrodiffusion.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer ${env:RD_API_KEY}"
-      }
-    }
-  }
+```python
+payload = {
+    "prompt": "corgi wearing a party hat",
+    "prompt_style": "rd_animation__four_angle_walking",  # 48x48 only
+    "width": 48,
+    "height": 48,
+    "num_images": 1,
 }
 ```
 
-### Antigravity setup (`mcp_config.json`)
+## Tilesets
 
-```json
-{
-  "mcpServers": {
-    "retrodiffusion": {
-      "serverUrl": "https://mcp.retrodiffusion.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_API_KEY"
-      }
-    }
-  }
+`rd_tile__tileset` builds a full wang-style tileset from one prompt (tile size 16–32px). See
+[`06_tileset.py`](example-scripts/06_tileset.py).
+
+<table>
+  <tr>
+    <td align="center"><img src="images/api-tileset.png" width="180" alt="Tileset"><br><sub><code>rd_tile__tileset</code>, 16px tiles</sub></td>
+    <td align="center"><img src="resources/single_tile.png" width="180" alt="Single tile"><br><sub><code>rd_tile__single_tile</code></sub></td>
+  </tr>
+</table>
+
+`rd_tile__tileset_advanced` takes an inside and an outside texture via `prompt` / `extra_prompt`
+(and optional `input_image` / `extra_input_image`). Also: `rd_tile__single_tile` (16–64px),
+`rd_tile__tile_variation` (16–128px, input image required), `rd_tile__tile_object` (16–96px),
+`rd_tile__scene_object` (64–384px).
+
+## Pricing
+
+Cost depends on style family, resolution, and image count. `check_cost` is always authoritative
+and free; these formulas are current at the time of writing:
+
+- **`rd_fast`:** `max(0.015, (w*h + 100000) / 6000000) * num_images`
+- **`rd_plus`:** `max(0.025, (w*h + 50000) / 2000000) * num_images`
+- **Low-res styles** (`mc_*`, `low_res`, `classic`, `skill_icon`, `topdown_item`, tile variants):
+  `max(0.02, (w*h + 13700) / 600000) * num_images`
+- **`rd_pro`:** `0.18 * num_images`
+- **Advanced animations:** `0.14` (`custom_action` and `subtle_motion`: `0.25`)
+- **Animations:** `0.07` (`any_animation` and `8_dir_rotation`: `0.25`)
+- **Tilesets** (`rd_tile__tileset` / `_advanced`): `0.10`
+
+Credits cannot be purchased through the API. Keep long runs alive with auto-refill (Payment
+Methods), or ask about monthly invoicing for teams/enterprise via
+[Discord](https://discord.gg/retrodiffusion) or support@retrodiffusion.com.
+
+## Edit tools
+
+Edit tools post-process one image and return one edited image. **These endpoints use camelCase
+field names** (`inputImageBase64`), unlike `/v1/inferences`. See
+[`09_edit_tools.py`](example-scripts/09_edit_tools.py).
+
+- `GET /v1/edit/tools` — the authoritative list of currently available tools, their fields, and costs.
+- `POST /v1/edit/tools/{tool_id}` — run a tool.
+- `POST /v1/edit/tools/{tool_id}/estimate` — cost and time estimate without running.
+
+| Tool | Cost | Key inputs |
+| --- | --- | --- |
+| `image_edit` | $0.18 | `inputImageBase64` (≤256px), `prompt`, `seed?` |
+| `inpainting` | $0.18 | `inputImageBase64`, `prompt`, `maskImageBase64` |
+| `outpainting` | $0.18 | `inputImageBase64`, `expandLeft/Right/Top/Bottom` |
+| `seam_tiling` | $0.18 | `inputImageBase64`, `seamTileHorizontal/Vertical`, `seamWidth` |
+| `background_remover` | $0.01 | `inputImageBase64`, `transparencyThreshold?`, `forceSolidPixels?` |
+| `color_style_transfer` | $0.01 | `inputImageBase64`, `referenceImageBase64` |
+| `color_reducer` | Free* | `inputImageBase64`, `colorCount?`, `dithering?` |
+| `palette_converter` | Free* | `inputImageBase64`, `paletteImageBase64`, `dithering?` |
+| `k_centroid_downscale` | Free* | `inputImageBase64`, `width`, `height` |
+
+\* Free tools require at least $0.01 account balance. Paid tools charge before running and refund
+on failure. Responses include `outputImageBase64`, `balanceCost`, `charged`, and
+`remaining_balance`. Chain tools by feeding each `outputImageBase64` into the next
+`inputImageBase64`.
+
+## User styles
+
+Create, update, and delete custom styles built on the RD Pro reference-image template. Fields
+outside the template are rejected.
+
+```python
+payload = {
+    "name": "My RD Pro Style",                 # required
+    "description": "A polished look for item art",
+    "style_icon": "sparkles",
+    "reference_images": ["<base64>"],          # max 1 via the API
+    "user_prompt_template": "Pixel art styled {prompt}, with 1px outlines.",  # must contain {prompt}
+    "force_palette": False,
+    "force_bg_removal": False,
+    "min_width": 192,                          # optional forced size; both together, 64-256
+    "min_height": 192,
 }
+# POST /v1/styles -> {"prompt_style": "user__my_rd_pro_style_1a2b3c4d", ...}
+# use that prompt_style in /v1/inferences.
 ```
 
-### VS Code setup (`.vscode/mcp.json`)
+`PATCH /v1/styles/{style_id}` updates (same fields, all optional); `DELETE /v1/styles/{style_id}`
+removes it.
+
+## Errors
+
+Two shapes; handle both:
 
 ```json
-{
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "rd_api_key",
-      "description": "RetroDiffusion API key",
-      "password": true
-    }
-  ],
-  "servers": {
-    "retrodiffusion": {
-      "type": "http",
-      "url": "https://mcp.retrodiffusion.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer ${input:rd_api_key}"
-      }
-    }
-  }
-}
+{"detail": {"code": "inference_failed", "message": "Unable to run inference."}}
+{"detail": [{"msg": "Not enough balance."}]}
 ```
 
-Docs:
-- Cursor: `https://cursor.com/docs/context/mcp`
-- Antigravity: `https://antigravity.google/docs/mcp`
-- VS Code: `https://code.visualstudio.com/docs/copilot/customization/mcp-servers`
+| Status | Meaning |
+| --- | --- |
+| `400` | Invalid input (size out of range, bad image) or insufficient balance. |
+| `401` | Missing or invalid `X-RD-Token`. |
+| `403` | Valid token without access to the resource (also used by the credits endpoint). |
+| `404` | Task or style not found (or not owned by this key). |
+| `422` | Request body failed validation (wrong types, missing required fields). |
+| `429` | Rate limited — respect the `Retry-After` header. |
+| `500` | Temporary server-side failure — safe to retry with backoff; charges are refunded. |
+
+Check `GET /v1/status` (no key required) before large batches.
+
+## Help
+
+- Full docs: https://www.retrodiffusion.ai/app/guide/api
+- Discord: https://discord.gg/retrodiffusion
