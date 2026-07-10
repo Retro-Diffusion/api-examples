@@ -6,6 +6,11 @@ Main generation endpoint:
 - `POST https://api.retrodiffusion.ai/v1/inferences`
 - Header: `X-RD-Token: YOUR_API_KEY`
 
+Canvas edit tools use the same API key and are available under
+`https://api.retrodiffusion.ai/v1/edit`. See [Canvas edit tools](EDIT_TOOLS.md)
+for the tool catalog, canonical input fields, estimates, responses, and Python
+examples.
+
 Status endpoint:
 - `GET https://api.retrodiffusion.ai/v1/status`
 - No API key required.
@@ -910,162 +915,13 @@ Example response excerpt:
 
 ## Edit tools API
 
-Edit tools process an uploaded image and return one edited image.
+Edit tools process an uploaded image and return one edited image. The public
+API supports eleven built-in canvas tools, canonical snake_case request fields,
+cost estimates, and scheduled jobs for large inpainting or outpainting
+requests. Query the catalog for the tools that are currently enabled.
 
-Endpoints:
-- `GET https://api.retrodiffusion.ai/v1/edit/tools`
-- `POST https://api.retrodiffusion.ai/v1/edit/tools/{tool_id}`
-
-Header:
-- `X-RD-Token: YOUR_API_KEY`
-
-Important notes:
-- Send image fields as plain base64 strings. Do not include `data:image/png;base64,`.
-- Paid tools deduct balance before work starts. If execution fails, the charge is refunded.
-- Free tools do not deduct balance, but the account must have at least `$0.01` balance.
-- Progressive editing is supported by using `outputImageBase64` from one tool as `inputImageBase64` for the next tool.
-
-Tool summary:
-
-| Tool ID | Inputs | Cost |
-| --- | --- | --- |
-| `image_edit` | input image, prompt, optional seed | `$0.18` |
-| `background_remover` | input image | `$0.01` |
-| `color_reducer` | input image, optional color count, dithering boolean | Free, requires minimum account value |
-| `palette_converter` | input image, palette image, dithering boolean | Free, requires minimum account value |
-| `color_style_transfer` | input image, reference image | `$0.01` |
-| `k_centroid_downscale` | input image, width, height | Free, requires minimum account value |
-
-Python helper:
-
-```python
-import base64
-import requests
-from pathlib import Path
-
-api_key = "YOUR_API_KEY"
-base_url = "https://api.retrodiffusion.ai/v1"
-
-def image_to_base64(path):
-    return base64.b64encode(Path(path).read_bytes()).decode("utf-8")
-
-def save_base64_image(image_base64, path):
-    Path(path).write_bytes(base64.b64decode(image_base64))
-
-def run_tool(tool_id, payload):
-    response = requests.post(
-        f"{base_url}/edit/tools/{tool_id}",
-        headers={"X-RD-Token": api_key},
-        json=payload,
-        timeout=120,
-    )
-    response.raise_for_status()
-    return response.json()
-```
-
-### Image edit
-
-Edits the uploaded image with a text prompt. The input image must be `256x256` or smaller.
-
-```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("image_edit", {
-    "inputImageBase64": input_image,
-    "prompt": "add a tiny wizard hat",
-    "seed": 123
-})
-
-save_base64_image(result["outputImageBase64"], "output_image_edit.png")
-```
-
-### Background remover
-
-Removes the image background and returns a transparent image when possible.
-
-```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("background_remover", {
-    "inputImageBase64": input_image
-})
-
-save_base64_image(result["outputImageBase64"], "output_background_removed.png")
-```
-
-### Color reducer
-
-Reduces an image to fewer colors. Leave `colorCount` out for automatic reduction.
-
-```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("color_reducer", {
-    "inputImageBase64": input_image,
-    "colorCount": 16,
-    "dithering": True
-})
-
-save_base64_image(result["outputImageBase64"], "output_color_reduced.png")
-```
-
-Automatic color count:
-
-```python
-result = run_tool("color_reducer", {
-    "inputImageBase64": input_image,
-    "dithering": False
-})
-```
-
-### Palette converter
-
-Maps an image to the colors from a supplied palette image.
-
-```python
-input_image = image_to_base64("input.png")
-palette_image = image_to_base64("palette.png")
-
-result = run_tool("palette_converter", {
-    "inputImageBase64": input_image,
-    "paletteImageBase64": palette_image,
-    "dithering": True
-})
-
-save_base64_image(result["outputImageBase64"], "output_palette_converted.png")
-```
-
-### Color style transfer
-
-Transfers the color style from a reference image to the input image.
-
-```python
-input_image = image_to_base64("input.png")
-reference_image = image_to_base64("reference.png")
-
-result = run_tool("color_style_transfer", {
-    "inputImageBase64": input_image,
-    "referenceImageBase64": reference_image
-})
-
-save_base64_image(result["outputImageBase64"], "output_color_style_transfer.png")
-```
-
-### K-centroid downscale
-
-Downscales an image to the requested dimensions using local block color centroids.
-
-```python
-input_image = image_to_base64("input.png")
-
-result = run_tool("k_centroid_downscale", {
-    "inputImageBase64": input_image,
-    "width": 64,
-    "height": 64
-})
-
-save_base64_image(result["outputImageBase64"], "output_k_centroid_downscale.png")
-```
+See [Canvas edit tools](EDIT_TOOLS.md) for the complete API contract and
+[edit_tools.py](edit_tools.py) for runnable payloads covering every tool.
 
 ## FAQ
 
@@ -1105,10 +961,11 @@ Unique model pricing:
 - `animation__any_animation`, `animation__8_dir_rotation`
   - Balance cost = `0.25`
 - Edit tools:
-  - `image_edit`: `0.18`
-  - `background_remover`: `0.01`
-  - `color_style_transfer`: `0.01`
+  - Read `GET /v1/edit/tools` for current prices and account requirements.
+  - `image_edit`, `inpainting`, `outpainting`, and `seam_tiling`: `0.18`
+  - `background_remover` and `color_style_transfer`: `0.01`
   - `color_reducer`, `palette_converter`, and `k_centroid_downscale`: free, with minimum account value required
+  - `pixel_correction` and `rotate`: free, with no minimum account value
 
 ### How can I check my remaining credits?
 
