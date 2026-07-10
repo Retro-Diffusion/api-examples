@@ -917,8 +917,8 @@ Example response excerpt:
 
 Edit tools process an uploaded image and return one edited image. The public
 API supports eleven built-in canvas tools, canonical snake_case request fields,
-cost estimates, and scheduled jobs for large inpainting or outpainting
-requests. Query the catalog for the tools that are currently enabled.
+and cost estimates. Query the catalog for the tools that are currently
+enabled.
 
 See [Canvas edit tools](EDIT_TOOLS.md) for the complete API contract and
 [edit_tools.py](edit_tools.py) for runnable payloads covering every tool.
