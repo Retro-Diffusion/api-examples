@@ -49,7 +49,7 @@ python example-scripts/01_generate_image.py
 | [`06_tileset.py`](example-scripts/06_tileset.py) | Generate a wang-style tileset |
 | [`07_async_batch.py`](example-scripts/07_async_batch.py) | Fan out many generations with async jobs |
 | [`08_list_styles.py`](example-scripts/08_list_styles.py) | Discover every style your account can use |
-| [`09_edit_tools.py`](example-scripts/09_edit_tools.py) | Chain post-processing edit tools |
+| [`09_edit_tools.py`](example-scripts/09_edit_tools.py) | Discover, estimate, and run any canvas edit tool |
 | [`generate_image.mjs`](example-scripts/generate_image.mjs) | The basic request from Node.js (no dependencies) |
 
 **Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
@@ -359,9 +359,10 @@ Methods), or ask about monthly invoicing for teams/enterprise via
 
 ## Edit tools
 
-Edit tools post-process one image and return one edited image. **These endpoints use camelCase
-field names** (`inputImageBase64`), unlike `/v1/inferences`. See
-[`09_edit_tools.py`](example-scripts/09_edit_tools.py).
+Edit tools post-process one image and return one edited image. Their canonical request and
+response fields use `snake_case`, matching `/v1/inferences`. See the
+[canvas edit tools guide](EDIT_TOOLS.md) and the runnable
+[`09_edit_tools.py`](example-scripts/09_edit_tools.py) example.
 
 - `GET /v1/edit/tools` — the authoritative list of currently available tools, their fields, and costs.
 - `POST /v1/edit/tools/{tool_id}` — run a tool.
@@ -369,20 +370,21 @@ field names** (`inputImageBase64`), unlike `/v1/inferences`. See
 
 | Tool | Cost | Key inputs |
 | --- | --- | --- |
-| `image_edit` | $0.18 | `inputImageBase64` (≤256px), `prompt`, `seed?` |
-| `inpainting` | $0.18 | `inputImageBase64`, `prompt`, `maskImageBase64` |
-| `outpainting` | $0.18 | `inputImageBase64`, `expandLeft/Right/Top/Bottom` |
-| `seam_tiling` | $0.18 | `inputImageBase64`, `seamTileHorizontal/Vertical`, `seamWidth` |
-| `background_remover` | $0.01 | `inputImageBase64`, `transparencyThreshold?`, `forceSolidPixels?` |
-| `color_style_transfer` | $0.01 | `inputImageBase64`, `referenceImageBase64` |
-| `color_reducer` | Free* | `inputImageBase64`, `colorCount?`, `dithering?` |
-| `palette_converter` | Free* | `inputImageBase64`, `paletteImageBase64`, `dithering?` |
-| `k_centroid_downscale` | Free* | `inputImageBase64`, `width`, `height` |
+| `image_edit` | $0.18 | `input_image` (≤256px), `prompt`, `seed?` |
+| `inpainting` | $0.18 | `input_image`, `prompt`, `mask_image` |
+| `outpainting` | $0.18 | `input_image`, `expand_left/right/top/bottom` |
+| `seam_tiling` | $0.18 | `input_image`, `tile_x`, `tile_y`, `seam_width` |
+| `background_remover` | $0.01 | `input_image`, `transparency_threshold?`, `force_solid_pixels?` |
+| `color_style_transfer` | $0.01 | `input_image`, `extra_input_image` |
+| `color_reducer` | Free* | `input_image`, `color_count?`, `dither_mode?`, `dither_strength?` |
+| `palette_converter` | Free* | `input_image`, `input_palette`, `dither_mode?`, `dither_strength?` |
+| `k_centroid_downscale` | Free* | `input_image`, `width`, `height` |
+| `pixel_correction` | Free | `input_image` |
+| `rotate` | Free | `input_image`, `rotation_degrees?` |
 
-\* Free tools require at least $0.01 account balance. Paid tools charge before running and refund
-on failure. Responses include `outputImageBase64`, `balanceCost`, `charged`, and
-`remaining_balance`. Chain tools by feeding each `outputImageBase64` into the next
-`inputImageBase64`.
+\* Some free tools require a minimum account value; check `requires_minimum_balance` in
+`GET /v1/edit/tools`. Paid tools charge before running and refund on failure. Responses include
+`base64_images`, `output_urls`, `balance_cost`, `charged`, and `remaining_balance`.
 
 ## User styles
 

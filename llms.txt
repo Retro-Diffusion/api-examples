@@ -54,15 +54,13 @@ Live discovery: GET /v1/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|
 rd_fast: max(0.015, (w*h+100000)/6000000) * num_images; rd_plus: max(0.025, (w*h+50000)/2000000) * num_images; low-res styles (mc_*, low_res, classic, skill_icon, topdown_item, tile variants): max(0.02, (w*h+13700)/600000) * num_images; rd_pro: 0.18 * num_images; rd_advanced_animation: 0.14 (custom_action and subtle_motion: 0.25); rd_animation: 0.07 (any_animation and 8_dir_rotation: 0.25); rd_tile__tileset(_advanced): 0.10.
 GET /v1/inferences/credits -> {"credits": 0, "balance": 100.75}. Balance is prepaid USD; charged before generation, auto-refunded on failure. Invalid token on this endpoint -> 403.
 
-## Edit tools (post-processing; NOTE: camelCase field names here)
-GET /v1/edit/tools -> current tool list with costs and fields (authoritative — exposed tools may vary).
-POST /v1/edit/tools/{tool_id}
-Tools: image_edit ($0.18, input <=256px; inputImageBase64, prompt, seed?), inpainting ($0.18; + maskImageBase64), outpainting ($0.18; + expandLeft/expandRight/expandTop/expandBottom int px), seam_tiling ($0.18; + seamTileHorizontal/seamTileVertical bool, seamWidth), background_remover ($0.01; + transparencyThreshold 0-255?, forceSolidPixels bool), color_style_transfer ($0.01; + referenceImageBase64), color_reducer (free; + colorCount 2-256?, dithering bool), palette_converter (free; + paletteImageBase64, dithering bool), k_centroid_downscale (free; + width, height). Free tools require account balance >= $0.01.
+## Canvas edit tools (post-processing; canonical fields use snake_case)
+GET /v1/edit/tools -> enabled tool list with api_fields, costs, defaults, and limits (authoritative; exposed tools may vary).
+POST /v1/edit/tools/{tool_id} -> run a tool. POST /v1/edit/tools/{tool_id}/estimate -> validate and estimate cost/time without running.
+Every request requires input_image (raw base64 or data URI). Tools: image_edit ($0.18; prompt required, seed?; <=256px), inpainting ($0.18; mask_image + prompt required, seed?, soft_inpaint?), outpainting ($0.18; expand_left/right/top/bottom with at least one positive, prompt?, seed?, soft_inpaint?), seam_tiling ($0.18; tile_x?, tile_y?, seam_width?, repair_window_size?, seed?), background_remover ($0.01; transparency_threshold?, force_solid_pixels?), color_style_transfer ($0.01; extra_input_image required), color_reducer (free; color_count?, dither_mode?, dither_strength?), palette_converter (free; input_palette required, dither_mode?, dither_strength?), k_centroid_downscale (free; width + height required), pixel_correction (free; no extra fields), rotate (free; rotation_degrees?). Some free tools require a minimum account value; inspect requires_minimum_balance.
 ### Example
-POST /v1/edit/tools/background_remover  {"inputImageBase64": "<base64>"}
--> {"toolId": "background_remover", "outputImageBase64": "<base64>", "balanceCost": 0.01, "charged": true, "remaining_balance": 100.74}
-Chain tools by feeding outputImageBase64 into the next call as inputImageBase64.
-POST /v1/edit/tools/{tool_id}/estimate -> cost + time estimate without running.
+POST /v1/edit/tools/background_remover  {"input_image": "<base64>"}
+-> {"tool_id": "background_remover", "base64_images": ["<base64>"], "output_urls": [], "balance_cost": 0.01, "charged": true, "remaining_balance": 100.74}
 
 ## Custom styles (RD Pro reference-image template)
 POST /v1/styles  {"name": "My Style" (required), "description"?, "style_icon"? (e.g. "sparkles"), "reference_images"? (max 1 via API), "reference_caption"?, "apply_prompt_fixer"? (default true), "llm_instructions"?, "user_prompt_template"? (must contain the token {prompt}), "force_palette"? (bool), "force_bg_removal"? (bool), "min_width"? + "min_height"? (both together, 64-256)}
