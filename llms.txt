@@ -5,7 +5,8 @@ Runnable example scripts: https://github.com/Retro-Diffusion/api-examples/tree/m
 Auth: send header "X-RD-Token: <key>" on every request. Keys start with "rdpk-".
 Humans create keys at https://www.retrodiffusion.ai/app/devtools (max 5 per account).
 Prefer MCP if available: https://mcp.retrodiffusion.ai/mcp (HTTP transport, header "Authorization: Bearer <key>").
-MCP tools: authenticate, get_balance, list_available_models, list_available_styles, get_style_usage, estimate_inference_cost, create_inference, create_user_style, update_user_style, delete_user_style, logout.
+MCP tools (17): create_inference, estimate_inference_cost (free), start_inference_job + get_inference_job (async jobs — recommended for animations and batches; success results carry hosted output_urls, not base64), list_available_styles, list_available_models, get_style_usage, list_edit_tools, run_edit_tool, estimate_edit_tool_cost (free), create_user_style, update_user_style, delete_user_style, authenticate, get_balance, get_service_status, logout. Tip: pass upload_outputs=true on create_inference to receive hosted URLs instead of base64 payloads.
+MCP setup guides for every client (Claude Code + plugin, Cursor, VS Code, Windsurf, Claude Desktop) live at https://github.com/Retro-Diffusion/retro-diffusion-mcp.
 
 ## Generate images
 POST /v1/inferences  (Content-Type: application/json)
