@@ -132,13 +132,13 @@ Animated GIF input is supported by `color_reducer`, `palette_converter`,
 `color_style_transfer`, and `k_centroid_downscale`. Other tools accept static
 images only.
 
-Example payloads for every tool are available in [edit_tools.py](edit_tools.py).
-The script defaults to the free `pixel_correction` tool and estimates the cost
-before executing:
+Example payloads for every tool are available in
+[09_edit_tools.py](example-scripts/09_edit_tools.py). The script defaults to
+the free `pixel_correction` tool and estimates the cost before executing:
 
 ```bash
-RD_API_KEY=YOUR_API_KEY python edit_tools.py
-RD_API_KEY=YOUR_API_KEY RD_EDIT_TOOL=rotate python edit_tools.py
+RD_API_KEY=YOUR_API_KEY python example-scripts/09_edit_tools.py
+RD_API_KEY=YOUR_API_KEY RD_EDIT_TOOL=rotate python example-scripts/09_edit_tools.py
 ```
 
 Set `INPUT_IMAGE_PATH` to use an image other than `input.png`. Inpainting also

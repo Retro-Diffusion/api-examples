@@ -1,0 +1,76 @@
+# Retro Diffusion API — context for AI agents (verified 2026-07)
+Pixel art image generation API. Base URL: https://api.retrodiffusion.ai/v1
+Full human-readable reference (with an interactive style explorer): https://www.retrodiffusion.ai/app/guide/api
+Runnable example scripts: https://github.com/Retro-Diffusion/api-examples/tree/main/example-scripts
+Auth: send header "X-RD-Token: <key>" on every request. Keys start with "rdpk-".
+Humans create keys at https://www.retrodiffusion.ai/app/devtools (max 5 per account).
+Prefer MCP if available: https://mcp.retrodiffusion.ai/mcp (HTTP transport, header "Authorization: Bearer <key>").
+MCP tools: authenticate, get_balance, list_available_models, list_available_styles, get_style_usage, estimate_inference_cost, create_inference, create_user_style, update_user_style, delete_user_style, logout.
+
+## Generate images
+POST /v1/inferences  (Content-Type: application/json)
+Required fields: prompt (string — describe the SUBJECT only, never write "pixel art"; styling comes from prompt_style), prompt_style (string style id), width (int), height (int), num_images (int).
+Optional fields: seed (int, reproducible), input_image (base64 PNG string, NO "data:image/png;base64," prefix, RGB without transparency) + strength (float 0-1, default 0.75 — how much to change the input), reference_images (array of base64, RD Pro styles only, up to 9, guides style/content without redrawing), input_palette (base64, constrains output colors), remove_bg (bool, transparent output), tile_x / tile_y (bool, seamless tiling), frames_duration (int 4|6|8|10|12|16, animation styles), return_spritesheet (bool, animations: PNG spritesheet instead of GIF), upscale_output_factor (int, 1 = native pixel size), bypass_prompt_expansion (bool, skip automatic LLM prompt enrichment), include_downloadable_data (bool, extra structured assets e.g. item atlas JSON), check_cost (bool, FREE dry run: returns price, generates nothing, charges nothing), async (bool).
+The "negative" field exists but is a placeholder — current models ignore it. Do not rely on it.
+Size limits: the API validates 16x16 to 512x512, but each style enforces tighter limits (current styles top out at 384x384) — use the per-style limits in the catalog below or from the selector.
+
+### Example: minimal request
+POST /v1/inferences
+{"prompt": "A knight resting by a campfire in a forest clearing at night", "prompt_style": "rd_fast__default", "width": 128, "height": 128, "num_images": 1, "seed": 77}
+### Example: success response (sync; null fields omitted)
+{"created_at": "2026-07-08T15:04:05", "balance_cost": 0.019, "base64_images": ["iVBORw0KGgo..."], "model": "rd_fast", "remaining_balance": 100.75}
+base64_images entries are raw base64 PNG (or GIF for animation styles). Decode and write to disk. Add "upload_outputs": true to receive hosted URLs in "output_urls" instead.
+
+### Example: img2img
+{"prompt": "The same scene in deep winter, snow covered", "prompt_style": "rd_plus__default", "width": 128, "height": 128, "num_images": 1, "input_image": "<base64>", "strength": 0.8}
+### Example: RD Pro with reference images (character/style consistency)
+{"prompt": "The same goblin merchant, now sitting by a campfire counting gold coins", "prompt_style": "rd_pro__default", "width": 128, "height": 128, "num_images": 1, "reference_images": ["<base64 of the original character>"]}
+### Example: advanced animation (animate an uploaded start frame; input_image REQUIRED; output is a GIF)
+{"prompt": "Confident, steady steps", "prompt_style": "rd_advanced_animation__walking", "width": 64, "height": 64, "num_images": 1, "frames_duration": 8, "input_image": "<base64 start frame, match width/height>"}
+### Example: advanced tileset (two textures)
+{"prompt": "grey stones with gravel", "extra_prompt": "lush green grass", "prompt_style": "rd_tile__tileset_advanced", "width": 16, "height": 16, "num_images": 1}
+### Example: free cost check (never charges)
+{"prompt": "test", "prompt_style": "rd_pro__default", "width": 256, "height": 256, "num_images": 2, "check_cost": true}
+-> {"balance_cost": 0.36, "model": "check_cost", "base64_images": [], "remaining_balance": 100.75}
+
+## Async jobs (recommended for animations / bulk)
+POST /v1/inferences with "async": true
+-> {"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v1/inferences/tasks/{task_id} for status."}
+Poll GET /v1/inferences/tasks/{task_id} (same X-RD-Token) every ~2s:
+-> {"status": "pending" | "running" | "succeeded" | "failed", "task_id": "...", "result": <same shape as sync response, when succeeded>, "error": {"status_code": 400, "detail": "..."} when failed}
+
+## Style catalog (public styles)
+RD Pro (highest quality, supports reference_images, $0.18/image): rd_pro__default, rd_pro__painterly, rd_pro__fantasy, rd_pro__horror, rd_pro__scifi, rd_pro__simple, rd_pro__isometric, rd_pro__topdown, rd_pro__platformer, rd_pro__dungeon_map, rd_pro__spritesheet, rd_pro__fps_weapon, rd_pro__typography — all (64-256px, batch<=4, refs<=9); rd_pro__hexagonal_tiles, rd_pro__ui_panel, rd_pro__inventory_items (256x256 only, batch<=4, refs<=9); rd_pro__edit, rd_pro__pixelate (64-256px, batch<=4, refs<=9, INPUT_IMAGE_REQUIRED).
+RD Plus (quality all-rounder): rd_plus__default, rd_plus__retro, rd_plus__watercolor, rd_plus__textured, rd_plus__cartoon, rd_plus__ui_element, rd_plus__item_sheet, rd_plus__character_turnaround, rd_plus__environment, rd_plus__isometric, rd_plus__isometric_asset, rd_plus__topdown_map, rd_plus__topdown_asset — all (64-384px, batch<=16); rd_plus__classic, rd_plus__skill_icon (32-192px); rd_plus__low_res, rd_plus__mc_item, rd_plus__mc_texture (16-128px); rd_plus__topdown_item (16-96px).
+RD Fast (fastest/cheapest): rd_fast__default (batch<=15), rd_fast__simple, rd_fast__detailed, rd_fast__retro, rd_fast__game_asset, rd_fast__portrait, rd_fast__texture, rd_fast__ui, rd_fast__item_sheet, rd_fast__character_turnaround, rd_fast__no_style, rd_fast__1_bit — all (64-384px, batch<=16); rd_fast__low_res, rd_fast__mc_item, rd_fast__mc_texture (16-128px). (The selector may return internal ids like "default:rd_flux" for these — both forms are accepted.)
+RD Mini (aliases routing to Plus/Fast low-res; response "model" shows the routed model): rd_mini__classic, rd_mini__skill_icon (32-192px); rd_mini__low_res, rd_mini__mc_item, rd_mini__mc_texture, rd_mini__fast_low_res, rd_mini__fast_mc_item, rd_mini__fast_mc_texture (16-128px); rd_mini__topdown_item (16-96px) — all batch<=16.
+Advanced animations (INPUT_IMAGE_REQUIRED, 32-256px matching your start frame, batch=1, frames_duration supported, GIF output): rd_advanced_animation__walking, __idle, __jump, __crouch, __attack, __destroy, __custom_action (describe any motion), __subtle_motion (ambient scene motion).
+Animations (prompt-driven, GIF output, batch=1 unless noted): rd_animation__four_angle_walking (48x48), rd_animation__four_angle_walking_idle (48x48), rd_animation__small_sprites (32x32, batch<=16), rd_animation__vfx (24-96px square), rd_animation__any_animation (64x64, refs<=9), rd_animation__big_animation (128x128, refs<=9), rd_animation__8_dir_rotation (80x80, refs<=5), rd_animation__battle_sprites (64x64).
+Tilesets: rd_tile__tileset (16-32px tile, batch=1), rd_tile__tileset_advanced (16-32px, batch=1, extra_prompt + extra_input_image), rd_tile__single_tile (16-64px), rd_tile__tile_variation (16-128px, INPUT_IMAGE_REQUIRED), rd_tile__tile_object (16-96px), rd_tile__scene_object (64-384px).
+User styles: user__<name>_<id> (created via /v1/styles or the My Styles page).
+Live discovery: GET /v1/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|rd_mini, ?tab=tab:image|tab:animation|tab:advanced-animation|tab:tileset). Each item: {"prompt_style", "name", "description", "required_model", "required_tab", "min_width", "max_width", "min_height", "max_height", "max_number_of_images", "require_input_image", "supports_reference_images", "example_prompt"}.
+
+## Costs (USD per request; verify with check_cost — it is free)
+rd_fast: max(0.015, (w*h+100000)/6000000) * num_images; rd_plus: max(0.025, (w*h+50000)/2000000) * num_images; low-res styles (mc_*, low_res, classic, skill_icon, topdown_item, tile variants): max(0.02, (w*h+13700)/600000) * num_images; rd_pro: 0.18 * num_images; rd_advanced_animation: 0.14 (custom_action and subtle_motion: 0.25); rd_animation: 0.07 (any_animation and 8_dir_rotation: 0.25); rd_tile__tileset(_advanced): 0.10.
+GET /v1/inferences/credits -> {"credits": 0, "balance": 100.75}. Balance is prepaid USD; charged before generation, auto-refunded on failure. Invalid token on this endpoint -> 403.
+
+## Canvas edit tools (post-processing; canonical fields use snake_case)
+GET /v1/edit/tools -> enabled tool list with api_fields, costs, defaults, and limits (authoritative; exposed tools may vary).
+POST /v1/edit/tools/{tool_id} -> run a tool. POST /v1/edit/tools/{tool_id}/estimate -> validate and estimate cost/time without running.
+Every request requires input_image (raw base64 or data URI). Tools: image_edit ($0.18; prompt required, seed?; <=256px), inpainting ($0.18; mask_image + prompt required, seed?, soft_inpaint?), outpainting ($0.18; expand_left/right/top/bottom with at least one positive, prompt?, seed?, soft_inpaint?), seam_tiling ($0.18; tile_x?, tile_y?, seam_width?, repair_window_size?, seed?), background_remover ($0.01; transparency_threshold?, force_solid_pixels?), color_style_transfer ($0.01; extra_input_image required), color_reducer (free; color_count?, dither_mode?, dither_strength?), palette_converter (free; input_palette required, dither_mode?, dither_strength?), k_centroid_downscale (free; width + height required), pixel_correction (free; no extra fields), rotate (free; rotation_degrees?). Some free tools require a minimum account value; inspect requires_minimum_balance.
+### Example
+POST /v1/edit/tools/background_remover  {"input_image": "<base64>"}
+-> {"tool_id": "background_remover", "base64_images": ["<base64>"], "output_urls": [], "balance_cost": 0.01, "charged": true, "remaining_balance": 100.74}
+
+## Custom styles (RD Pro reference-image template)
+POST /v1/styles  {"name": "My Style" (required), "description"?, "style_icon"? (e.g. "sparkles"), "reference_images"? (max 1 via API), "reference_caption"?, "apply_prompt_fixer"? (default true), "llm_instructions"?, "user_prompt_template"? (must contain the token {prompt}), "force_palette"? (bool), "force_bg_removal"? (bool), "min_width"? + "min_height"? (both together, 64-256)}
+-> 201 {"id": "...", "prompt_style": "user__my_style_1a2b3c4d", "name": "...", "type": "user"} — use prompt_style in /v1/inferences.
+PATCH /v1/styles/{style_id} (same fields, all optional). DELETE /v1/styles/{style_id} -> {"deleted": true}. Non-template fields are rejected.
+
+## Status & errors
+GET /v1/status (no auth) -> {"status": {"rd_fast": "ok", "rd_pro": "ok", "rd_plus": "ok", "animations": "ok", "background_removal": "ok"}, "updated_at": ...}. Check before bulk runs.
+Error shapes (handle both): {"detail": {"code": "inference_failed", "message": "Unable to run inference."}} and {"detail": [{"msg": "Not enough balance."}]}.
+Status codes: 400 invalid input (size out of range, bad image) or insufficient balance; 401 missing/invalid X-RD-Token; 403 token lacks access (also used by /credits); 404 task/style not found or not owned by this key; 410 deprecated endpoint; 422 body failed validation; 429 rate limited (respect Retry-After); 500 temporary — retry with backoff, charges are refunded.
+
+## Agent best practices
+1) Pick a prompt_style from the catalog above (or GET /v1/styles/selector for live limits). 2) POST with "check_cost": true to verify price — free. 3) Generate. 4) Use "async": true and poll for animations or bulk jobs. 5) Reuse the same seed to iterate on a composition; change only the prompt. 6) Base64 images are raw strings — never include a data: URI prefix. 7) Prompts describe the subject; the style handles pixel-art rendering. 8) For a consistent character across images, generate once with RD Pro, then pass that output as reference_images in follow-up requests.

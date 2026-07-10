@@ -1,8 +1,13 @@
-"""Run one canvas edit tool through the public RetroDiffusion API.
+"""Discover, estimate, and run one canvas edit tool.
 
 Set RD_API_KEY and optionally RD_EDIT_TOOL. The default tool is the free
 pixel_correction operation. Some tools also need MASK_IMAGE_PATH,
 PALETTE_IMAGE_PATH, or REFERENCE_IMAGE_PATH.
+
+Examples:
+    python 09_edit_tools.py
+    RD_EDIT_TOOL=rotate python 09_edit_tools.py
+    RD_EDIT_TOOL=image_edit python 09_edit_tools.py
 """
 
 import base64
@@ -12,8 +17,9 @@ from typing import Any
 
 import requests
 
+from rd_client import API_BASE_URL, get_api_key
 
-API_BASE_URL = "https://api.retrodiffusion.ai/v1"
+
 SUPPORTED_TOOL_IDS = (
     "image_edit",
     "inpainting",
@@ -68,12 +74,8 @@ def request_edit_tool(
     return response.json()
 
 
-def list_edit_tools(api_key: str) -> list[dict[str, Any]]:
-    response = requests.get(
-        f"{API_BASE_URL}/edit/tools",
-        headers={"X-RD-Token": api_key},
-        timeout=30,
-    )
+def list_edit_tools() -> list[dict[str, Any]]:
+    response = requests.get(f"{API_BASE_URL}/edit/tools", timeout=30)
     response.raise_for_status()
     return response.json()
 
@@ -83,7 +85,8 @@ def build_payload(tool_id: str) -> dict[str, Any]:
         available = ", ".join(SUPPORTED_TOOL_IDS)
         raise ValueError(f"Unknown RD_EDIT_TOOL {tool_id!r}. Choose one of: {available}")
 
-    input_image = image_to_base64(os.getenv("INPUT_IMAGE_PATH", "input.png"))
+    default_input = Path(__file__).resolve().parent.parent / "input.png"
+    input_image = image_to_base64(os.getenv("INPUT_IMAGE_PATH", str(default_input)))
     common = {"input_image": input_image}
 
     if tool_id == "inpainting":
@@ -103,17 +106,11 @@ def build_payload(tool_id: str) -> dict[str, Any]:
     if tool_id == "color_style_transfer":
         return {
             **common,
-            "extra_input_image": image_to_base64(
-                os.environ["REFERENCE_IMAGE_PATH"]
-            ),
+            "extra_input_image": image_to_base64(os.environ["REFERENCE_IMAGE_PATH"]),
         }
 
     payloads: dict[str, dict[str, Any]] = {
-        "image_edit": {
-            **common,
-            "prompt": "add a tiny wizard hat",
-            "seed": 123,
-        },
+        "image_edit": {**common, "prompt": "add a tiny wizard hat", "seed": 123},
         "outpainting": {
             **common,
             "expand_right": 32,
@@ -133,11 +130,7 @@ def build_payload(tool_id: str) -> dict[str, Any]:
             "dither_strength": 50,
         },
         "pixel_correction": common,
-        "k_centroid_downscale": {
-            **common,
-            "width": 64,
-            "height": 64,
-        },
+        "k_centroid_downscale": {**common, "width": 64, "height": 64},
         "seam_tiling": {
             **common,
             "tile_x": True,
@@ -146,21 +139,17 @@ def build_payload(tool_id: str) -> dict[str, Any]:
             "repair_window_size": 256,
             "seed": 123,
         },
-        "rotate": {
-            **common,
-            "rotation_degrees": 45,
-        },
+        "rotate": {**common, "rotation_degrees": 45},
     }
-
     return payloads[tool_id]
 
 
 def main() -> None:
-    api_key = os.environ["RD_API_KEY"]
+    api_key = get_api_key()
     tool_id = os.getenv("RD_EDIT_TOOL", "pixel_correction")
     payload = build_payload(tool_id)
 
-    catalog = {tool["id"]: tool for tool in list_edit_tools(api_key)}
+    catalog = {tool["id"]: tool for tool in list_edit_tools()}
     if tool_id not in catalog:
         raise RuntimeError(f"{tool_id} is not enabled in the public API catalog")
 
