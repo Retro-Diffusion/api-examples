@@ -1,13 +1,16 @@
 """Discover, estimate, and run one canvas edit tool.
 
 Set RD_API_KEY and optionally RD_EDIT_TOOL. The default tool is the free
-pixel_correction operation. Some tools also need MASK_IMAGE_PATH,
+pixel_correction operation. Inpainting needs MASK_IMAGE_PATH pointing to a
+same-size RGBA or grayscale mask. Some tools also need
 PALETTE_IMAGE_PATH, or REFERENCE_IMAGE_PATH.
 
 Examples:
     python 09_edit_tools.py
     RD_EDIT_TOOL=rotate python 09_edit_tools.py
     RD_EDIT_TOOL=image_edit python 09_edit_tools.py
+    RD_EDIT_TOOL=inpainting INPUT_IMAGE_PATH=../resources/single_tile.png \
+        MASK_IMAGE_PATH=../resources/inpainting-mask-rgba.png python 09_edit_tools.py
 """
 
 import base64
@@ -16,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from PIL import Image
 
 from rd_client import API_BASE_URL, get_api_key
 
@@ -37,6 +41,35 @@ SUPPORTED_TOOL_IDS = (
 
 def image_to_base64(path: str) -> str:
     return base64.b64encode(Path(path).read_bytes()).decode("utf-8")
+
+
+def validate_inpainting_mask(input_path: str, mask_path: str) -> None:
+    """Validate the public inpainting mask contract before spending balance."""
+    with Image.open(input_path) as input_image:
+        input_size = input_image.size
+
+    with Image.open(mask_path) as mask_image:
+        if mask_image.size != input_size:
+            raise ValueError(
+                "MASK_IMAGE_PATH must have the same pixel dimensions as "
+                f"INPUT_IMAGE_PATH: got {mask_image.size}, expected {input_size}"
+            )
+
+        if mask_image.mode == "L":
+            selected = mask_image.point(lambda value: 255 if value > 12 else 0)
+        elif "A" in mask_image.getbands():
+            selected = mask_image.getchannel("A").point(
+                lambda value: 255 if value > 12 else 0
+            )
+        else:
+            raise ValueError(
+                "MASK_IMAGE_PATH must be an RGBA/LA image with transparent "
+                "protected pixels or an L-mode grayscale image with black "
+                "protected pixels. A fully opaque RGB image selects everything."
+            )
+
+        if selected.getbbox() is None:
+            raise ValueError("MASK_IMAGE_PATH does not select any pixels to replace")
 
 
 def save_base64_image(image_base64: str, path_stem: str) -> Path:
@@ -86,13 +119,16 @@ def build_payload(tool_id: str) -> dict[str, Any]:
         raise ValueError(f"Unknown RD_EDIT_TOOL {tool_id!r}. Choose one of: {available}")
 
     default_input = Path(__file__).resolve().parent.parent / "input.png"
-    input_image = image_to_base64(os.getenv("INPUT_IMAGE_PATH", str(default_input)))
+    input_path = os.getenv("INPUT_IMAGE_PATH", str(default_input))
+    input_image = image_to_base64(input_path)
     common = {"input_image": input_image}
 
     if tool_id == "inpainting":
+        mask_path = os.environ["MASK_IMAGE_PATH"]
+        validate_inpainting_mask(input_path, mask_path)
         return {
             **common,
-            "mask_image": image_to_base64(os.environ["MASK_IMAGE_PATH"]),
+            "mask_image": image_to_base64(mask_path),
             "prompt": "replace the masked area with a red gem",
             "seed": 123,
             "soft_inpaint": False,

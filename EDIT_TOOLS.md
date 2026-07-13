@@ -128,6 +128,59 @@ Supported `dither_mode` values are `none`, `bayer_2x2`, `bayer_4x4`, and
 Outpainting requires at least one positive expansion value. Seam tiling
 requires at least one of `tile_x` or `tile_y` to be `true`.
 
+## Inpainting mask format
+
+For `inpainting`, `mask_image` must be the same pixel dimensions as
+`input_image`. The recommended format is an RGBA PNG:
+
+- Alpha `0` means protect this pixel and copy it unchanged to the result.
+- Alpha values greater than `12` mean replace this pixel using the prompt.
+- The mask's visible RGB color does not matter; the alpha channel controls the
+  editable area.
+
+An `L`-mode grayscale PNG is also accepted. Values from `0` through `12` are
+protected, and values greater than `12` are replaced.
+
+Do not use an ordinary fully opaque RGB image as the mask. Converting it to
+RGBA gives every pixel alpha `255`, which selects the entire image. Export an
+RGBA image with transparent protected pixels, or export a true grayscale
+image with black protected pixels.
+
+This example creates a transparent RGBA mask with one opaque editable region:
+
+```python
+from PIL import Image, ImageDraw
+
+with Image.open("input.png") as source:
+    mask = Image.new("RGBA", source.size, (0, 0, 0, 0))
+
+# Replace only this rectangle. The red color is for human visibility; alpha
+# 255 is what marks these pixels as editable.
+box = (mask.width // 4, mask.height // 4, mask.width * 3 // 4, mask.height * 3 // 4)
+ImageDraw.Draw(mask).rectangle(box, fill=(255, 0, 0, 255))
+mask.save("mask.png")
+```
+
+A ready-to-run RGBA example mask is included at
+`resources/inpainting-mask-rgba.png`; it matches
+`resources/single_tile.png`.
+
+The inpainting request then sends both files as base64:
+
+```json
+{
+  "input_image": "<base64 input.png>",
+  "mask_image": "<base64 mask.png>",
+  "prompt": "replace the masked area with a red gem",
+  "seed": 123,
+  "soft_inpaint": false
+}
+```
+
+With `soft_inpaint` set to `false`, pixels outside the selected mask are
+restored exactly. Set it to `true` only when the edit may blend through a
+bounded transition immediately around the mask edge.
+
 Animated GIF input is supported by `color_reducer`, `palette_converter`,
 `color_style_transfer`, and `k_centroid_downscale`. Other tools accept static
 images only.
@@ -139,11 +192,16 @@ the free `pixel_correction` tool and estimates the cost before executing:
 ```bash
 RD_API_KEY=YOUR_API_KEY python example-scripts/09_edit_tools.py
 RD_API_KEY=YOUR_API_KEY RD_EDIT_TOOL=rotate python example-scripts/09_edit_tools.py
+RD_API_KEY=YOUR_API_KEY RD_EDIT_TOOL=inpainting \
+  INPUT_IMAGE_PATH=resources/single_tile.png \
+  MASK_IMAGE_PATH=resources/inpainting-mask-rgba.png \
+  python example-scripts/09_edit_tools.py
 ```
 
 Set `INPUT_IMAGE_PATH` to use an image other than `input.png`. Inpainting also
-requires `MASK_IMAGE_PATH`; palette conversion requires `PALETTE_IMAGE_PATH`;
-and color style transfer requires `REFERENCE_IMAGE_PATH`.
+requires `MASK_IMAGE_PATH`; the script verifies its dimensions, mode, and
+selected pixels before sending it. Palette conversion requires
+`PALETTE_IMAGE_PATH`; color style transfer requires `REFERENCE_IMAGE_PATH`.
 
 ## Errors and retries
 

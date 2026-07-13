@@ -385,6 +385,12 @@ response fields use `snake_case`, matching `/v1/inferences`. See the
 | `pixel_correction` | Free | `input_image` |
 | `rotate` | Free | `input_image`, `rotation_degrees?` |
 
+For inpainting, use a same-size RGBA PNG mask with transparent protected
+pixels and opaque editable pixels. A true grayscale mask also works: black is
+protected and values greater than `12` are editable. A fully opaque RGB/RGBA
+mask selects the entire image. See [the mask format guide](EDIT_TOOLS.md#inpainting-mask-format)
+for a complete example.
+
 \* Some free tools require a minimum account value; check `requires_minimum_balance` in
 `GET /v1/edit/tools`. Paid tools charge before running and refund on failure. Responses include
 `base64_images`, `output_urls`, `balance_cost`, `charged`, and `remaining_balance`.
