@@ -98,6 +98,40 @@ def get_balance(api_key: str | None = None) -> float:
     return float(data["balance"])
 
 
+def fix_pixel_art(
+    input_image: str,
+    *,
+    engine: str = "standard",
+    width: int | None = None,
+    height: int | None = None,
+    api_key: str | None = None,
+) -> dict[str, Any]:
+    """Reconstruct an image at its native pixel grid and return one base64 PNG."""
+    if engine not in {"standard", "neural"}:
+        raise ValueError("engine must be 'standard' or 'neural'")
+    if engine == "standard" and (width is not None or height is not None):
+        raise ValueError("width and height are accepted only by the neural endpoint")
+    for name, value in (("width", width), ("height", height)):
+        if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value <= 0):
+            raise ValueError(f"{name} must be a positive integer when provided")
+
+    payload: dict[str, Any] = {"input_image": input_image}
+    if width is not None:
+        payload["width"] = width
+    if height is not None:
+        payload["height"] = height
+
+    response = requests.post(
+        f"{API_BASE_URL}/pixel-fixer/{engine}",
+        headers=_headers(api_key or get_api_key()),
+        json=payload,
+        timeout=120,
+    )
+    if not response.ok:
+        raise RuntimeError(f"HTTP {response.status_code}: {response.text}")
+    return response.json()
+
+
 def image_to_base64(path: str | Path) -> str:
     """Read an image file and return a raw base64 string (no data: URI prefix)."""
     return base64.b64encode(Path(path).read_bytes()).decode("utf-8")

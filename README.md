@@ -50,12 +50,13 @@ python example-scripts/01_generate_image.py
 | [`07_async_batch.py`](example-scripts/07_async_batch.py) | Fan out many generations with async jobs |
 | [`08_list_styles.py`](example-scripts/08_list_styles.py) | Discover every style your account can use |
 | [`09_edit_tools.py`](example-scripts/09_edit_tools.py) | Discover, estimate, and run any canvas edit tool |
+| [`10_pixel_fixer.py`](example-scripts/10_pixel_fixer.py) | Restore an enlarged or softened image to its native pixel grid |
 | [`generate_image.mjs`](example-scripts/generate_image.mjs) | The basic request from Node.js (no dependencies) |
 
 **Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
 it's a complete, verified plain-text summary of this API. Agents with MCP support can instead
 connect to the hosted MCP server at `https://mcp.retrodiffusion.ai/mcp` (header
-`Authorization: Bearer YOUR_API_KEY`) — 17 typed tools covering generation, free cost estimates,
+`Authorization: Bearer YOUR_API_KEY`) — 18 typed tools covering generation, Pixel Fixer, free cost estimates,
 async jobs for animations and batches, the canvas edit tools, custom styles, and service health.
 Per-client setup guides live in the
 [retro-diffusion-mcp repo](https://github.com/Retro-Diffusion/retro-diffusion-mcp).
@@ -387,6 +388,27 @@ response fields use `snake_case`, matching `/v1/inferences`. See the
 \* Some free tools require a minimum account value; check `requires_minimum_balance` in
 `GET /v1/edit/tools`. Paid tools charge before running and refund on failure. Responses include
 `base64_images`, `output_urls`, `balance_cost`, `charged`, and `remaining_balance`.
+
+## Pixel Fixer
+
+Pixel Fixer restores enlarged, softened, AI-rendered, or compressed pixel art to its detected
+native grid. It is free and returns only one raw base64 PNG:
+
+```python
+from rd_client import fix_pixel_art, image_to_base64, save_images
+
+result = fix_pixel_art(image_to_base64("soft-sprite.png"), engine="standard")
+save_images(result, "fixed-sprite")
+```
+
+- `POST /v1/pixel-fixer/standard` — native Rust detector and reconstructor.
+- `POST /v1/pixel-fixer/neural` — neural reconstruction with optional positive target `width` and
+  `height` values.
+- Both accept PNG/JPEG as raw base64 or a data URI, cost nothing, and share a per-token limit of
+  10 requests per minute.
+- Requests are capped at 900,000 serialized bytes
+
+See [`PIXEL_FIXER.md`](PIXEL_FIXER.md) for the exact contract, limits, errors, and runnable example.
 
 ## User styles
 
