@@ -99,8 +99,9 @@ def get_balance(api_key: str | None = None) -> float:
 
 
 def fix_pixel_art(
-    input_image: str,
+    input_image: str | None = None,
     *,
+    image_url: str | None = None,
     engine: str = "standard",
     width: int | None = None,
     height: int | None = None,
@@ -111,11 +112,17 @@ def fix_pixel_art(
         raise ValueError("engine must be 'standard' or 'neural'")
     if engine == "standard" and (width is not None or height is not None):
         raise ValueError("width and height are accepted only by the neural endpoint")
+    if (input_image is None) == (image_url is None):
+        raise ValueError("provide exactly one of input_image or image_url")
     for name, value in (("width", width), ("height", height)):
         if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value <= 0):
             raise ValueError(f"{name} must be a positive integer when provided")
 
-    payload: dict[str, Any] = {"input_image": input_image}
+    payload: dict[str, Any] = (
+        {"input_image": input_image}
+        if input_image is not None
+        else {"image_url": image_url}
+    )
     if width is not None:
         payload["width"] = width
     if height is not None:

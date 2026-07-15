@@ -3,6 +3,7 @@
 Usage:
     export RD_API_KEY="rdpk-..."
     python 10_pixel_fixer.py path/to/image.png
+    python 10_pixel_fixer.py --image-url https://cdn.example.com/soft-sprite.png
     python 10_pixel_fixer.py path/to/image.jpg --engine neural --width 32 --height 32
 
 The neural endpoint accepts optional target width and height values.
@@ -16,7 +17,9 @@ from rd_client import fix_pixel_art, image_to_base64, save_images
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("image", type=Path, help="PNG or JPEG image to fix")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("image", type=Path, nargs="?", help="PNG or JPEG image to fix")
+    source.add_argument("--image-url", help="Public HTTPS PNG or JPEG URL to fix")
     parser.add_argument(
         "--engine",
         choices=("standard", "neural"),
@@ -35,7 +38,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     result = fix_pixel_art(
-        image_to_base64(args.image),
+        input_image=image_to_base64(args.image) if args.image is not None else None,
+        image_url=args.image_url,
         engine=args.engine,
         width=args.width,
         height=args.height,

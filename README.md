@@ -403,16 +403,17 @@ native grid. It is free and returns only one raw base64 PNG:
 ```python
 from rd_client import fix_pixel_art, image_to_base64, save_images
 
-result = fix_pixel_art(image_to_base64("soft-sprite.png"), engine="standard")
+result = fix_pixel_art(input_image=image_to_base64("soft-sprite.png"), engine="standard")
 save_images(result, "fixed-sprite")
 ```
 
 - `POST /v1/pixel-fixer/standard` — native Rust detector and reconstructor.
 - `POST /v1/pixel-fixer/neural` — neural reconstruction with optional positive target `width` and
   `height` values.
-- Both accept PNG/JPEG as raw base64 or a data URI, cost nothing, and share a per-token limit of
-  10 requests per minute.
-- Requests are capped at 900,000 serialized bytes
+- Both accept exactly one PNG/JPEG source as raw base64, a data URI, or a public HTTPS
+  `image_url`, cost nothing, and share a per-token limit of 10 requests per minute.
+- Decoded sources may contain up to 16 megapixels. Base64 requests are capped at 900,000
+  serialized bytes; URL downloads are capped at 20 MB and bypass that request-body limit.
 
 See [`PIXEL_FIXER.md`](PIXEL_FIXER.md) for the exact contract, limits, errors, and runnable example.
 

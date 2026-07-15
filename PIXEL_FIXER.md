@@ -14,6 +14,15 @@ Content-Type: application/json
 {"input_image":"<raw base64 PNG or JPEG, or a data URI>"}
 ```
 
+For source files that would exceed the ALB request limit after base64 encoding,
+send a public HTTPS URL instead:
+
+```json
+{"image_url":"https://cdn.example.com/soft-sprite.png"}
+```
+
+Provide exactly one of `input_image` or `image_url`.
+
 The response contains exactly one raw base64 PNG and no generation metadata:
 
 ```json
@@ -32,8 +41,11 @@ POST https://api.retrodiffusion.ai/v1/pixel-fixer/neural
 
 ## Limits
 
-- Input image: PNG or JPEG, at least 16×16, no more than 4 megapixels.
-- Request JSON: at most 900,000 bytes, including base64 expansion and JSON syntax.
+- Decoded input image: PNG or JPEG, at least 16×16, no more than 16 megapixels.
+- Base64 request JSON: at most 900,000 bytes, including base64 expansion and JSON syntax.
+- URL input: public HTTPS only, at most three redirects and a 20 MB download. Private-network
+  destinations are rejected. URL input bypasses the request-body limit, not the decoded-image or
+  response limits.
 - Successful response JSON: at most 850,000 bytes. Larger reconstructed PNGs return HTTP 413.
 - Rate limit: 10 requests per minute per API token, shared by standard and neural.
 - Unknown request fields are rejected.
