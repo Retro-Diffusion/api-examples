@@ -11,7 +11,7 @@ POST https://api.retrodiffusion.ai/v1/pixel-fixer/standard
 X-RD-Token: rdpk-YOUR-KEY
 Content-Type: application/json
 
-{"input_image":"<raw base64 PNG, JPEG, or WebP, or a data URI>"}
+{"input_image":"<raw base64 PNG or JPEG, or a data URI>"}
 ```
 
 For source files that would exceed the ALB request limit after base64 encoding,
@@ -41,7 +41,7 @@ POST https://api.retrodiffusion.ai/v1/pixel-fixer/neural
 
 ## Limits
 
-- Decoded input image: PNG, JPEG, or WebP, at least 16×16, no more than 16 megapixels.
+- Decoded input image: PNG or JPEG, at least 16×16, no more than 16 megapixels.
 - Base64 request JSON: at most 900,000 bytes, including base64 expansion and JSON syntax.
 - URL input: public HTTPS only, at most three redirects and a 20 MB download. Private-network
   destinations are rejected. URL input bypasses the request-body limit, not the decoded-image or
