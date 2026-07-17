@@ -65,7 +65,7 @@ POST /v1/edit/tools/background_remover  {"input_image": "<base64>"}
 -> {"tool_id": "background_remover", "base64_images": ["<base64>"], "output_urls": [], "balance_cost": 0.01, "charged": true, "remaining_balance": 100.74}
 
 ## Pixel Fixer (free native-grid reconstruction)
-POST /v1/pixel-fixer/standard {"input_image":"<raw base64 PNG/JPEG or data URI>"} or {"image_url":"<public HTTPS PNG/JPEG>"}
+POST /v1/pixel-fixer/standard {"input_image":"<raw base64 PNG/JPEG/WebP or data URI>"} or {"image_url":"<public HTTPS PNG/JPEG/WebP>"}
 POST /v1/pixel-fixer/neural (same image source plus "width"?:positive int,"height"?:positive int)
 Provide exactly one of input_image or image_url. Both return exactly {"base64_images":["<raw base64 PNG>"]}, charge nothing, and share a limit of 10 requests/minute per token. Standard uses native Rust grid detection. Neural uses neural reconstruction; optional width/height set its target size. Decoded images must be at least 16x16 and at most 16 megapixels. Serialized base64 request JSON is limited to 900000 bytes; successful response JSON is limited to 850000 bytes. Public HTTPS image_url downloads are limited to 20MB and bypass the ALB request-body limit, but not the decoded-image or response limits. Unknown fields are rejected. Pixel Fixer error codes: pixel_fixer_request_too_large (413), pixel_fixer_output_too_large (413), invalid_pixel_fixer_image (422), pixel_fixer_rate_limit_exceeded (429), pixel_fixer_failed (500).
 

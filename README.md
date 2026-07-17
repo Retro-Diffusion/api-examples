@@ -410,7 +410,7 @@ save_images(result, "fixed-sprite")
 - `POST /v1/pixel-fixer/standard` — native Rust detector and reconstructor.
 - `POST /v1/pixel-fixer/neural` — neural reconstruction with optional positive target `width` and
   `height` values.
-- Both accept exactly one PNG/JPEG source as raw base64, a data URI, or a public HTTPS
+- Both accept exactly one PNG/JPEG/WebP source as raw base64, a data URI, or a public HTTPS
   `image_url`, cost nothing, and share a per-token limit of 10 requests per minute.
 - Decoded sources may contain up to 16 megapixels. Base64 requests are capped at 900,000
   serialized bytes; URL downloads are capped at 20 MB and bypass that request-body limit.
