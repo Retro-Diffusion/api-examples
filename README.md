@@ -242,6 +242,23 @@ while True:
     break
 ```
 
+### Recovering after a lost submission response
+
+If the first response never reaches you (edge timeout, disconnect, crash), the job was still
+accepted and charged — re-submitting charges again. List your recent jobs and resume polling
+instead: `GET /v1/inferences/tasks?limit=20&status=running` returns your tasks newest first
+(`status` is optional: `pending` / `running` / `succeeded` / `failed`). See
+[`11_recover_async_tasks.py`](example-scripts/11_recover_async_tasks.py).
+
+```python
+tasks = requests.get(
+    "https://api.retrodiffusion.ai/v1/inferences/tasks",
+    headers=headers,
+    params={"limit": 5},
+).json()["tasks"]
+# -> [{"task_id": "8d24...", "status": "running", "created_at": ..., "result": null, ...}, ...]
+```
+
 ## Images in: img2img, references, and palettes
 
 All image inputs are **raw base64 with no `data:image/png;base64,` prefix**, RGB without

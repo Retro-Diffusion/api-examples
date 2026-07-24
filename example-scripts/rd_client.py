@@ -87,6 +87,33 @@ def check_cost(payload: dict[str, Any], api_key: str | None = None) -> float:
     return float(result["balance_cost"])
 
 
+def list_tasks(
+    limit: int = 20,
+    status: str | None = None,
+    api_key: str | None = None,
+) -> list[dict[str, Any]]:
+    """GET /v1/inferences/tasks — your most recent async jobs, newest first.
+
+    Recovery path: if a submission response was lost (timeout, disconnect)
+    before the task_id arrived, the job was still accepted and charged. Find
+    it here instead of re-submitting and being charged twice, then keep
+    polling it via GET /v1/inferences/tasks/{task_id}.
+    """
+    api_key = api_key or get_api_key()
+    params: dict[str, Any] = {"limit": max(1, min(limit, 100))}
+    if status:
+        params["status"] = status
+    data = requests.get(
+        f"{API_BASE_URL}/inferences/tasks",
+        headers=_headers(api_key),
+        params=params,
+        timeout=30,
+    )
+    if not data.ok:
+        raise RuntimeError(f"HTTP {data.status_code}: {data.text}")
+    return data.json()["tasks"]
+
+
 def get_balance(api_key: str | None = None) -> float:
     """Return the account's current USD balance."""
     api_key = api_key or get_api_key()
