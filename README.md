@@ -23,7 +23,10 @@ Generate pixel art — images, animations, and tilesets — over a simple HTTP A
 field, an interactive style explorer, live pricing, and MCP setup. This repo holds runnable
 examples and a machine-readable summary; the hosted page is the source of truth.
 
-- **Base URL:** `https://api.retrodiffusion.ai/v1`
+- **Existing-compatible base URL:** `https://api.retrodiffusion.ai/v1`
+- **Opt-in v2 base URL:** `https://api.retrodiffusion.ai/v2` — see
+  [`V2_MIGRATION.md`](V2_MIGRATION.md) and the generated
+  [`contracts/`](contracts) artifacts.
 - **Auth:** header `X-RD-Token: YOUR_API_KEY` on every request (keys start with `rdpk-`)
 - **Create a key:** https://www.retrodiffusion.ai/app/devtools (max 5 per account)
 - Usage spends your account's prepaid USD balance; charges are refunded automatically if a generation fails.
@@ -35,6 +38,7 @@ and run any of them:
 
 ```bash
 export RD_API_KEY="rdpk-..."          # macOS / Linux  (setx on Windows)
+export RD_API_VERSION="v1"            # default; select v2 only after its release
 pip install -r example-scripts/requirements.txt
 python example-scripts/01_generate_image.py
 ```
@@ -460,22 +464,36 @@ removes it.
 
 ## Errors
 
-Two shapes; handle both:
+V1 remains unchanged and may return string, list, or structured detail:
 
 ```json
 {"detail": {"code": "inference_failed", "message": "Unable to run inference."}}
 {"detail": [{"msg": "Not enough balance."}]}
+{"detail": "Not Found"}
 ```
+
+V2 always returns:
+
+```json
+{"error": {"code": "inference_failed", "message": "Unable to run inference.", "request_id": "..."}}
+```
+
+Validation may add safe `details.issues`. Preserve the matching
+`X-Request-ID` and `Retry-After`; branch on `code`, never `message`. The Python
+and JavaScript examples parse both versions. They never retry a paid failure
+across versions.
 
 | Status | Meaning |
 | --- | --- |
-| `400` | Invalid input (size out of range, bad image) or insufficient balance. |
+| `400` | V1 invalid input or insufficient balance; v2 semantic invalid input. |
 | `401` | Missing or invalid `X-RD-Token`. |
-| `403` | Valid token without access to the resource (also used by the credits endpoint). |
+| `402` | V2 account cannot fund the request. |
+| `403` | Valid token without permission. V1 retains legacy credits behavior. |
 | `404` | Task or style not found (or not owned by this key). |
 | `422` | Request body failed validation (wrong types, missing required fields). |
 | `429` | Rate limited — respect the `Retry-After` header. |
-| `500` | Temporary server-side failure — safe to retry with backoff; charges are refunded. |
+| `500` | Unexpected internal failure. |
+| `502/503/504` | V2 provider failure, temporary unavailability, or timeout. Retry only when safe. |
 
 Check `GET /v1/status` (no key required) before large batches.
 

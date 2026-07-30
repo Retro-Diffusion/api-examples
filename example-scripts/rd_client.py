@@ -11,6 +11,7 @@ Set your API key once, in the environment:
 
 Create a key at https://www.retrodiffusion.ai/app/devtools
 """
+
 from __future__ import annotations
 
 import base64
@@ -21,7 +22,103 @@ from typing import Any
 
 import requests
 
-API_BASE_URL = "https://api.retrodiffusion.ai/v1"
+API_VERSION = os.environ.get("RD_API_VERSION", "v1").strip().lower()
+if API_VERSION not in {"v1", "v2"}:
+    raise RuntimeError("RD_API_VERSION must be either v1 or v2.")
+API_BASE_URL = f"https://api.retrodiffusion.ai/{API_VERSION}"
+
+
+class RetroDiffusionAPIError(RuntimeError):
+    """Safe typed representation of v1 and v2 API errors."""
+
+    def __init__(
+        self,
+        *,
+        status_code: int,
+        code: str | None,
+        message: str,
+        request_id: str | None,
+        details: dict[str, Any] | None,
+        retry_after: str | None,
+    ):
+        self.status_code = status_code
+        self.code = code
+        self.message = message
+        self.request_id = request_id
+        self.details = details
+        self.retry_after = retry_after
+        metadata = [str(status_code)]
+        if code:
+            metadata.append(f"code={code}")
+        if request_id:
+            metadata.append(f"request_id={request_id}")
+        if retry_after:
+            metadata.append(f"retry_after={retry_after}")
+        super().__init__(
+            f"RetroDiffusion API request failed ({' '.join(metadata)}): {message}"
+        )
+
+
+def parse_api_error(
+    *,
+    status_code: int,
+    body: Any,
+    headers: Any = None,
+) -> RetroDiffusionAPIError:
+    response_headers = {
+        str(key).lower(): str(value)
+        for key, value in (headers.items() if headers is not None else [])
+    }
+    code = None
+    message = None
+    request_id = None
+    details = None
+    if isinstance(body, dict):
+        source = body.get("error")
+        if not isinstance(source, dict):
+            detail = body.get("detail")
+            if isinstance(detail, dict):
+                source = detail
+            elif isinstance(detail, list):
+                source = next(
+                    (item for item in detail if isinstance(item, dict)),
+                    None,
+                )
+            elif isinstance(detail, str):
+                message = detail
+        if isinstance(source, dict):
+            code = source.get("code") if isinstance(source.get("code"), str) else None
+            if isinstance(source.get("message"), str):
+                message = source["message"]
+            elif isinstance(source.get("msg"), str):
+                message = source["msg"]
+            if source.get("request_id"):
+                request_id = str(source["request_id"])
+            if isinstance(source.get("details"), dict):
+                details = source["details"]
+
+    return RetroDiffusionAPIError(
+        status_code=status_code,
+        code=code,
+        message=message or "The API request failed.",
+        request_id=request_id or response_headers.get("x-request-id"),
+        details=details,
+        retry_after=response_headers.get("retry-after"),
+    )
+
+
+def raise_for_api_error(response: requests.Response) -> None:
+    if response.ok:
+        return
+    try:
+        body = response.json()
+    except ValueError:
+        body = None
+    raise parse_api_error(
+        status_code=response.status_code,
+        body=body,
+        headers=response.headers,
+    )
 
 
 def get_api_key() -> str:
@@ -51,12 +148,13 @@ def generate(payload: dict[str, Any], api_key: str | None = None) -> dict[str, A
         json=payload,
         timeout=300,
     )
-    if not response.ok:
-        raise RuntimeError(f"HTTP {response.status_code}: {response.text}")
+    raise_for_api_error(response)
     return response.json()
 
 
-def generate_async(payload: dict[str, Any], api_key: str | None = None, poll_seconds: float = 2.0) -> dict[str, Any]:
+def generate_async(
+    payload: dict[str, Any], api_key: str | None = None, poll_seconds: float = 2.0
+) -> dict[str, Any]:
     """Submit an async job and poll until it finishes, returning the final result.
 
     Use this for animations or large batches you'd rather not hold a connection
@@ -67,18 +165,26 @@ def generate_async(payload: dict[str, Any], api_key: str | None = None, poll_sec
     task_id = accepted["task_id"]
     print(f"  queued task {task_id}")
     while True:
-        task = requests.get(
+        task_response = requests.get(
             f"{API_BASE_URL}/inferences/tasks/{task_id}",
             headers=_headers(api_key),
             timeout=30,
-        ).json()
+        )
+        raise_for_api_error(task_response)
+        task = task_response.json()
         status = task["status"]
         if status in ("pending", "running"):
             time.sleep(poll_seconds)
             continue
         if status == "succeeded":
             return task["result"]
-        raise RuntimeError(f"task failed: {task.get('error')}")
+        task_error = task.get("error")
+        if isinstance(task_error, dict):
+            raise parse_api_error(
+                status_code=int(task_error.get("status_code", 500)),
+                body={"error": task_error},
+            )
+        raise RuntimeError("The inference task failed without a valid error.")
 
 
 def check_cost(payload: dict[str, Any], api_key: str | None = None) -> float:
@@ -109,19 +215,20 @@ def list_tasks(
         params=params,
         timeout=30,
     )
-    if not data.ok:
-        raise RuntimeError(f"HTTP {data.status_code}: {data.text}")
+    raise_for_api_error(data)
     return data.json()["tasks"]
 
 
 def get_balance(api_key: str | None = None) -> float:
     """Return the account's current USD balance."""
     api_key = api_key or get_api_key()
-    data = requests.get(
+    response = requests.get(
         f"{API_BASE_URL}/inferences/credits",
         headers=_headers(api_key),
         timeout=30,
-    ).json()
+    )
+    raise_for_api_error(response)
+    data = response.json()
     return float(data["balance"])
 
 
@@ -142,7 +249,9 @@ def fix_pixel_art(
     if (input_image is None) == (image_url is None):
         raise ValueError("provide exactly one of input_image or image_url")
     for name, value in (("width", width), ("height", height)):
-        if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value <= 0):
+        if value is not None and (
+            isinstance(value, bool) or not isinstance(value, int) or value <= 0
+        ):
             raise ValueError(f"{name} must be a positive integer when provided")
 
     payload: dict[str, Any] = (
@@ -161,8 +270,7 @@ def fix_pixel_art(
         json=payload,
         timeout=120,
     )
-    if not response.ok:
-        raise RuntimeError(f"HTTP {response.status_code}: {response.text}")
+    raise_for_api_error(response)
     return response.json()
 
 

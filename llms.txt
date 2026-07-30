@@ -1,5 +1,6 @@
 # Retro Diffusion API — context for AI agents (verified 2026-07)
-Pixel art image generation API. Base URL: https://api.retrodiffusion.ai/v1
+Pixel art image generation API. Existing-compatible base URL: https://api.retrodiffusion.ai/v1
+Opt-in v2 base URL: https://api.retrodiffusion.ai/v2. V1 remains supported and unchanged. V2 uses {"error":{"code":"...","message":"...","request_id":"..."}} for every JSON error. Preserve X-Request-ID and Retry-After, branch on code, and never retry a paid failure across versions.
 Full human-readable reference (with an interactive style explorer): https://www.retrodiffusion.ai/app/guide/api
 Runnable example scripts: https://github.com/Retro-Diffusion/api-examples/tree/main/example-scripts
 Auth: send header "X-RD-Token: <key>" on every request. Keys start with "rdpk-".
@@ -79,8 +80,9 @@ PATCH /v1/styles/{style_id} (same fields, all optional). DELETE /v1/styles/{styl
 
 ## Status & errors
 GET /v1/status (no auth) -> {"status": {"rd_fast": "ok", "rd_pro": "ok", "rd_plus": "ok", "animations": "ok", "background_removal": "ok"}, "updated_at": ...}. Check before bulk runs.
-Error shapes (handle both): {"detail": {"code": "inference_failed", "message": "Unable to run inference."}} and {"detail": [{"msg": "Not enough balance."}]}.
-Status codes: 400 invalid input (size out of range, bad image) or insufficient balance; 401 missing/invalid X-RD-Token; 403 token lacks access (also used by /credits); 404 task/style not found or not owned by this key; 410 deprecated endpoint; 422 body failed validation; 429 rate limited (respect Retry-After); 500 temporary — retry with backoff, charges are refunded.
+V1 error shapes: {"detail": {"code": "inference_failed", "message": "Unable to run inference."}}, {"detail": [{"msg": "Not enough balance."}]}, or {"detail":"Not Found"}.
+V2 error shape: {"error":{"code":"inference_failed","message":"Unable to run inference.","request_id":"..."}}. Validation may add safe details.issues.
+V2 status codes: 400 semantic input; 401 invalid credentials; 402 insufficient balance; 403 permission; 404 concealed/missing; 409 conflict; 413 size; 422 schema; 429 rate limit; 500 unexpected; 502 provider failure; 503 unavailable; 504 timeout.
 
 ## Agent best practices
 1) Pick a prompt_style from the catalog above (or GET /v1/styles/selector for live limits). 2) POST with "check_cost": true to verify price — free. 3) Generate. 4) Use "async": true and poll for animations or bulk jobs. 5) Reuse the same seed to iterate on a composition; change only the prompt. 6) Base64 images are raw strings — never include a data: URI prefix. 7) Prompts describe the subject; the style handles pixel-art rendering. 8) For a consistent character across images, generate once with RD Pro, then pass that output as reference_images in follow-up requests.

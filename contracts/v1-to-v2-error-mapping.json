@@ -1,0 +1,467 @@
+{
+  "excluded_v2_routes": [
+    "/external-credits/*",
+    "/inferences/legacy"
+  ],
+  "generic_status_mapping": {
+    "400": "bad_request",
+    "401": "invalid_token",
+    "402": "not_enough_balance",
+    "403": "forbidden",
+    "404": "not_found",
+    "405": "method_not_allowed",
+    "409": "conflict",
+    "410": "gone",
+    "413": "payload_too_large",
+    "422": "validation_error",
+    "429": "rate_limited",
+    "500": "internal_error",
+    "502": "upstream_failure",
+    "503": "service_unavailable",
+    "504": "request_timeout"
+  },
+  "known_auth_detail_mapping": {
+    "Invalid or expired API token": {
+      "code": "invalid_token",
+      "message": "Invalid or expired API token.",
+      "status_code": 401
+    },
+    "User not found or inactive": {
+      "code": "invalid_token",
+      "message": "Invalid or expired API token.",
+      "status_code": 401
+    }
+  },
+  "registered_code_mapping": {
+    "account_already_deactivated": {
+      "code": "account_already_deactivated",
+      "status_code": 409
+    },
+    "account_deactivation_failed": {
+      "code": "account_deactivation_failed",
+      "status_code": 500
+    },
+    "account_deletion_finalized": {
+      "code": "account_deletion_finalized",
+      "status_code": 409
+    },
+    "admin_debug_only": {
+      "code": "admin_debug_only",
+      "status_code": 403
+    },
+    "animated_input_not_supported": {
+      "code": "animated_input_not_supported",
+      "status_code": 400
+    },
+    "api_activity_not_found": {
+      "code": "api_activity_not_found",
+      "status_code": 404
+    },
+    "api_token_create_failed": {
+      "code": "api_token_create_failed",
+      "status_code": 500
+    },
+    "api_token_not_found": {
+      "code": "api_token_not_found",
+      "status_code": 404
+    },
+    "api_token_revoke_failed": {
+      "code": "api_token_revoke_failed",
+      "status_code": 500
+    },
+    "api_tokens_lookup_failed": {
+      "code": "api_tokens_lookup_failed",
+      "status_code": 500
+    },
+    "autoreload_unavailable": {
+      "code": "autoreload_unavailable",
+      "status_code": 409
+    },
+    "background_removal_failed": {
+      "code": "background_removal_failed",
+      "status_code": 502
+    },
+    "bad_request": {
+      "code": "bad_request",
+      "status_code": 400
+    },
+    "batch_gallery_folder_update_failed": {
+      "code": "batch_gallery_folder_update_failed",
+      "status_code": 500
+    },
+    "batch_inference_not_found": {
+      "code": "batch_inference_not_found",
+      "status_code": 404
+    },
+    "builtin_tool_contract_managed": {
+      "code": "builtin_tool_contract_managed",
+      "status_code": 400
+    },
+    "checkout_session_not_found": {
+      "code": "checkout_session_not_found",
+      "status_code": 404
+    },
+    "confirmation_required": {
+      "code": "confirmation_required",
+      "status_code": 400
+    },
+    "conflict": {
+      "code": "conflict",
+      "status_code": 409
+    },
+    "credits_lookup_failed": {
+      "code": "credits_lookup_failed",
+      "status_code": 500
+    },
+    "edit_failed": {
+      "code": "edit_failed",
+      "status_code": 500
+    },
+    "edit_tool_estimate_failed": {
+      "code": "edit_tool_estimate_failed",
+      "status_code": 500
+    },
+    "edit_tool_failed": {
+      "code": "edit_tool_failed",
+      "status_code": 500
+    },
+    "email_mismatch": {
+      "code": "email_mismatch",
+      "status_code": 403
+    },
+    "email_update_failed": {
+      "code": "email_update_failed",
+      "status_code": 500
+    },
+    "empty_gallery_upload": {
+      "code": "empty_gallery_upload",
+      "status_code": 400
+    },
+    "expansion_exceeds_context": {
+      "code": "expansion_exceeds_context",
+      "status_code": 400
+    },
+    "forbidden": {
+      "code": "forbidden",
+      "status_code": 403
+    },
+    "gallery_image_dimensions_too_large": {
+      "code": "gallery_image_dimensions_too_large",
+      "status_code": 400
+    },
+    "gallery_image_file_too_large": {
+      "code": "gallery_image_file_too_large",
+      "status_code": 413
+    },
+    "gallery_upload_failed": {
+      "code": "gallery_upload_failed",
+      "status_code": 500
+    },
+    "gone": {
+      "code": "gone",
+      "status_code": 410
+    },
+    "image_too_large": {
+      "code": "image_too_large",
+      "status_code": 413
+    },
+    "inference_failed": {
+      "code": "inference_failed",
+      "status_code": 502
+    },
+    "internal_error": {
+      "code": "internal_error",
+      "status_code": 500
+    },
+    "invalid_authentication": {
+      "code": "invalid_authentication",
+      "status_code": 401
+    },
+    "invalid_color_count": {
+      "code": "invalid_color_count",
+      "status_code": 400
+    },
+    "invalid_cursor": {
+      "code": "invalid_cursor",
+      "status_code": 400
+    },
+    "invalid_date_range": {
+      "code": "invalid_date_range",
+      "status_code": 422
+    },
+    "invalid_dimensions": {
+      "code": "invalid_dimensions",
+      "status_code": 400
+    },
+    "invalid_dither_mode": {
+      "code": "invalid_dither_mode",
+      "status_code": 400
+    },
+    "invalid_expansion": {
+      "code": "invalid_expansion",
+      "status_code": 400
+    },
+    "invalid_gallery_image": {
+      "code": "invalid_gallery_image",
+      "status_code": 400
+    },
+    "invalid_image": {
+      "code": "invalid_image",
+      "status_code": 400
+    },
+    "invalid_image_size": {
+      "code": "invalid_image_size",
+      "status_code": 400
+    },
+    "invalid_inference_update": {
+      "code": "invalid_inference_update",
+      "status_code": 400
+    },
+    "invalid_palette": {
+      "code": "invalid_palette",
+      "status_code": 400
+    },
+    "invalid_pixel_fixer_image": {
+      "code": "invalid_pixel_fixer_image",
+      "status_code": 422
+    },
+    "invalid_region_plan": {
+      "code": "invalid_region_plan",
+      "status_code": 400
+    },
+    "invalid_repair_window": {
+      "code": "invalid_repair_window",
+      "status_code": 400
+    },
+    "invalid_rotation": {
+      "code": "invalid_rotation",
+      "status_code": 400
+    },
+    "invalid_seam_width": {
+      "code": "invalid_seam_width",
+      "status_code": 400
+    },
+    "invalid_stats_date_range": {
+      "code": "invalid_stats_date_range",
+      "status_code": 400
+    },
+    "invalid_token": {
+      "code": "invalid_token",
+      "status_code": 401
+    },
+    "invalid_tool_function": {
+      "code": "invalid_tool_function",
+      "status_code": 400
+    },
+    "invalid_tool_pipeline": {
+      "code": "invalid_tool_pipeline",
+      "status_code": 400
+    },
+    "invoice_has_no_balance": {
+      "code": "invoice_has_no_balance",
+      "status_code": 400
+    },
+    "invoice_not_found": {
+      "code": "invoice_not_found",
+      "status_code": 404
+    },
+    "invoice_not_payable": {
+      "code": "invoice_not_payable",
+      "status_code": 409
+    },
+    "invoice_payment_processing": {
+      "code": "invoice_payment_processing",
+      "status_code": 409
+    },
+    "managed_checkout_unavailable": {
+      "code": "managed_checkout_unavailable",
+      "status_code": 503
+    },
+    "method_not_allowed": {
+      "code": "method_not_allowed",
+      "status_code": 405
+    },
+    "missing_dimensions": {
+      "code": "missing_dimensions",
+      "status_code": 400
+    },
+    "missing_expansion": {
+      "code": "missing_expansion",
+      "status_code": 400
+    },
+    "missing_mask": {
+      "code": "missing_mask",
+      "status_code": 400
+    },
+    "missing_palette": {
+      "code": "missing_palette",
+      "status_code": 400
+    },
+    "missing_prompt": {
+      "code": "missing_prompt",
+      "status_code": 400
+    },
+    "missing_reference_image": {
+      "code": "missing_reference_image",
+      "status_code": 400
+    },
+    "missing_tile_direction": {
+      "code": "missing_tile_direction",
+      "status_code": 400
+    },
+    "not_enough_balance": {
+      "code": "not_enough_balance",
+      "status_code": 402
+    },
+    "not_found": {
+      "code": "not_found",
+      "status_code": 404
+    },
+    "outpaint_failed": {
+      "code": "outpaint_failed",
+      "status_code": 500
+    },
+    "palette_too_large": {
+      "code": "palette_too_large",
+      "status_code": 400
+    },
+    "payload_too_large": {
+      "code": "payload_too_large",
+      "status_code": 413
+    },
+    "payment_debt_outstanding": {
+      "code": "payment_debt_outstanding",
+      "status_code": 402
+    },
+    "payment_method_setup_failed": {
+      "code": "payment_method_setup_failed",
+      "status_code": 500
+    },
+    "pixel_fixer_failed": {
+      "code": "pixel_fixer_failed",
+      "status_code": 500
+    },
+    "pixel_fixer_output_too_large": {
+      "code": "pixel_fixer_output_too_large",
+      "status_code": 413
+    },
+    "pixel_fixer_rate_limit_exceeded": {
+      "code": "pixel_fixer_rate_limit_exceeded",
+      "status_code": 429
+    },
+    "pixel_fixer_request_too_large": {
+      "code": "pixel_fixer_request_too_large",
+      "status_code": 413
+    },
+    "public_cover_upload_failed": {
+      "code": "public_cover_upload_failed",
+      "status_code": 500
+    },
+    "rate_limited": {
+      "code": "rate_limited",
+      "status_code": 429
+    },
+    "request_timeout": {
+      "code": "request_timeout",
+      "status_code": 504
+    },
+    "scheduled_region_cancelled": {
+      "code": "scheduled_region_cancelled",
+      "status_code": 409
+    },
+    "scheduled_region_job_cancel_failed": {
+      "code": "scheduled_region_job_cancel_failed",
+      "status_code": 500
+    },
+    "scheduled_region_job_cancelled": {
+      "code": "scheduled_region_job_cancelled",
+      "status_code": 409
+    },
+    "scheduled_region_job_expired": {
+      "code": "scheduled_region_job_expired",
+      "status_code": 409
+    },
+    "scheduled_region_job_lookup_failed": {
+      "code": "scheduled_region_job_lookup_failed",
+      "status_code": 500
+    },
+    "scheduled_region_job_not_found": {
+      "code": "scheduled_region_job_not_found",
+      "status_code": 404
+    },
+    "scheduled_region_job_not_runnable": {
+      "code": "scheduled_region_job_not_runnable",
+      "status_code": 409
+    },
+    "scheduled_region_job_plan_mismatch": {
+      "code": "scheduled_region_job_plan_mismatch",
+      "status_code": 409
+    },
+    "scheduled_region_job_start_failed": {
+      "code": "scheduled_region_job_start_failed",
+      "status_code": 500
+    },
+    "scheduled_region_not_supported": {
+      "code": "scheduled_region_not_supported",
+      "status_code": 400
+    },
+    "scheduled_region_plan_required": {
+      "code": "scheduled_region_plan_required",
+      "status_code": 400
+    },
+    "scheduled_region_required": {
+      "code": "scheduled_region_required",
+      "status_code": 400
+    },
+    "scheduled_region_tile_rejected": {
+      "code": "scheduled_region_tile_rejected",
+      "status_code": 502
+    },
+    "scheduled_regions_not_supported": {
+      "code": "scheduled_regions_not_supported",
+      "status_code": 400
+    },
+    "service_unavailable": {
+      "code": "service_unavailable",
+      "status_code": 503
+    },
+    "stripe_customer_rebuild_failed": {
+      "code": "stripe_customer_rebuild_failed",
+      "status_code": 500
+    },
+    "too_many_gallery_images": {
+      "code": "too_many_gallery_images",
+      "status_code": 400
+    },
+    "tool_not_found": {
+      "code": "tool_not_found",
+      "status_code": 404
+    },
+    "unauthorized": {
+      "code": "unauthorized",
+      "status_code": 403
+    },
+    "upstream_failure": {
+      "code": "upstream_failure",
+      "status_code": 502
+    },
+    "user_not_found": {
+      "code": "user_not_found",
+      "status_code": 404
+    },
+    "validation_error": {
+      "code": "validation_error",
+      "status_code": 422
+    },
+    "verified_email_required": {
+      "code": "verified_email_required",
+      "status_code": 403
+    },
+    "webhook_processing_failed": {
+      "code": "webhook_processing_failed",
+      "status_code": 500
+    }
+  },
+  "schema_version": "2.0.0",
+  "v1_compatibility": "frozen"
+}
