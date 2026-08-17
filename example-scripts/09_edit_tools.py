@@ -163,7 +163,7 @@ def build_payload(tool_id: str) -> dict[str, Any]:
             **common,
             "color_count": 16,
             "dither_mode": "bayer_4x4",
-            "dither_strength": 50,
+            "dither_strength": 5,
         },
         "pixel_correction": common,
         "k_centroid_downscale": {**common, "width": 64, "height": 64},
