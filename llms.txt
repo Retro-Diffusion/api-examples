@@ -20,7 +20,7 @@ POST /v1/inferences
 {"prompt": "A knight resting by a campfire in a forest clearing at night", "prompt_style": "rd_fast__default", "width": 128, "height": 128, "num_images": 1, "seed": 77}
 ### Example: success response (sync; null fields omitted)
 {"created_at": "2026-07-08T15:04:05", "balance_cost": 0.019, "base64_images": ["iVBORw0KGgo..."], "model": "rd_fast", "remaining_balance": 100.75}
-base64_images entries are raw base64 PNG (or GIF for animation styles). Decode and write to disk. Add "upload_outputs": true to receive hosted URLs in "output_urls" instead.
+base64_images entries are raw base64 PNG (or GIF for animation styles). Decode and write to disk. Add "upload_outputs": true to receive hosted URLs in "output_urls" instead. Large results (notably multi-frame animations) are delivered as hosted output_urls automatically with base64_images empty — always handle both fields, exactly like the edit tools.
 
 ### Example: img2img
 {"prompt": "The same scene in deep winter, snow covered", "prompt_style": "rd_plus__default", "width": 128, "height": 128, "num_images": 1, "input_image": "<base64>", "strength": 0.8}
