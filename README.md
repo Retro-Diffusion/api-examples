@@ -125,12 +125,13 @@ The same prompt and seed across all four models:
 
 **RD Pro — highest quality.** The professional-grade model: the cleanest pixel work, the most
 detailed prompt following, and support for up to **9 reference images** to keep a character or
-art style consistent. Best for hero assets and matching an existing look. `$0.18`/image, 64–256px,
-batch ≤ 4. Styles: `rd_pro__default`, `rd_pro__painterly`, `rd_pro__fantasy`, `rd_pro__horror`,
-`rd_pro__scifi`, `rd_pro__simple`, `rd_pro__isometric`, `rd_pro__topdown`, `rd_pro__platformer`,
-`rd_pro__dungeon_map`, `rd_pro__spritesheet`, `rd_pro__fps_weapon`, `rd_pro__typography`.
-256×256-only: `rd_pro__hexagonal_tiles`, `rd_pro__ui_panel`, `rd_pro__inventory_items`.
-Require an input image: `rd_pro__edit`, `rd_pro__pixelate`.
+art style consistent. Best for hero assets and matching an existing look. `$0.18`/image.
+Down to **12×12px** with **batch ≤ 16** (great for tiny sprites and icons): `rd_pro__default`,
+`rd_pro__painterly`, `rd_pro__fantasy`, `rd_pro__horror`, `rd_pro__scifi`, `rd_pro__simple`,
+`rd_pro__isometric`, `rd_pro__topdown`, `rd_pro__platformer` (12–256px).
+64–256px, batch ≤ 4: `rd_pro__dungeon_map`, `rd_pro__spritesheet`, `rd_pro__fps_weapon`, `rd_pro__typography`.
+256×256-only, batch ≤ 4: `rd_pro__hexagonal_tiles`, `rd_pro__ui_panel`, `rd_pro__inventory_items`.
+Require an input image (64–256px, batch ≤ 4): `rd_pro__edit`, `rd_pro__pixelate`.
 
 **RD Plus — quality all-rounder** with the largest style library. 64–384px (low-res variants
 smaller), batch ≤ 16: `rd_plus__default`, `rd_plus__retro`, `rd_plus__watercolor`,
@@ -172,8 +173,8 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | --- | --- | --- |
 | `prompt` | string | **Required.** Describe the subject — never write "pixel art". |
 | `prompt_style` | string | **Required.** A style id (see above). |
-| `width`, `height` | int | **Required.** 16–512 overall; each style enforces tighter limits (most top out at 256 or 384). |
-| `num_images` | int | **Required.** Batch size — up to 16 for most styles, 4 for RD Pro, 1 for animations. |
+| `width`, `height` | int | **Required.** 12–512 overall; each style enforces tighter limits (most top out at 256 or 384; several RD Pro styles go down to 12). |
+| `num_images` | int | **Required.** Batch size — up to 16 for most styles (including the 12px-capable RD Pro styles), 4 for other RD Pro styles, 1 for animations. |
 | `seed` | int | Optional. Same seed + settings ≈ same image. Omit for random. |
 | `input_image` | base64 | Optional img2img source (raw base64, **no** `data:` prefix, RGB). |
 | `strength` | float | 0–1, default `0.75`. How much `input_image` changes: low = subtle, high = loose. |
