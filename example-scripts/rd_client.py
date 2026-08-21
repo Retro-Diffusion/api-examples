@@ -174,12 +174,19 @@ def image_to_base64(path: str | Path) -> str:
 def save_images(result: dict[str, Any], stem: str) -> list[str]:
     """Save every image in a response. PNG normally, .gif for animation styles.
 
-    Returns the list of written file paths.
+    Handles both delivery modes: inline ``base64_images`` AND hosted
+    ``output_urls`` — the image_edit, inpainting, and outpainting edit tools
+    normally return an empty ``base64_images`` and deliver the result only as
+    a URL. Returns the list of written file paths.
     """
-    images = result.get("base64_images") or []
+    images = [base64.b64decode(b64) for b64 in result.get("base64_images") or []]
+    if not images:
+        for url in result.get("output_urls") or []:
+            response = requests.get(url, timeout=60)
+            response.raise_for_status()
+            images.append(response.content)
     written: list[str] = []
-    for index, b64 in enumerate(images):
-        data = base64.b64decode(b64)
+    for index, data in enumerate(images):
         # Animation styles return GIFs; sniff the header to pick the extension.
         ext = "gif" if data[:3] == b"GIF" else "png"
         suffix = f"_{index + 1}" if len(images) > 1 else ""

@@ -77,6 +77,12 @@ response = requests.post(
 )
 response.raise_for_status()
 result = response.json()
+
+# The result may arrive inline OR as a hosted URL — handle both.
+if result["base64_images"]:
+    image_bytes = base64.b64decode(result["base64_images"][0])
+else:
+    image_bytes = requests.get(result["output_urls"][0], timeout=60).content
 ```
 
 A successful response follows the regular inference API conventions:
@@ -95,9 +101,16 @@ A successful response follows the regular inference API conventions:
 }
 ```
 
-At least one of `base64_images` or `output_urls` contains the result. The
-deprecated camelCase response fields remain available for existing clients,
-but new integrations should use the snake_case fields above.
+**At least one of `base64_images` or `output_urls` contains the result — do
+not assume it is `base64_images`.** `image_edit`, `inpainting`, and
+`outpainting` normally return an **empty** `base64_images` and deliver the
+image only as a hosted URL in `output_urls` (as in the sample above); the
+other tools return inline base64. An integration that only reads
+`base64_images` will silently drop those tools' results while still being
+charged for the run. Always check `base64_images` first, then fall back to
+downloading `output_urls[0]`. The deprecated camelCase response fields remain
+available for existing clients, but new integrations should use the
+snake_case fields above.
 
 ## Tool inputs
 

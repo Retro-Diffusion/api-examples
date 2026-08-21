@@ -413,6 +413,12 @@ for a complete example.
 `GET /v1/edit/tools`. Paid tools charge before running and refund on failure. Responses include
 `base64_images`, `output_urls`, `balance_cost`, `charged`, and `remaining_balance`.
 
+> **The result may be in either field.** `image_edit`, `inpainting`, and `outpainting` normally
+> return an **empty** `base64_images` and deliver the image only as a hosted URL in
+> `output_urls` — download it. The other tools return inline base64. Code that only reads
+> `base64_images` silently loses those tools' results while still being charged; always check
+> `base64_images` first, then fall back to fetching `output_urls[0]`.
+
 ## Pixel Fixer
 
 Pixel Fixer restores enlarged, softened, AI-rendered, or compressed pixel art to its detected

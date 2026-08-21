@@ -196,14 +196,21 @@ def main() -> None:
     )
 
     result = request_edit_tool(api_key, tool_id, payload)
+    # The result may arrive inline OR as a hosted URL — handle both.
+    # image_edit, inpainting, and outpainting normally return base64_images
+    # EMPTY and deliver the image only via output_urls.
     if result["base64_images"]:
         output_path = save_base64_image(
             result["base64_images"][0], f"output_{tool_id}"
         )
         print(f"Saved {output_path}; inference ID: {result['inference_id']}")
     elif result["output_urls"]:
+        download = requests.get(result["output_urls"][0], timeout=60)
+        download.raise_for_status()
+        output_path = f"output_{tool_id}.png"
+        Path(output_path).write_bytes(download.content)
         print(
-            f"Output URL: {result['output_urls'][0]}; "
+            f"Saved {output_path} (downloaded from output_urls); "
             f"inference ID: {result['inference_id']}"
         )
     else:
