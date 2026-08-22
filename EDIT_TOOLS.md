@@ -112,6 +112,22 @@ downloading `output_urls[0]`. The deprecated camelCase response fields remain
 available for existing clients, but new integrations should use the
 snake_case fields above.
 
+## A workflow worth knowing: consistent variants via `image_edit`
+
+To get the *same* image in several versions (seasons, day/night, weather, palettes,
+damaged/pristine), do **not** generate each variant from scratch — independent generations
+come out as unrelated compositions. Generate the base once, then derive each variant with
+`image_edit` and an imperative prompt that pins the layout:
+
+```
+"Turn this summer scene into deep winter — snow blankets the ground, bare frosted
+trees, cold grey-blue light — keep the exact same composition, layout, and every
+structure in place."
+```
+
+Each derivation costs the same as a generation but keeps the set visually consistent, and
+all variants can be derived from the one base in parallel.
+
 ## Tool inputs
 
 Every tool requires `input_image`. The table lists its additional fields.

@@ -290,6 +290,19 @@ results. Actions: `walking`, `idle`, `jump`, `crouch`, `attack`, `destroy`, `cus
 (describe any motion), `subtle_motion` (ambient scene motion). See
 [`05_animation.py`](example-scripts/05_animation.py).
 
+Three field-tested rules that prevent most animation failures:
+
+1. **Send the native-resolution frame.** A 96px sprite exported at 4× display scale is 384px
+   and gets rejected by the 32–256 range. If your pipeline stores upscaled copies, downscale
+   back to the true pixel grid first (nearest-neighbor is lossless for integer upscales).
+2. **Give motion room.** A sprite whose opaque pixels touch the canvas edge animates badly —
+   pad it onto a larger transparent canvas first (e.g. 48×48 content onto 64×64).
+3. **Retry once on failure.** Animations fail/time out more often than stills; failed runs are
+   auto-refunded, so submit async and retry a failure once with identical parameters. Use
+   `frames_duration: 8` for loops (walking/idle), 6 for a snappy single action, 10–12 for
+   flowing ambient motion. Transparency carries through: a transparent start frame yields a
+   transparent GIF.
+
 <table>
   <tr>
     <td align="center"><img src="images/anim-character.png" width="130" alt="Start frame"></td>
