@@ -23,7 +23,11 @@ Generate pixel art — images, animations, and tilesets — over a simple HTTP A
 field, an interactive style explorer, live pricing, and MCP setup. This repo holds runnable
 examples and a machine-readable summary; the hosted page is the source of truth.
 
-- **Base URL:** `https://api.retrodiffusion.ai/v1`
+- **Default base URL for new integrations:** `https://api.retrodiffusion.ai/v2` — see
+  [`V2_MIGRATION.md`](V2_MIGRATION.md) and the generated
+  [`contracts/`](contracts) artifacts.
+- **V1 compatibility:** `https://api.retrodiffusion.ai/v1` remains supported with no
+  retirement plan. Existing integrations do not need to migrate on a deadline.
 - **Auth:** header `X-RD-Token: YOUR_API_KEY` on every request (keys start with `rdpk-`)
 - **Create a key:** https://www.retrodiffusion.ai/app/devtools (max 5 per account)
 - Usage spends your account's prepaid USD balance; charges are refunded automatically if a generation fails.
@@ -35,6 +39,7 @@ and run any of them:
 
 ```bash
 export RD_API_KEY="rdpk-..."          # macOS / Linux  (setx on Windows)
+export RD_API_VERSION="v1"            # optional rollback; examples default to v2
 pip install -r example-scripts/requirements.txt
 python example-scripts/01_generate_image.py
 ```
@@ -67,9 +72,10 @@ Create a key, make sure you have balance, then send a request:
 
 ```python
 import base64
+import time
 import requests
 
-url = "https://api.retrodiffusion.ai/v1/inferences"
+url = "https://api.retrodiffusion.ai/v2/inferences"
 headers = {"X-RD-Token": "YOUR_API_KEY"}
 payload = {
     "prompt": "A really cool corgi wearing sunglasses",  # describe the SUBJECT only
@@ -82,7 +88,20 @@ payload = {
 
 response = requests.post(url, headers=headers, json=payload)
 response.raise_for_status()
-data = response.json()
+accepted = response.json()
+
+task_id = accepted["task_id"]
+while True:
+    response = requests.get(f"{url}/tasks/{task_id}", headers=headers)
+    response.raise_for_status()
+    task = response.json()
+    if task["status"] in ("pending", "running"):
+        time.sleep(2)
+        continue
+    if task["status"] == "failed":
+        raise RuntimeError(task["error"])
+    data = task["result"]
+    break
 
 for i, image in enumerate(data["base64_images"]):
     with open(f"output_{i}.png", "wb") as f:
@@ -91,7 +110,13 @@ for i, image in enumerate(data["base64_images"]):
 print(f"Cost: ${data['balance_cost']}   Remaining: ${data['remaining_balance']}")
 ```
 
-Response (null fields are omitted):
+The POST returns an accepted task immediately:
+
+```json
+{"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
+```
+
+When the task succeeds, its `result` has the generation response (null fields are omitted):
 
 ```json
 {
@@ -109,7 +134,7 @@ write them to disk. Set `"upload_outputs": true` to receive hosted URLs in `outp
 ## Models
 
 Pass a style id in `prompt_style`; the style also determines the model. Call
-`GET /v1/styles/selector` (see [`08_list_styles.py`](example-scripts/08_list_styles.py)) for the
+`GET /v2/styles/selector` (see [`08_list_styles.py`](example-scripts/08_list_styles.py)) for the
 live catalog with each style's exact size limits, batch cap, and input requirements.
 
 The same prompt and seed across all four models:
@@ -167,7 +192,7 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 
 ## Request fields
 
-`POST /v1/inferences`
+`POST /v2/inferences`
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -188,7 +213,7 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | `bypass_prompt_expansion` | bool | Skip the automatic LLM prompt enrichment. |
 | `include_downloadable_data` | bool | Include structured extras (e.g. `rd_pro__inventory_items` returns an item-atlas JSON). |
 | `check_cost` | bool | Free dry run — returns the price, generates nothing, charges nothing. |
-| `async` | bool | Queue and poll instead of waiting (see [async](#async-jobs)). |
+| `async` | bool | Accepted for source compatibility. V2 generation is always queued and polled. |
 
 > A `negative` field is accepted for forward compatibility but is a **placeholder — no current
 > model uses it.** Describe what you *want* in `prompt` instead.
@@ -209,19 +234,19 @@ payload = {
 # -> {"balance_cost": 0.36, "model": "check_cost", "base64_images": [], "remaining_balance": 100.75}
 ```
 
-Check your balance any time: `GET /v1/inferences/credits` → `{"credits": 0, "balance": 100.75}`.
+Check your balance any time: `GET /v2/inferences/credits` → `{"credits": 0, "balance": 100.75}`.
 
 ## Async jobs
 
-Add `"async": true` to accept the job immediately and poll for the result — recommended for
-animations and large batches. See [`07_async_batch.py`](example-scripts/07_async_batch.py).
+V2 always accepts generation jobs immediately and requires polling. The optional `"async": true`
+field is retained for source compatibility. See [`07_async_batch.py`](example-scripts/07_async_batch.py).
 
 ```python
 import time, requests
 headers = {"X-RD-Token": "YOUR_API_KEY"}
 
 start = requests.post(
-    "https://api.retrodiffusion.ai/v1/inferences",
+    "https://api.retrodiffusion.ai/v2/inferences",
     headers=headers,
     json={"prompt": "A really cool corgi", "prompt_style": "rd_pro__default",
           "width": 256, "height": 256, "num_images": 1, "async": True},
@@ -231,7 +256,7 @@ start = requests.post(
 task_id = start["task_id"]
 while True:
     task = requests.get(
-        f"https://api.retrodiffusion.ai/v1/inferences/tasks/{task_id}", headers=headers
+        f"https://api.retrodiffusion.ai/v2/inferences/tasks/{task_id}", headers=headers
     ).json()
     if task["status"] in ("pending", "running"):
         time.sleep(2)
@@ -247,13 +272,13 @@ while True:
 
 If the first response never reaches you (edge timeout, disconnect, crash), the job was still
 accepted and charged — re-submitting charges again. List your recent jobs and resume polling
-instead: `GET /v1/inferences/tasks?limit=20&status=running` returns your tasks newest first
+instead: `GET /v2/inferences/tasks?limit=20&status=running` returns your tasks newest first
 (`status` is optional: `pending` / `running` / `succeeded` / `failed`). See
 [`11_recover_async_tasks.py`](example-scripts/11_recover_async_tasks.py).
 
 ```python
 tasks = requests.get(
-    "https://api.retrodiffusion.ai/v1/inferences/tasks",
+    "https://api.retrodiffusion.ai/v2/inferences/tasks",
     headers=headers,
     params={"limit": 5},
 ).json()["tasks"]
@@ -394,13 +419,13 @@ Methods), or ask about monthly invoicing for teams/enterprise via
 ## Edit tools
 
 Edit tools post-process one image and return one edited image. Their canonical request and
-response fields use `snake_case`, matching `/v1/inferences`. See the
+response fields use `snake_case`, matching `/v2/inferences`. See the
 [canvas edit tools guide](EDIT_TOOLS.md) and the runnable
 [`09_edit_tools.py`](example-scripts/09_edit_tools.py) example.
 
-- `GET /v1/edit/tools` — the authoritative list of currently available tools, their fields, and costs.
-- `POST /v1/edit/tools/{tool_id}` — run a tool.
-- `POST /v1/edit/tools/{tool_id}/estimate` — cost and time estimate without running.
+- `GET /v2/edit/tools` — the authoritative list of currently available tools, their fields, and costs.
+- `POST /v2/edit/tools/{tool_id}` — run a tool.
+- `POST /v2/edit/tools/{tool_id}/estimate` — cost and time estimate without running.
 
 | Tool | Cost | Key inputs |
 | --- | --- | --- |
@@ -423,7 +448,7 @@ mask selects the entire image. See [the mask format guide](EDIT_TOOLS.md#inpaint
 for a complete example.
 
 \* Some free tools require a minimum account value; check `requires_minimum_balance` in
-`GET /v1/edit/tools`. Paid tools charge before running and refund on failure. Responses include
+`GET /v2/edit/tools`. Paid tools charge before running and refund on failure. Responses include
 `base64_images`, `output_urls`, `balance_cost`, `charged`, and `remaining_balance`.
 
 > **The result may be in either field.** `image_edit`, `inpainting`, and `outpainting` normally
@@ -444,8 +469,8 @@ result = fix_pixel_art(input_image=image_to_base64("soft-sprite.png"), engine="s
 save_images(result, "fixed-sprite")
 ```
 
-- `POST /v1/pixel-fixer/standard` — native Rust detector and reconstructor.
-- `POST /v1/pixel-fixer/neural` — neural reconstruction with optional positive target `width` and
+- `POST /v2/pixel-fixer/standard` — native Rust detector and reconstructor.
+- `POST /v2/pixel-fixer/neural` — neural reconstruction with optional positive target `width` and
   `height` values.
 - Both accept exactly one PNG/JPEG source as raw base64, a data URI, or a public HTTPS
   `image_url`, cost nothing, and share a per-token limit of 10 requests per minute.
@@ -471,33 +496,47 @@ payload = {
     "min_width": 192,                          # optional forced size; both together, 64-256
     "min_height": 192,
 }
-# POST /v1/styles -> {"prompt_style": "user__my_rd_pro_style_1a2b3c4d", ...}
-# use that prompt_style in /v1/inferences.
+# POST /v2/styles -> {"prompt_style": "user__my_rd_pro_style_1a2b3c4d", ...}
+# use that prompt_style in /v2/inferences.
 ```
 
-`PATCH /v1/styles/{style_id}` updates (same fields, all optional); `DELETE /v1/styles/{style_id}`
+`PATCH /v2/styles/{style_id}` updates (same fields, all optional); `DELETE /v2/styles/{style_id}`
 removes it.
 
 ## Errors
 
-Two shapes; handle both:
+V1 remains unchanged and may return string, list, or structured detail:
 
 ```json
 {"detail": {"code": "inference_failed", "message": "Unable to run inference."}}
 {"detail": [{"msg": "Not enough balance."}]}
+{"detail": "Not Found"}
 ```
+
+V2 always returns:
+
+```json
+{"error": {"code": "inference_failed", "message": "Unable to run inference.", "request_id": "..."}}
+```
+
+Validation may add safe `details.issues`. Preserve the matching
+`X-Request-ID` and `Retry-After`; branch on `code`, never `message`. The Python
+and JavaScript examples parse both versions. They never retry a paid failure
+across versions.
 
 | Status | Meaning |
 | --- | --- |
-| `400` | Invalid input (size out of range, bad image) or insufficient balance. |
+| `400` | V1 invalid input or insufficient balance; v2 semantic invalid input. |
 | `401` | Missing or invalid `X-RD-Token`. |
-| `403` | Valid token without access to the resource (also used by the credits endpoint). |
+| `402` | V2 account cannot fund the request. |
+| `403` | Valid token without permission. V1 retains legacy credits behavior. |
 | `404` | Task or style not found (or not owned by this key). |
 | `422` | Request body failed validation (wrong types, missing required fields). |
 | `429` | Rate limited — respect the `Retry-After` header. |
-| `500` | Temporary server-side failure — safe to retry with backoff; charges are refunded. |
+| `500` | Unexpected internal failure. |
+| `502/503/504` | V2 provider failure, temporary unavailability, or timeout. Retry only when safe. |
 
-Check `GET /v1/status` (no key required) before large batches.
+Check `GET /v2/status` (no key required) before large batches.
 
 ## Help
 

@@ -1,5 +1,6 @@
-# Retro Diffusion API — context for AI agents (verified 2026-08)
-Pixel art image generation API. Base URL: https://api.retrodiffusion.ai/v1
+# Retro Diffusion API — context for AI agents (verified 2026-09)
+Pixel art image generation API. Default base URL for new integrations: https://api.retrodiffusion.ai/v2
+V1 remains supported with no retirement plan at https://api.retrodiffusion.ai/v1. V2 uses {"error":{"code":"...","message":"...","request_id":"..."}} for every JSON error. Preserve X-Request-ID and Retry-After, branch on code, and never retry a paid failure across versions.
 Full human-readable reference (with an interactive style explorer): https://www.retrodiffusion.ai/app/guide/api
 Runnable example scripts: https://github.com/Retro-Diffusion/api-examples/tree/main/example-scripts
 Auth: send header "X-RD-Token: <key>" on every request. Keys start with "rdpk-".
@@ -9,16 +10,18 @@ MCP tools (18): create_inference, estimate_inference_cost (free), start_inferenc
 MCP setup guides for every client (Claude Code + plugin, Cursor, VS Code, Windsurf, Claude Desktop) live at https://github.com/Retro-Diffusion/retro-diffusion-mcp.
 
 ## Generate images
-POST /v1/inferences  (Content-Type: application/json)
+POST /v2/inferences  (Content-Type: application/json)
 Required fields: prompt (string — describe the SUBJECT only, never write "pixel art"; styling comes from prompt_style), prompt_style (string style id), width (int), height (int), num_images (int).
-Optional fields: seed (int, reproducible), input_image (base64 PNG string, NO "data:image/png;base64," prefix, RGB without transparency) + strength (float 0-1, default 0.75 — how much to change the input), reference_images (array of base64, RD Pro styles only, up to 9, guides style/content without redrawing), input_palette (base64, constrains output colors), remove_bg (bool, transparent output), tile_x / tile_y (bool, seamless tiling), frames_duration (int 4|6|8|10|12|16, animation styles), return_spritesheet (bool, animations: PNG spritesheet instead of GIF), upscale_output_factor (int, 1 = native pixel size), bypass_prompt_expansion (bool, skip automatic LLM prompt enrichment), include_downloadable_data (bool, extra structured assets e.g. item atlas JSON), check_cost (bool, FREE dry run: returns price, generates nothing, charges nothing), async (bool).
+Optional fields: seed (int, reproducible), input_image (base64 PNG string, NO "data:image/png;base64," prefix, RGB without transparency) + strength (float 0-1, default 0.75 — how much to change the input), reference_images (array of base64, RD Pro styles only, up to 9, guides style/content without redrawing), input_palette (base64, constrains output colors), remove_bg (bool, transparent output), tile_x / tile_y (bool, seamless tiling), frames_duration (int 4|6|8|10|12|16, animation styles), return_spritesheet (bool, animations: PNG spritesheet instead of GIF), upscale_output_factor (int, 1 = native pixel size), bypass_prompt_expansion (bool, skip automatic LLM prompt enrichment), include_downloadable_data (bool, extra structured assets e.g. item atlas JSON), check_cost (bool, FREE dry run: returns price, generates nothing, charges nothing), async (bool, accepted for source compatibility; v2 generation is always async).
 The "negative" field exists but is a placeholder — current models ignore it. Do not rely on it.
 Size limits: the API validates 16x16 to 512x512, but each style enforces tighter limits (current styles top out at 384x384) — use the per-style limits in the catalog below or from the selector.
 
 ### Example: minimal request
-POST /v1/inferences
+POST /v2/inferences
 {"prompt": "A knight resting by a campfire in a forest clearing at night", "prompt_style": "rd_fast__default", "width": 128, "height": 128, "num_images": 1, "seed": 77}
-### Example: success response (sync; null fields omitted)
+### Example: accepted response
+{"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
+Poll the task. When it succeeds, `result` contains the generation response:
 {"created_at": "2026-07-08T15:04:05", "balance_cost": 0.019, "base64_images": ["iVBORw0KGgo..."], "model": "rd_fast", "remaining_balance": 100.75}
 base64_images entries are raw base64 PNG (or GIF for animation styles). Decode and write to disk. Add "upload_outputs": true to receive hosted URLs in "output_urls" instead. Large results (notably multi-frame animations) are delivered as hosted output_urls automatically with base64_images empty — always handle both fields, exactly like the edit tools.
 
@@ -34,13 +37,13 @@ base64_images entries are raw base64 PNG (or GIF for animation styles). Decode a
 {"prompt": "test", "prompt_style": "rd_pro__default", "width": 256, "height": 256, "num_images": 2, "check_cost": true}
 -> {"balance_cost": 0.36, "model": "check_cost", "base64_images": [], "remaining_balance": 100.75}
 
-## Async jobs (recommended for animations / bulk)
-POST /v1/inferences with "async": true
--> {"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v1/inferences/tasks/{task_id} for status."}
-Poll GET /v1/inferences/tasks/{task_id} (same X-RD-Token) every ~2s:
+## Async jobs (required for every v2 generation)
+POST /v2/inferences (the optional "async": true field is retained for source compatibility)
+-> {"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
+Poll GET /v2/inferences/tasks/{task_id} (same X-RD-Token) every ~2s:
 -> {"status": "pending" | "running" | "succeeded" | "failed", "task_id": "...", "result": <same shape as sync response, when succeeded>, "error": {"status_code": 400, "detail": "..."} when failed}
 List recent jobs (recovery after a lost submission response — job was accepted+charged, don't resubmit):
-GET /v1/inferences/tasks?limit=20 (optional &status=pending|running|succeeded|failed), newest first:
+GET /v2/inferences/tasks?limit=20 (optional &status=pending|running|succeeded|failed), newest first:
 -> {"tasks": [{"task_id": "...", "status": "running", "created_at": ..., "updated_at": ..., "result": null, "error": null}, ...]}
 
 ## Style catalog (public styles)
@@ -51,37 +54,38 @@ RD Mini (aliases routing to Plus/Fast low-res; response "model" shows the routed
 Advanced animations (INPUT_IMAGE_REQUIRED, 32-256px matching your start frame, batch=1, frames_duration supported, GIF output): rd_advanced_animation__walking, __idle, __jump, __crouch, __attack, __destroy, __custom_action (describe any motion), __subtle_motion (ambient scene motion).
 Animations (prompt-driven, GIF output, batch=1 unless noted): rd_animation__four_angle_walking (48x48), rd_animation__four_angle_walking_idle (48x48), rd_animation__small_sprites (32x32, batch<=16), rd_animation__vfx (24-96px square), rd_animation__any_animation (64x64, refs<=9), rd_animation__big_animation (128x128, refs<=9), rd_animation__8_dir_rotation (80x80, refs<=5), rd_animation__battle_sprites (64x64).
 Tilesets: rd_tile__tileset (16-32px tile, batch=1), rd_tile__tileset_advanced (16-32px, batch=1, extra_prompt + extra_input_image), rd_tile__single_tile (16-64px), rd_tile__tile_variation (16-128px, INPUT_IMAGE_REQUIRED), rd_tile__tile_object (16-96px), rd_tile__scene_object (64-384px).
-User styles: user__<name>_<id> (created via /v1/styles or the My Styles page).
-Live discovery: GET /v1/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|rd_mini, ?tab=tab:image|tab:animation|tab:advanced-animation|tab:tileset). Each item: {"prompt_style", "name", "description", "required_model", "required_tab", "min_width", "max_width", "min_height", "max_height", "max_number_of_images", "require_input_image", "supports_reference_images", "example_prompt"}.
+User styles: user__<name>_<id> (created via /v2/styles or the My Styles page).
+Live discovery: GET /v2/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|rd_mini, ?tab=tab:image|tab:animation|tab:advanced-animation|tab:tileset). Each item: {"prompt_style", "name", "description", "required_model", "required_tab", "min_width", "max_width", "min_height", "max_height", "max_number_of_images", "require_input_image", "supports_reference_images", "example_prompt"}.
 
 ## Costs (USD per request; verify with check_cost — it is free)
 rd_fast: max(0.015, (w*h+100000)/6000000) * num_images; rd_plus: max(0.025, (w*h+50000)/2000000) * num_images; low-res styles (mc_*, low_res, classic, skill_icon, topdown_item, tile variants): max(0.02, (w*h+13700)/600000) * num_images; rd_pro: 0.18 * num_images; rd_advanced_animation: 0.14 (custom_action and subtle_motion: 0.25); rd_animation: 0.07 (any_animation and 8_dir_rotation: 0.25); rd_tile__tileset(_advanced): 0.10.
-GET /v1/inferences/credits -> {"credits": 0, "balance": 100.75}. Balance is prepaid USD; charged before generation, auto-refunded on failure. Invalid token on this endpoint -> 403.
+GET /v2/inferences/credits -> {"credits": 0, "balance": 100.75}. Balance is prepaid USD; charged before generation, auto-refunded on failure. Invalid token on this endpoint -> 403.
 
 ## Canvas edit tools (post-processing; canonical fields use snake_case)
-GET /v1/edit/tools -> enabled tool list with api_fields, costs, defaults, and limits (authoritative; exposed tools may vary).
-POST /v1/edit/tools/{tool_id} -> run a tool. POST /v1/edit/tools/{tool_id}/estimate -> validate and estimate cost/time without running.
+GET /v2/edit/tools -> enabled tool list with api_fields, costs, defaults, and limits (authoritative; exposed tools may vary).
+POST /v2/edit/tools/{tool_id} -> run a tool. POST /v2/edit/tools/{tool_id}/estimate -> validate and estimate cost/time without running.
 Every request requires input_image (raw base64 or data URI). Tools: image_edit ($0.18; prompt required, seed?; <=256px), inpainting ($0.18; mask_image + prompt required, seed?, soft_inpaint?), outpainting ($0.18; expand_left/right/top/bottom with at least one positive, prompt?, seed?, soft_inpaint?), seam_tiling ($0.18; tile_x?, tile_y?, seam_width?, repair_window_size?, seed?), background_remover ($0.01; transparency_threshold?, force_solid_pixels?), color_style_transfer ($0.01; extra_input_image required), color_reducer (free; color_count?, dither_mode?, dither_strength?), palette_converter (free; input_palette required, dither_mode?, dither_strength?), k_centroid_downscale (free; width + height required), pixel_correction (free; no extra fields), rotate (free; rotation_degrees?). Some free tools require a minimum account value; inspect requires_minimum_balance.
 RESULT DELIVERY — DO NOT ASSUME INLINE BASE64: the result arrives in base64_images OR output_urls. image_edit, inpainting, and outpainting normally return base64_images EMPTY and deliver the image only as a hosted URL in output_urls — download it. The other tools return inline base64 (as in the example below). Code that only reads base64_images[0] silently loses image_edit/inpainting/outpainting results while still being charged for them. Always check base64_images first, then fall back to fetching output_urls[0].
 Inpainting mask_image must match input_image dimensions. Recommended format: RGBA PNG with alpha 0 for protected pixels and alpha >12 for editable pixels; visible RGB color is ignored. An L-mode grayscale mask also works: values 0-12 are protected and values >12 are editable. Do not send an ordinary fully opaque RGB/RGBA mask unless the whole image should be selected. With soft_inpaint=false, pixels outside the selected mask are restored exactly.
 ### Example
-POST /v1/edit/tools/background_remover  {"input_image": "<base64>"}
+POST /v2/edit/tools/background_remover  {"input_image": "<base64>"}
 -> {"tool_id": "background_remover", "base64_images": ["<base64>"], "output_urls": [], "balance_cost": 0.01, "charged": true, "remaining_balance": 100.74}
 
 ## Pixel Fixer (free native-grid reconstruction)
-POST /v1/pixel-fixer/standard {"input_image":"<raw base64 PNG/JPEG or data URI>"} or {"image_url":"<public HTTPS PNG/JPEG>"}
-POST /v1/pixel-fixer/neural (same image source plus "width"?:positive int,"height"?:positive int)
+POST /v2/pixel-fixer/standard {"input_image":"<raw base64 PNG/JPEG or data URI>"} or {"image_url":"<public HTTPS PNG/JPEG>"}
+POST /v2/pixel-fixer/neural (same image source plus "width"?:positive int,"height"?:positive int)
 Provide exactly one of input_image or image_url. Both return exactly {"base64_images":["<raw base64 PNG>"]}, charge nothing, and share a limit of 10 requests/minute per token. Standard uses native Rust grid detection. Neural uses neural reconstruction; optional width/height set its target size. Decoded images must be at least 16x16 and at most 16 megapixels. Serialized base64 request JSON is limited to 900000 bytes; successful response JSON is limited to 850000 bytes. Public HTTPS image_url downloads are limited to 20MB and bypass the ALB request-body limit, but not the decoded-image or response limits. Unknown fields are rejected. Pixel Fixer error codes: pixel_fixer_request_too_large (413), pixel_fixer_output_too_large (413), invalid_pixel_fixer_image (422), pixel_fixer_rate_limit_exceeded (429), pixel_fixer_failed (500).
 
 ## Custom styles (RD Pro reference-image template)
-POST /v1/styles  {"name": "My Style" (required), "description"?, "style_icon"? (e.g. "sparkles"), "reference_images"? (max 1 via API), "reference_caption"?, "apply_prompt_fixer"? (default true), "llm_instructions"?, "user_prompt_template"? (must contain the token {prompt}), "force_palette"? (bool), "force_bg_removal"? (bool), "min_width"? + "min_height"? (both together, 64-256)}
--> 201 {"id": "...", "prompt_style": "user__my_style_1a2b3c4d", "name": "...", "type": "user"} — use prompt_style in /v1/inferences.
-PATCH /v1/styles/{style_id} (same fields, all optional). DELETE /v1/styles/{style_id} -> {"deleted": true}. Non-template fields are rejected.
+POST /v2/styles  {"name": "My Style" (required), "description"?, "style_icon"? (e.g. "sparkles"), "reference_images"? (max 1 via API), "reference_caption"?, "apply_prompt_fixer"? (default true), "llm_instructions"?, "user_prompt_template"? (must contain the token {prompt}), "force_palette"? (bool), "force_bg_removal"? (bool), "min_width"? + "min_height"? (both together, 64-256)}
+-> 201 {"id": "...", "prompt_style": "user__my_style_1a2b3c4d", "name": "...", "type": "user"} — use prompt_style in /v2/inferences.
+PATCH /v2/styles/{style_id} (same fields, all optional). DELETE /v2/styles/{style_id} -> {"deleted": true}. Non-template fields are rejected.
 
 ## Status & errors
-GET /v1/status (no auth) -> {"status": {"rd_fast": "ok", "rd_pro": "ok", "rd_plus": "ok", "animations": "ok", "background_removal": "ok"}, "updated_at": ...}. Check before bulk runs.
-Error shapes (handle both): {"detail": {"code": "inference_failed", "message": "Unable to run inference."}} and {"detail": [{"msg": "Not enough balance."}]}.
-Status codes: 400 invalid input (size out of range, bad image) or insufficient balance; 401 missing/invalid X-RD-Token; 403 token lacks access (also used by /credits); 404 task/style not found or not owned by this key; 410 deprecated endpoint; 422 body failed validation; 429 rate limited (respect Retry-After); 500 temporary — retry with backoff, charges are refunded.
+GET /v2/status (no auth) -> {"status": {"rd_fast": "ok", "rd_pro": "ok", "rd_plus": "ok", "animations": "ok", "background_removal": "ok"}, "updated_at": ...}. Check before bulk runs.
+V1 error shapes: {"detail": {"code": "inference_failed", "message": "Unable to run inference."}}, {"detail": [{"msg": "Not enough balance."}]}, or {"detail":"Not Found"}.
+V2 error shape: {"error":{"code":"inference_failed","message":"Unable to run inference.","request_id":"..."}}. Validation may add safe details.issues.
+V2 status codes: 400 semantic input; 401 invalid credentials; 402 insufficient balance; 403 permission; 404 concealed/missing; 409 conflict; 413 size; 422 schema; 429 rate limit; 500 unexpected; 502 provider failure; 503 unavailable; 504 timeout.
 
 ## Craft guide (field-tested defaults from Retro Diffusion's own production assistant)
 Sizes by genre (per ITEM, not per sheet): Minecraft items/textures 16; items/icons/props/critters 32-64; character sprites 16-48 retro or 96-128 showcase; single tiles 16-32; dialogue busts 64; portraits 96-128; full scenes/key art 256 (RD Pro's max — for 16:9 use 256x144; pixel art integer-upscales losslessly, so the smaller canvas loses nothing). Size is never a reason to leave RD Pro: rd_pro__default goes down to 12px.
@@ -98,4 +102,4 @@ Animation input rules (these prevent the most common failures):
 - Animations fail/time out more often than stills: submit with "async": true and retry a failure once with identical parameters (failed runs are auto-refunded; a failure is not a reason to switch styles or sizes).
 
 ## Agent best practices
-1) Pick a prompt_style from the catalog above (or GET /v1/styles/selector for live limits). 2) POST with "check_cost": true to verify price — free. 3) Generate. 4) Use "async": true and poll for animations or bulk jobs. 5) Reuse the same seed to iterate on a composition; change only the prompt. 6) Base64 images are raw strings — never include a data: URI prefix. 7) Prompts describe the subject; the style handles pixel-art rendering — rich concrete visual descriptions ("a squat round flask of glowing crimson liquid, cork stopper, bright highlight on the upper-left rim") outperform terse ones ("a potion"). 8) For a consistent character across images, generate once with RD Pro, then pass that output as reference_images in follow-up requests — a text description alone is never a substitute for the actual reference. 9) Style ids are opaque strings with no uniform format (rd_fast styles may appear as "default:rd_flux") — take them verbatim from the catalog/selector and never infer capabilities from an id's prefix. 10) Verify results programmatically where vision models cannot: transparency is checked from the alpha channel (vision models see composited backdrops, not alpha), and output dimensions are checked from the decoded image.
+1) Pick a prompt_style from the catalog above (or GET /v2/styles/selector for live limits). 2) POST with "check_cost": true to verify price — free. 3) Generate. 4) Use "async": true and poll for animations or bulk jobs. 5) Reuse the same seed to iterate on a composition; change only the prompt. 6) Base64 images are raw strings — never include a data: URI prefix. 7) Prompts describe the subject; the style handles pixel-art rendering — rich concrete visual descriptions ("a squat round flask of glowing crimson liquid, cork stopper, bright highlight on the upper-left rim") outperform terse ones ("a potion"). 8) For a consistent character across images, generate once with RD Pro, then pass that output as reference_images in follow-up requests — a text description alone is never a substitute for the actual reference. 9) Style ids are opaque strings with no uniform format (rd_fast styles may appear as "default:rd_flux") — take them verbatim from the catalog/selector and never infer capabilities from an id's prefix. 10) Verify results programmatically where vision models cannot: transparency is checked from the alpha channel (vision models see composited backdrops, not alpha), and output dimensions are checked from the decoded image.

@@ -1,0 +1,1247 @@
+{
+  "errors": [
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "account_deactivation_failed",
+      "description": "Account deactivation failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Account deactivation failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "admin_debug_only",
+      "description": "Admin debug only.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Admin debug only.",
+      "retryable": false,
+      "status_code": 403
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "animated_input_not_supported",
+      "description": "Animated input not supported.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Animated input not supported.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "api_activity_not_found",
+      "description": "Api activity not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Api activity not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "api_token_create_failed",
+      "description": "Api token create failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "authentication",
+        "users"
+      ],
+      "message": "Api token create failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "api_token_revoke_failed",
+      "description": "Api token revoke failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "authentication",
+        "users"
+      ],
+      "message": "Api token revoke failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "api_tokens_lookup_failed",
+      "description": "Api tokens lookup failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "authentication",
+        "users"
+      ],
+      "message": "Api tokens lookup failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "background_removal_failed",
+      "description": "Background removal failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Background removal failed.",
+      "retryable": true,
+      "status_code": 502
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "bad_request",
+      "description": "The request is invalid.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The request is invalid.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "batch_gallery_folder_update_failed",
+      "description": "Batch gallery folder update failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "Batch gallery folder update failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "batch_inference_not_found",
+      "description": "Batch inference not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "Batch inference not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "builtin_tool_contract_managed",
+      "description": "Builtin tool contract managed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Builtin tool contract managed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "conflict",
+      "description": "The request conflicts with the current resource state.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The request conflicts with the current resource state.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "credits_lookup_failed",
+      "description": "Credits lookup failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Credits lookup failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "durable_dispatch_unavailable",
+      "description": "Durable dispatch unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Durable dispatch unavailable.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "edit_failed",
+      "description": "Edit failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Edit failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "edit_tool_estimate_failed",
+      "description": "Edit tool estimate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Edit tool estimate failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "edit_tool_failed",
+      "description": "Edit tool failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Edit tool failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "email_update_failed",
+      "description": "Email update failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "authentication",
+        "users"
+      ],
+      "message": "Email update failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "empty_gallery_upload",
+      "description": "Empty gallery upload.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "Empty gallery upload.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "expansion_exceeds_context",
+      "description": "Expansion exceeds context.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Expansion exceeds context.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "forbidden",
+      "description": "The authenticated caller is not allowed to perform this action.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The authenticated caller is not allowed to perform this action.",
+      "retryable": false,
+      "status_code": 403
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "gallery_image_dimensions_too_large",
+      "description": "Gallery image dimensions too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Gallery image dimensions too large.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "gallery_image_file_too_large",
+      "description": "Gallery image file too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Gallery image file too large.",
+      "retryable": false,
+      "status_code": 413
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "gallery_upload_failed",
+      "description": "Gallery upload failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "Gallery upload failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "gone",
+      "description": "The requested operation is no longer available.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The requested operation is no longer available.",
+      "retryable": false,
+      "status_code": 410
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "image_too_large",
+      "description": "Image too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Image too large.",
+      "retryable": false,
+      "status_code": 413
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "inference_failed",
+      "description": "Inference failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "Inference failed.",
+      "retryable": true,
+      "status_code": 502
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "internal_error",
+      "description": "An unexpected internal error occurred.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "An unexpected internal error occurred.",
+      "retryable": true,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_authentication",
+      "description": "Authentication is required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "authentication",
+        "users"
+      ],
+      "message": "Authentication is required.",
+      "retryable": false,
+      "status_code": 401
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_color_count",
+      "description": "Invalid color count.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid color count.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_cursor",
+      "description": "Invalid cursor.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid cursor.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_date_range",
+      "description": "Invalid date range.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid date range.",
+      "retryable": false,
+      "status_code": 422
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_dimensions",
+      "description": "Invalid dimensions.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid dimensions.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_dither_mode",
+      "description": "Invalid dither mode.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid dither mode.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_expansion",
+      "description": "Invalid expansion.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid expansion.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_gallery_image",
+      "description": "Invalid gallery image.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid gallery image.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_image",
+      "description": "Invalid image.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid image.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_image_size",
+      "description": "Invalid image size.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid image size.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_inference_update",
+      "description": "Invalid inference update.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "Invalid inference update.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_palette",
+      "description": "Invalid palette.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid palette.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_pixel_fixer_image",
+      "description": "Invalid pixel fixer image.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid pixel fixer image.",
+      "retryable": false,
+      "status_code": 422
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_region_plan",
+      "description": "Invalid region plan.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid region plan.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_repair_window",
+      "description": "Invalid repair window.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid repair window.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_rotation",
+      "description": "Invalid rotation.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid rotation.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_seam_width",
+      "description": "Invalid seam width.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid seam width.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_stats_date_range",
+      "description": "Invalid stats date range.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid stats date range.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_token",
+      "description": "Invalid or missing X-RD-Token header.",
+      "details_schema": null,
+      "endpoint_families": [
+        "authentication",
+        "users"
+      ],
+      "message": "Invalid or missing X-RD-Token header.",
+      "retryable": false,
+      "status_code": 401
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_tool_function",
+      "description": "Invalid tool function.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid tool function.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "invalid_tool_pipeline",
+      "description": "Invalid tool pipeline.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Invalid tool pipeline.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "managed_checkout_unavailable",
+      "description": "Managed checkout unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "billing"
+      ],
+      "message": "Managed checkout unavailable.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "method_not_allowed",
+      "description": "Method not allowed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Method not allowed.",
+      "retryable": false,
+      "status_code": 405
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_dimensions",
+      "description": "Missing dimensions.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Missing dimensions.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_expansion",
+      "description": "Missing expansion.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Missing expansion.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_mask",
+      "description": "Missing mask.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Missing mask.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_palette",
+      "description": "Missing palette.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Missing palette.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_prompt",
+      "description": "Missing prompt.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Missing prompt.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_reference_image",
+      "description": "Missing reference image.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Missing reference image.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_tile_direction",
+      "description": "Missing tile direction.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Missing tile direction.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "not_enough_balance",
+      "description": "Not enough balance.",
+      "details_schema": null,
+      "endpoint_families": [
+        "billing"
+      ],
+      "message": "Not enough balance.",
+      "retryable": false,
+      "status_code": 402
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "not_found",
+      "description": "Resource not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Resource not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "outpaint_failed",
+      "description": "Outpaint failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Outpaint failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "palette_too_large",
+      "description": "Palette too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Palette too large.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "payload_too_large",
+      "description": "The request or response payload is too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The request or response payload is too large.",
+      "retryable": false,
+      "status_code": 413
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "payment_debt_outstanding",
+      "description": "Payment debt outstanding.",
+      "details_schema": null,
+      "endpoint_families": [
+        "billing"
+      ],
+      "message": "Payment debt outstanding.",
+      "retryable": false,
+      "status_code": 402
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "payment_method_setup_failed",
+      "description": "Payment method setup failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "billing"
+      ],
+      "message": "Payment method setup failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "pixel_fixer_failed",
+      "description": "Pixel fixer failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "pixel-fixer"
+      ],
+      "message": "Pixel fixer failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "pixel_fixer_output_too_large",
+      "description": "Pixel fixer output too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "pixel-fixer"
+      ],
+      "message": "Pixel fixer output too large.",
+      "retryable": false,
+      "status_code": 413
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "pixel_fixer_rate_limit_exceeded",
+      "description": "Pixel fixer rate limit exceeded.",
+      "details_schema": null,
+      "endpoint_families": [
+        "pixel-fixer"
+      ],
+      "message": "Pixel fixer rate limit exceeded.",
+      "retryable": true,
+      "status_code": 429
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "pixel_fixer_request_too_large",
+      "description": "Pixel fixer request too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "pixel-fixer"
+      ],
+      "message": "Pixel fixer request too large.",
+      "retryable": false,
+      "status_code": 413
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "public_cover_upload_failed",
+      "description": "Public cover upload failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Public cover upload failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "rate_limited",
+      "description": "Too many requests.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Too many requests.",
+      "retryable": true,
+      "status_code": 429
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "request_timeout",
+      "description": "The request timed out.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The request timed out.",
+      "retryable": true,
+      "status_code": 504
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_cancelled",
+      "description": "Scheduled region cancelled.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region cancelled.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_cancel_failed",
+      "description": "Scheduled region job cancel failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job cancel failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_cancelled",
+      "description": "Scheduled region job cancelled.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job cancelled.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_expired",
+      "description": "Scheduled region job expired.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job expired.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_lookup_failed",
+      "description": "Scheduled region job lookup failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job lookup failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_not_found",
+      "description": "Scheduled region job not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_not_runnable",
+      "description": "Scheduled region job not runnable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job not runnable.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_plan_mismatch",
+      "description": "Scheduled region job plan mismatch.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job plan mismatch.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_job_start_failed",
+      "description": "Scheduled region job start failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region job start failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_not_supported",
+      "description": "Scheduled region not supported.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region not supported.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_plan_required",
+      "description": "Scheduled region plan required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region plan required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_required",
+      "description": "Scheduled region required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_region_tile_rejected",
+      "description": "Scheduled region tile rejected.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled region tile rejected.",
+      "retryable": true,
+      "status_code": 502
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "scheduled_regions_not_supported",
+      "description": "Scheduled regions not supported.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Scheduled regions not supported.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "service_unavailable",
+      "description": "The service is temporarily unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The service is temporarily unavailable.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "stripe_customer_rebuild_failed",
+      "description": "Stripe customer rebuild failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Stripe customer rebuild failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "too_many_gallery_images",
+      "description": "Too many gallery images.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Too many gallery images.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "tool_not_found",
+      "description": "Tool not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Tool not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "upstream_failure",
+      "description": "An upstream service failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "An upstream service failed.",
+      "retryable": true,
+      "status_code": 502
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "usage_already_refunded",
+      "description": "Usage already refunded.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Usage already refunded.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "validation_error",
+      "description": "The request could not be validated.",
+      "details_schema": "V2ValidationDetails",
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "The request could not be validated.",
+      "retryable": false,
+      "status_code": 422
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "webhook_processing_failed",
+      "description": "Webhook processing failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Webhook processing failed.",
+      "retryable": false,
+      "status_code": 500
+    }
+  ],
+  "schema_version": "2.0.0",
+  "source": "src/retrodiffusion/api_v2_errors.py"
+}

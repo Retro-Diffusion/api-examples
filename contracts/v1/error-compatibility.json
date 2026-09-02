@@ -1,0 +1,57 @@
+[
+  {
+    "name": "unknown_route_string_detail",
+    "method": "GET",
+    "path": "/v1/does-not-exist",
+    "status_code": 404,
+    "content_type": "application/json",
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  {
+    "name": "method_not_allowed_string_detail",
+    "method": "POST",
+    "path": "/v1/status",
+    "status_code": 405,
+    "content_type": "application/json",
+    "body": {
+      "detail": "Method Not Allowed"
+    }
+  },
+  {
+    "name": "missing_token_validation_list",
+    "method": "GET",
+    "path": "/v1/inferences/credits",
+    "status_code": 422,
+    "content_type": "application/json",
+    "body": {
+      "detail": [
+        {
+          "loc": [
+            "header",
+            "X-RD-Token"
+          ],
+          "msg": "field required",
+          "type": "value_error.missing"
+        }
+      ]
+    }
+  },
+  {
+    "name": "legacy_inference_gone_list",
+    "method": "POST",
+    "path": "/v1/inferences/legacy",
+    "status_code": 410,
+    "content_type": "application/json",
+    "body": {
+      "detail": [
+        {
+          "msg": "This endpoint has been deprecated. Please use /v1/inferences instead.",
+          "migration_guide": "https://github.com/Retro-Diffusion/api-examples",
+          "new_endpoint": "/v1/inferences"
+        }
+      ]
+    }
+  }
+]
