@@ -489,7 +489,7 @@ payload = {
     "name": "My RD Pro Style",                 # required
     "description": "A polished look for item art",
     "style_icon": "sparkles",
-    "reference_images": ["<base64>"],          # max 1 via the API
+    "reference_images": ["<base64>"],          # exactly 1; required when creating
     "user_prompt_template": "Pixel art styled {prompt}, with 1px outlines.",  # must contain {prompt}
     "force_palette": False,
     "force_bg_removal": False,
@@ -500,8 +500,9 @@ payload = {
 # use that prompt_style in /v2/inferences.
 ```
 
-`PATCH /v2/styles/{style_id}` updates (same fields, all optional); `DELETE /v2/styles/{style_id}`
-removes it.
+Creation requires exactly one reference image. `PATCH /v2/styles/{style_id}` updates the same
+fields (all optional; omit or use null to retain the current reference); `DELETE
+/v2/styles/{style_id}` removes it.
 
 ## Errors
 

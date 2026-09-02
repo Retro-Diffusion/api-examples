@@ -1166,6 +1166,20 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "style_not_found",
+      "description": "Prompt style not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "styles",
+        "inferences"
+      ],
+      "message": "Prompt style not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "too_many_gallery_images",
       "description": "Too many gallery images.",
       "details_schema": null,

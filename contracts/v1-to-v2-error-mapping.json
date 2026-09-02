@@ -465,6 +465,10 @@
       "code": "stripe_customer_rebuild_failed",
       "status_code": 500
     },
+    "style_not_found": {
+      "code": "style_not_found",
+      "status_code": 404
+    },
     "too_many_gallery_images": {
       "code": "too_many_gallery_images",
       "status_code": 400

@@ -88,7 +88,18 @@ class ContractArtifactTests(unittest.TestCase):
                 "not_enough_balance",
                 "inference_failed",
                 "internal_error",
+                "style_not_found",
             }.issubset(codes)
+        )
+        create_style = openapi["components"]["schemas"]["ExternalRDProStyleCreate"]
+        self.assertIn("reference_images", create_style["required"])
+        self.assertEqual(
+            create_style["properties"]["reference_images"]["minItems"],
+            1,
+        )
+        self.assertEqual(
+            create_style["properties"]["reference_images"]["maxItems"],
+            1,
         )
 
     def test_llms_summary_matches_v2_auth_and_async_contracts(self):
@@ -105,6 +116,7 @@ class ContractArtifactTests(unittest.TestCase):
             "recover the accepted task with GET /v2/inferences/tasks",
             llms,
         )
+        self.assertIn('"reference_images": ["<base64>"] (exactly 1, required)', llms)
 
 
 if __name__ == "__main__":
