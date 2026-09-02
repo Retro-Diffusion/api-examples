@@ -9,7 +9,7 @@
 import { writeFileSync } from 'node:fs';
 
 const API_KEY = process.env.RD_API_KEY;
-const API_VERSION = process.env.RD_API_VERSION ?? 'v1';
+const API_VERSION = process.env.RD_API_VERSION ?? 'v2';
 if (!API_KEY) {
   console.error('Set RD_API_KEY (create a key at https://www.retrodiffusion.ai/app/devtools).');
   process.exit(1);
@@ -60,7 +60,27 @@ if (!response.ok) {
   process.exit(1);
 }
 
-const data = await response.json();
+let data = await response.json();
+if (API_VERSION === 'v2' && data.status === 'accepted') {
+  const taskId = data.task_id;
+  do {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const poll = await fetch(
+      `https://api.retrodiffusion.ai/${API_VERSION}/inferences/tasks/${taskId}`,
+      { headers: { 'X-RD-Token': API_KEY } },
+    );
+    if (!poll.ok) {
+      console.error(`Task poll failed: HTTP ${poll.status}. Do not resubmit the paid request.`);
+      process.exit(1);
+    }
+    data = await poll.json();
+  } while (data.status === 'pending' || data.status === 'running');
+  if (data.status === 'failed') {
+    console.error(`${data.error?.code ?? 'inference_failed'} request_id=${data.error?.request_id ?? taskId}`);
+    process.exit(1);
+  }
+  data = data.result;
+}
 
 // base64_images entries are raw base64 (PNG, or GIF for animation styles).
 data.base64_images.forEach((b64, i) => {

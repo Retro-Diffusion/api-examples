@@ -77,6 +77,12 @@ response = requests.post(
 )
 response.raise_for_status()
 result = response.json()
+
+# The result may arrive inline OR as a hosted URL — handle both.
+if result["base64_images"]:
+    image_bytes = base64.b64decode(result["base64_images"][0])
+else:
+    image_bytes = requests.get(result["output_urls"][0], timeout=60).content
 ```
 
 A successful response follows the regular inference API conventions:
@@ -95,9 +101,32 @@ A successful response follows the regular inference API conventions:
 }
 ```
 
-At least one of `base64_images` or `output_urls` contains the result. The
-deprecated camelCase response fields remain available for existing clients,
-but new integrations should use the snake_case fields above.
+**At least one of `base64_images` or `output_urls` contains the result — do
+not assume it is `base64_images`.** `image_edit`, `inpainting`, and
+`outpainting` normally return an **empty** `base64_images` and deliver the
+image only as a hosted URL in `output_urls` (as in the sample above); the
+other tools return inline base64. An integration that only reads
+`base64_images` will silently drop those tools' results while still being
+charged for the run. Always check `base64_images` first, then fall back to
+downloading `output_urls[0]`. The deprecated camelCase response fields remain
+available for existing clients, but new integrations should use the
+snake_case fields above.
+
+## A workflow worth knowing: consistent variants via `image_edit`
+
+To get the *same* image in several versions (seasons, day/night, weather, palettes,
+damaged/pristine), do **not** generate each variant from scratch — independent generations
+come out as unrelated compositions. Generate the base once, then derive each variant with
+`image_edit` and an imperative prompt that pins the layout:
+
+```
+"Turn this summer scene into deep winter — snow blankets the ground, bare frosted
+trees, cold grey-blue light — keep the exact same composition, layout, and every
+structure in place."
+```
+
+Each derivation costs the same as a generation but keeps the set visually consistent, and
+all variants can be derived from the one base in parallel.
 
 ## Tool inputs
 
@@ -123,7 +152,9 @@ your queue. It is not an idempotency or deduplication key.
 | `rotate` | `rotation_degrees` |
 
 Supported `dither_mode` values are `none`, `bayer_2x2`, `bayer_4x4`, and
-`bayer_8x8`. `dither_strength` ranges from `0` to `100`.
+`bayer_8x8`. `dither_strength` ranges from `0` to `10` (`0` disables
+dithering, default `5`), matching the Pixel Fixer's dither scale. Values
+above `10` are treated as the deprecated `0`-`100` scale and divided by 10.
 
 Outpainting requires at least one positive expansion value. Seam tiling
 requires at least one of `tile_x` or `tile_y` to be `true`.

@@ -155,11 +155,313 @@
         "title": "ApiActivityRead",
         "type": "object"
       },
+      "AssistantBankImageRead": {
+        "properties": {
+          "desc": {
+            "default": "",
+            "title": "Desc",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "height": {
+            "title": "Height",
+            "type": "integer"
+          },
+          "inference_id": {
+            "title": "Inference Id",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "title": "Source",
+            "type": "string"
+          },
+          "transparent": {
+            "title": "Transparent",
+            "type": "boolean"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "width": {
+            "title": "Width",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ref",
+          "url",
+          "format"
+        ],
+        "title": "AssistantBankImageRead",
+        "type": "object"
+      },
+      "AssistantDecisionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "feedback": {
+            "title": "Feedback",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "AssistantDecisionRequest",
+        "type": "object"
+      },
+      "AssistantKeepaliveRead": {
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "title": "AssistantKeepaliveRead",
+        "type": "object"
+      },
+      "AssistantMessageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "images": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Images",
+            "type": "array"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "supersede": {
+            "default": false,
+            "title": "Supersede",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "AssistantMessageRequest",
+        "type": "object"
+      },
+      "AssistantSessionCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/AssistantSessionSettings"
+          }
+        },
+        "title": "AssistantSessionCreateRequest",
+        "type": "object"
+      },
+      "AssistantSessionRead": {
+        "properties": {
+          "active_turn_id": {
+            "title": "Active Turn Id",
+            "type": "string"
+          },
+          "bank": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/AssistantBankImageRead"
+            },
+            "title": "Bank",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "message_count": {
+            "default": 0,
+            "title": "Message Count",
+            "type": "integer"
+          },
+          "pending_plan": {
+            "title": "Pending Plan",
+            "type": "object"
+          },
+          "settings": {
+            "default": {},
+            "title": "Settings",
+            "type": "object"
+          },
+          "spent_usd": {
+            "default": 0.0,
+            "title": "Spent Usd",
+            "type": "number"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ],
+        "title": "AssistantSessionRead",
+        "type": "object"
+      },
+      "AssistantSessionSettings": {
+        "additionalProperties": false,
+        "properties": {
+          "auto_approve_budget_usd": {
+            "title": "Auto Approve Budget Usd",
+            "type": "number"
+          }
+        },
+        "title": "AssistantSessionSettings",
+        "type": "object"
+      },
+      "AssistantTurnAccepted": {
+        "properties": {
+          "charged_usd": {
+            "default": 0.0,
+            "title": "Charged Usd",
+            "type": "number"
+          },
+          "remaining_balance": {
+            "title": "Remaining Balance",
+            "type": "number"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "turn_id": {
+            "title": "Turn Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "turn_id",
+          "status"
+        ],
+        "title": "AssistantTurnAccepted",
+        "type": "object"
+      },
+      "AssistantTurnRead": {
+        "properties": {
+          "charged_usd": {
+            "default": 0.0,
+            "title": "Charged Usd",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "title": "Error",
+            "type": "string"
+          },
+          "events": {
+            "default": [],
+            "items": {
+              "type": "object"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "plan": {
+            "title": "Plan",
+            "type": "object"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "spent_usd": {
+            "default": 0.0,
+            "title": "Spent Usd",
+            "type": "number"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "session_id",
+          "kind",
+          "status"
+        ],
+        "title": "AssistantTurnRead",
+        "type": "object"
+      },
+      "BillingCanaryFaultMode": {
+        "description": "An enumeration.",
+        "enum": [
+          "normal_failure",
+          "stale_reconciliation"
+        ],
+        "title": "BillingCanaryFaultMode",
+        "type": "string"
+      },
       "ChatCompletionRequest": {
         "properties": {
           "assistant_id": {
             "title": "Assistant Id",
             "type": "string"
+          },
+          "conversation_id": {
+            "title": "Conversation Id",
+            "type": "string"
+          },
+          "disable_reasoning": {
+            "title": "Disable Reasoning",
+            "type": "boolean"
           },
           "messages": {
             "items": {
@@ -172,9 +474,24 @@
             "title": "Model",
             "type": "string"
           },
+          "reasoning_effort": {
+            "title": "Reasoning Effort",
+            "type": "string"
+          },
           "system_prompt_override": {
             "title": "System Prompt Override",
             "type": "string"
+          },
+          "tool_choice": {
+            "title": "Tool Choice",
+            "type": "string"
+          },
+          "tools": {
+            "items": {
+              "type": "object"
+            },
+            "title": "Tools",
+            "type": "array"
           }
         },
         "required": [
@@ -192,6 +509,10 @@
             },
             "title": "Choices",
             "type": "array"
+          },
+          "conversation_id": {
+            "title": "Conversation Id",
+            "type": "string"
           },
           "created": {
             "title": "Created",
@@ -250,11 +571,21 @@
           "role": {
             "title": "Role",
             "type": "string"
+          },
+          "tool_call_id": {
+            "title": "Tool Call Id",
+            "type": "string"
+          },
+          "tool_calls": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCall"
+            },
+            "title": "Tool Calls",
+            "type": "array"
           }
         },
         "required": [
-          "role",
-          "content"
+          "role"
         ],
         "title": "ChatMessage",
         "type": "object"
@@ -1559,7 +1890,7 @@
             "type": "number"
           },
           "height": {
-            "minimum": 16.0,
+            "minimum": 12.0,
             "title": "Height",
             "type": "integer"
           },
@@ -1724,8 +2055,13 @@
             "title": "Used Input Palette",
             "type": "boolean"
           },
+          "used_reference_images": {
+            "default": false,
+            "title": "Used Reference Images",
+            "type": "boolean"
+          },
           "width": {
-            "minimum": 16.0,
+            "minimum": 12.0,
             "title": "Width",
             "type": "integer"
           }
@@ -2166,6 +2502,46 @@
         "title": "TextContent",
         "type": "object"
       },
+      "ToolCall": {
+        "properties": {
+          "function": {
+            "$ref": "#/components/schemas/ToolCallFunction"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "default": "function",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "function"
+        ],
+        "title": "ToolCall",
+        "type": "object"
+      },
+      "ToolCallFunction": {
+        "properties": {
+          "arguments": {
+            "title": "Arguments",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "arguments"
+        ],
+        "title": "ToolCallFunction",
+        "type": "object"
+      },
       "V2AsyncTaskError": {
         "properties": {
           "code": {
@@ -2322,11 +2698,1684 @@
     }
   },
   "info": {
+    "description": "The default public API contract. V2 preserves the maintained v1 surface while making inference admission asynchronous and all JSON errors canonical.",
     "title": "RetroDiffusion API",
     "version": "2.0.0"
   },
   "openapi": "3.0.2",
   "paths": {
+    "/assistant/sessions": {
+      "post": {
+        "description": "Start an assistant session (5-minute idle expiry; keepalive extends).",
+        "operationId": "create_session_assistant_sessions_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantSessionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantSessionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create Session",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/assistant/sessions/{session_id}": {
+      "delete": {
+        "description": "End a session immediately (its turns remain readable until cleanup).",
+        "operationId": "delete_session_assistant_sessions__session_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantKeepaliveRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete Session",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      },
+      "get": {
+        "description": "Full session state: transcript-derived bank, pending plan, active turn.",
+        "operationId": "get_session_assistant_sessions__session_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantSessionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Session",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/assistant/sessions/{session_id}/decision": {
+      "post": {
+        "description": "Approve or deny the pending plan (free — no thinking-cycle charge).",
+        "operationId": "decide_plan_assistant_sessions__session_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantTurnAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Decide Plan",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/assistant/sessions/{session_id}/keepalive": {
+      "post": {
+        "description": "Reset the idle-expiry clock (poll while the user is away).",
+        "operationId": "keepalive_assistant_sessions__session_id__keepalive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantKeepaliveRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Keepalive",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/assistant/sessions/{session_id}/messages": {
+      "post": {
+        "description": "Send a message (charges the thinking-cycle fee) and start a turn.",
+        "operationId": "send_message_assistant_sessions__session_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantMessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantTurnAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Send Message",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/assistant/sessions/{session_id}/turns": {
+      "get": {
+        "description": "The session's most recent turns, newest first.",
+        "operationId": "list_turns_assistant_sessions__session_id__turns_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AssistantTurnRead"
+                  },
+                  "title": "Response List Turns Assistant Sessions  Session Id  Turns Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List Turns",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/assistant/sessions/{session_id}/turns/{turn_id}": {
+      "get": {
+        "description": "Poll one turn: status plus its accumulated events (messages, plan,\nimages, inspector notes).",
+        "operationId": "get_turn_assistant_sessions__session_id__turns__turn_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "turn_id",
+            "required": true,
+            "schema": {
+              "title": "Turn Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantTurnRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Turn",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_region_plan",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_prompt",
+          "not_found",
+          "payload_too_large",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
     "/assistants/chat/completions": {
       "post": {
         "description": "Create a chat completion using an assistant (external API with token authentication).\nOnly accessible by admin users.",
@@ -2503,6 +4552,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -2526,6 +4576,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -2710,6 +4761,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -2779,6 +4831,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -2963,6 +5016,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -3032,6 +5086,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -3215,6 +5270,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -3284,6 +5340,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -3467,6 +5524,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -3536,6 +5594,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -3679,6 +5738,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -3748,6 +5808,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -3897,6 +5958,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -3966,6 +6028,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -4159,6 +6222,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -4228,6 +6292,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -4421,6 +6486,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -4490,6 +6556,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -4683,6 +6750,7 @@
           "builtin_tool_contract_managed",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "edit_failed",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
@@ -4752,6 +6820,7 @@
           "too_many_gallery_images",
           "tool_not_found",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -4759,7 +6828,8 @@
     },
     "/inferences": {
       "post": {
-        "operationId": "run_external_neo_inference_inferences_post",
+        "description": "Always admit inference asynchronously; cost checks stay immediate.",
+        "operationId": "run_external_neo_inference_v2_inferences_post",
         "parameters": [
           {
             "in": "header",
@@ -4778,6 +6848,14 @@
               "default": "false",
               "title": "X-Rd-Fail-Inference",
               "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Billing-Canary-Fault",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/BillingCanaryFaultMode"
             }
           }
         ],
@@ -4804,83 +6882,11 @@
                       "$ref": "#/components/schemas/ExternalInferenceTaskAccepted"
                     }
                   ],
-                  "title": "Response Run External Neo Inference Inferences Post"
+                  "title": "Response Run External Neo Inference V2 Inferences Post"
                 }
               }
             },
             "description": "Successful Response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Bad Request",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Not Found",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
           },
           "405": {
             "content": {
@@ -4926,7 +6932,7 @@
                 }
               }
             },
-            "description": "Internal Server Error",
+            "description": "Unexpected internal error.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for support and log correlation.",
@@ -4937,7 +6943,10 @@
             }
           }
         },
-        "summary": "Run External Neo Inference",
+        "summary": "Run External Neo Inference V2",
+        "tags": [
+          "external-inference-v2"
+        ],
         "x-rd-error-codes": [
           "account_deactivation_failed",
           "admin_debug_only",
@@ -4952,6 +6961,7 @@
           "batch_inference_not_found",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "empty_gallery_upload",
           "forbidden",
@@ -4983,6 +6993,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -5153,6 +7164,7 @@
           "batch_inference_not_found",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "empty_gallery_upload",
           "forbidden",
@@ -5184,6 +7196,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -5368,6 +7381,7 @@
           "batch_inference_not_found",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "empty_gallery_upload",
           "forbidden",
@@ -5399,6 +7413,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -5406,8 +7421,7 @@
     },
     "/inferences/tasks": {
       "get": {
-        "description": "List the most recent async inference tasks created with this API token,\nnewest first. Allows clients to recover task IDs after a lost submission\nresponse (e.g. an edge timeout before the acknowledgement was delivered).",
-        "operationId": "list_external_inference_tasks_inferences_tasks_get",
+        "operationId": "list_external_inference_tasks_v2_inferences_tasks_get",
         "parameters": [
           {
             "in": "query",
@@ -5455,78 +7469,6 @@
             },
             "description": "Successful Response"
           },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Bad Request",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Not Found",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
           "405": {
             "content": {
               "application/json": {
@@ -5571,7 +7513,7 @@
                 }
               }
             },
-            "description": "Internal Server Error",
+            "description": "Unexpected internal error.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for support and log correlation.",
@@ -5582,7 +7524,10 @@
             }
           }
         },
-        "summary": "List External Inference Tasks",
+        "summary": "List External Inference Tasks V2",
+        "tags": [
+          "external-inference-v2"
+        ],
         "x-rd-error-codes": [
           "account_deactivation_failed",
           "admin_debug_only",
@@ -5597,6 +7542,7 @@
           "batch_inference_not_found",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "empty_gallery_upload",
           "forbidden",
@@ -5628,6 +7574,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -5635,7 +7582,7 @@
     },
     "/inferences/tasks/{task_id}": {
       "get": {
-        "operationId": "get_external_inference_task_inferences_tasks__task_id__get",
+        "operationId": "get_external_inference_task_v2_inferences_tasks__task_id__get",
         "parameters": [
           {
             "in": "path",
@@ -5667,78 +7614,6 @@
             },
             "description": "Successful Response"
           },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Bad Request",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/V2ErrorResponse"
-                }
-              }
-            },
-            "description": "Not Found",
-            "headers": {
-              "X-Request-ID": {
-                "description": "Request identifier for support and log correlation.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
           "405": {
             "content": {
               "application/json": {
@@ -5783,7 +7658,7 @@
                 }
               }
             },
-            "description": "Internal Server Error",
+            "description": "Unexpected internal error.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for support and log correlation.",
@@ -5794,7 +7669,10 @@
             }
           }
         },
-        "summary": "Get External Inference Task",
+        "summary": "Get External Inference Task V2",
+        "tags": [
+          "external-inference-v2"
+        ],
         "x-rd-error-codes": [
           "account_deactivation_failed",
           "admin_debug_only",
@@ -5809,6 +7687,7 @@
           "batch_inference_not_found",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "empty_gallery_upload",
           "forbidden",
@@ -5840,6 +7719,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -6023,6 +7903,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -6050,6 +7931,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -6233,6 +8115,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -6260,6 +8143,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -6404,6 +8288,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -6427,6 +8312,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -6611,6 +8497,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -6634,6 +8521,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -6830,6 +8718,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -6853,6 +8742,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -7038,6 +8928,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -7061,6 +8952,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -7254,6 +9146,7 @@
           "bad_request",
           "conflict",
           "credits_lookup_failed",
+          "durable_dispatch_unavailable",
           "email_update_failed",
           "forbidden",
           "gone",
@@ -7277,6 +9170,7 @@
           "service_unavailable",
           "stripe_customer_rebuild_failed",
           "upstream_failure",
+          "usage_already_refunded",
           "validation_error",
           "webhook_processing_failed"
         ]
@@ -7996,6 +9890,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "usage_already_refunded",
+      "description": "Usage already refunded.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Usage already refunded.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "gone",
       "description": "The requested operation is no longer available.",
       "details_schema": null,
@@ -8464,6 +10371,19 @@
       "message": "An upstream service failed.",
       "retryable": true,
       "status_code": 502
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "durable_dispatch_unavailable",
+      "description": "Durable dispatch unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Durable dispatch unavailable.",
+      "retryable": true,
+      "status_code": 503
     },
     {
       "aliases": [],

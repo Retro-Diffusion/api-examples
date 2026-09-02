@@ -3,9 +3,9 @@
 V1 remains supported and unchanged. Existing clients can keep using
 `https://api.retrodiffusion.ai/v1` without a code change.
 
-V2 is an explicit opt-in at `https://api.retrodiffusion.ai/v2`. It preserves
-successful route/status/response contracts for carried operations and
-standardizes every JSON error:
+V2 is the default for new integrations at `https://api.retrodiffusion.ai/v2`.
+It preserves successful route contracts for carried operations, makes inference
+admission predictably asynchronous, and standardizes every JSON error:
 
 ```json
 {
@@ -37,9 +37,11 @@ Not carried into v2:
 - `/external-credits/*` pending an authenticated ownership decision
 
 The exact artifacts are checked in under `contracts/`. Python and JavaScript
-examples select a version with `RD_API_VERSION`; they default to v1. Never
-retry a failed paid v2 request on v1. Rollback by setting the version back to
-v1.
+examples select a version with `RD_API_VERSION`; they default to v2. V2
+`POST /inferences` returns an accepted task for real generations, which clients
+poll at `GET /inferences/tasks/{task_id}`. Free `check_cost` requests remain
+immediate. Never retry a failed paid v2 request on v1. Roll back an integration
+by explicitly setting the version to v1.
 
-This documentation introduces no redirect, deprecation header, sunset date, or
-removal. Eventual v1 deprecation requires a separate approved lifecycle plan.
+There is no redirect, deprecation header, sunset date, or removal plan for v1.
+Any future retirement proposal would require a separate approved lifecycle plan.

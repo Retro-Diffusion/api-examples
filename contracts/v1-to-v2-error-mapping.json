@@ -45,6 +45,10 @@
       "code": "account_deletion_finalized",
       "status_code": 409
     },
+    "account_lifecycle_action_required": {
+      "code": "account_lifecycle_action_required",
+      "status_code": 409
+    },
     "admin_debug_only": {
       "code": "admin_debug_only",
       "status_code": 403
@@ -93,6 +97,14 @@
       "code": "batch_inference_not_found",
       "status_code": 404
     },
+    "billing_canary_async_required": {
+      "code": "billing_canary_async_required",
+      "status_code": 400
+    },
+    "billing_canary_unavailable": {
+      "code": "billing_canary_unavailable",
+      "status_code": 403
+    },
     "builtin_tool_contract_managed": {
       "code": "builtin_tool_contract_managed",
       "status_code": 400
@@ -112,6 +124,10 @@
     "credits_lookup_failed": {
       "code": "credits_lookup_failed",
       "status_code": 500
+    },
+    "durable_dispatch_unavailable": {
+      "code": "durable_dispatch_unavailable",
+      "status_code": 503
     },
     "edit_failed": {
       "code": "edit_failed",
@@ -169,6 +185,10 @@
       "code": "inference_failed",
       "status_code": 502
     },
+    "inference_not_found": {
+      "code": "inference_not_found",
+      "status_code": 404
+    },
     "internal_error": {
       "code": "internal_error",
       "status_code": 500
@@ -216,6 +236,10 @@
     "invalid_inference_update": {
       "code": "invalid_inference_update",
       "status_code": 400
+    },
+    "invalid_internal_token": {
+      "code": "invalid_internal_token",
+      "status_code": 401
     },
     "invalid_palette": {
       "code": "invalid_palette",
@@ -309,6 +333,10 @@
       "code": "missing_tile_direction",
       "status_code": 400
     },
+    "neural_worker_not_ready": {
+      "code": "neural_worker_not_ready",
+      "status_code": 503
+    },
     "not_enough_balance": {
       "code": "not_enough_balance",
       "status_code": 402
@@ -352,6 +380,10 @@
     "pixel_fixer_request_too_large": {
       "code": "pixel_fixer_request_too_large",
       "status_code": 413
+    },
+    "pixel_fixer_usage_unavailable": {
+      "code": "pixel_fixer_usage_unavailable",
+      "status_code": 503
     },
     "public_cover_upload_failed": {
       "code": "public_cover_upload_failed",
@@ -425,6 +457,10 @@
       "code": "service_unavailable",
       "status_code": 503
     },
+    "source_media_read_failed": {
+      "code": "source_media_read_failed",
+      "status_code": 500
+    },
     "stripe_customer_rebuild_failed": {
       "code": "stripe_customer_rebuild_failed",
       "status_code": 500
@@ -444,6 +480,10 @@
     "upstream_failure": {
       "code": "upstream_failure",
       "status_code": 502
+    },
+    "usage_already_refunded": {
+      "code": "usage_already_refunded",
+      "status_code": 409
     },
     "user_not_found": {
       "code": "user_not_found",

@@ -188,6 +188,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "durable_dispatch_unavailable",
+      "description": "Durable dispatch unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Durable dispatch unavailable.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "edit_failed",
       "description": "Edit failed.",
       "details_schema": null,
@@ -1188,6 +1201,19 @@
       "message": "An upstream service failed.",
       "retryable": true,
       "status_code": 502
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "usage_already_refunded",
+      "description": "Usage already refunded.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Usage already refunded.",
+      "retryable": false,
+      "status_code": 409
     },
     {
       "aliases": [],

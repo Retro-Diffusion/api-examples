@@ -22,7 +22,7 @@ from typing import Any
 
 import requests
 
-API_VERSION = os.environ.get("RD_API_VERSION", "v1").strip().lower()
+API_VERSION = os.environ.get("RD_API_VERSION", "v2").strip().lower()
 if API_VERSION not in {"v1", "v2"}:
     raise RuntimeError("RD_API_VERSION must be either v1 or v2.")
 API_BASE_URL = f"https://api.retrodiffusion.ai/{API_VERSION}"
@@ -136,12 +136,8 @@ def _headers(api_key: str) -> dict[str, str]:
     return {"X-RD-Token": api_key}
 
 
-def generate(payload: dict[str, Any], api_key: str | None = None) -> dict[str, Any]:
-    """POST /v1/inferences and return the parsed JSON response.
-
-    Raises a helpful error if the request fails.
-    """
-    api_key = api_key or get_api_key()
+def _submit_inference(payload: dict[str, Any], api_key: str) -> dict[str, Any]:
+    """Submit exactly one inference request without replay or version fallback."""
     response = requests.post(
         f"{API_BASE_URL}/inferences",
         headers=_headers(api_key),
@@ -152,18 +148,7 @@ def generate(payload: dict[str, Any], api_key: str | None = None) -> dict[str, A
     return response.json()
 
 
-def generate_async(
-    payload: dict[str, Any], api_key: str | None = None, poll_seconds: float = 2.0
-) -> dict[str, Any]:
-    """Submit an async job and poll until it finishes, returning the final result.
-
-    Use this for animations or large batches you'd rather not hold a connection
-    open for.
-    """
-    api_key = api_key or get_api_key()
-    accepted = generate({**payload, "async": True}, api_key)
-    task_id = accepted["task_id"]
-    print(f"  queued task {task_id}")
+def _poll_task(task_id: str, api_key: str, poll_seconds: float) -> dict[str, Any]:
     while True:
         task_response = requests.get(
             f"{API_BASE_URL}/inferences/tasks/{task_id}",
@@ -173,7 +158,7 @@ def generate_async(
         raise_for_api_error(task_response)
         task = task_response.json()
         status = task["status"]
-        if status in ("pending", "running"):
+        if status in ("accepted", "pending", "running"):
             time.sleep(poll_seconds)
             continue
         if status == "succeeded":
@@ -187,6 +172,33 @@ def generate_async(
         raise RuntimeError("The inference task failed without a valid error.")
 
 
+def generate(payload: dict[str, Any], api_key: str | None = None) -> dict[str, Any]:
+    """Submit one inference and return its result; v2 polls the accepted task.
+
+    Raises a helpful error if the request fails.
+    """
+    api_key = api_key or get_api_key()
+    response = _submit_inference(payload, api_key)
+    if API_VERSION == "v2" and response.get("status") == "accepted":
+        return _poll_task(str(response["task_id"]), api_key, 2.0)
+    return response
+
+
+def generate_async(
+    payload: dict[str, Any], api_key: str | None = None, poll_seconds: float = 2.0
+) -> dict[str, Any]:
+    """Submit an async job and poll until it finishes, returning the final result.
+
+    Use this for animations or large batches you'd rather not hold a connection
+    open for.
+    """
+    api_key = api_key or get_api_key()
+    accepted = _submit_inference({**payload, "async": True}, api_key)
+    task_id = accepted["task_id"]
+    print(f"  queued task {task_id}")
+    return _poll_task(str(task_id), api_key, poll_seconds)
+
+
 def check_cost(payload: dict[str, Any], api_key: str | None = None) -> float:
     """Return the price of a request without generating anything (free dry run)."""
     result = generate({**payload, "check_cost": True}, api_key)
@@ -198,12 +210,12 @@ def list_tasks(
     status: str | None = None,
     api_key: str | None = None,
 ) -> list[dict[str, Any]]:
-    """GET /v1/inferences/tasks — your most recent async jobs, newest first.
+    """GET /v2/inferences/tasks — your most recent async jobs, newest first.
 
     Recovery path: if a submission response was lost (timeout, disconnect)
     before the task_id arrived, the job was still accepted and charged. Find
     it here instead of re-submitting and being charged twice, then keep
-    polling it via GET /v1/inferences/tasks/{task_id}.
+    polling it via GET /v2/inferences/tasks/{task_id}.
     """
     api_key = api_key or get_api_key()
     params: dict[str, Any] = {"limit": max(1, min(limit, 100))}
@@ -282,12 +294,19 @@ def image_to_base64(path: str | Path) -> str:
 def save_images(result: dict[str, Any], stem: str) -> list[str]:
     """Save every image in a response. PNG normally, .gif for animation styles.
 
-    Returns the list of written file paths.
+    Handles both delivery modes: inline ``base64_images`` AND hosted
+    ``output_urls`` — the image_edit, inpainting, and outpainting edit tools
+    normally return an empty ``base64_images`` and deliver the result only as
+    a URL. Returns the list of written file paths.
     """
-    images = result.get("base64_images") or []
+    images = [base64.b64decode(b64) for b64 in result.get("base64_images") or []]
+    if not images:
+        for url in result.get("output_urls") or []:
+            response = requests.get(url, timeout=60)
+            response.raise_for_status()
+            images.append(response.content)
     written: list[str] = []
-    for index, b64 in enumerate(images):
-        data = base64.b64decode(b64)
+    for index, data in enumerate(images):
         # Animation styles return GIFs; sniff the header to pick the extension.
         ext = "gif" if data[:3] == b"GIF" else "png"
         suffix = f"_{index + 1}" if len(images) > 1 else ""
