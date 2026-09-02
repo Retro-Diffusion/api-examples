@@ -91,6 +91,21 @@ class ContractArtifactTests(unittest.TestCase):
             }.issubset(codes)
         )
 
+    def test_llms_summary_matches_v2_auth_and_async_contracts(self):
+        llms = (ROOT / "llms.txt").read_text()
+
+        self.assertIn("Invalid token on this endpoint -> 401 invalid_token.", llms)
+        self.assertNotIn("Invalid token on this endpoint -> 403.", llms)
+        self.assertIn(
+            "v2 always returns an accepted task for real generation requests.",
+            llms,
+        )
+        self.assertIn("Poll GET /v2/inferences/tasks/{task_id}", llms)
+        self.assertIn(
+            "recover the accepted task with GET /v2/inferences/tasks",
+            llms,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
