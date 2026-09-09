@@ -56,6 +56,7 @@ python example-scripts/01_generate_image.py
 | [`08_list_styles.py`](example-scripts/08_list_styles.py) | Discover every style your account can use |
 | [`09_edit_tools.py`](example-scripts/09_edit_tools.py) | Discover, estimate, and run any canvas edit tool |
 | [`10_pixel_fixer.py`](example-scripts/10_pixel_fixer.py) | Restore an enlarged or softened image to its native pixel grid |
+| [`12_assistant_session.py`](example-scripts/12_assistant_session.py) | Talk to the assistant: describe a goal, approve its priced plan, collect results |
 | [`generate_image.mjs`](example-scripts/generate_image.mjs) | The basic request from Node.js (no dependencies) |
 
 **Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
@@ -156,7 +157,7 @@ Down to **12×12px** with **batch ≤ 16** (great for tiny sprites and icons): `
 `rd_pro__isometric`, `rd_pro__topdown`, `rd_pro__platformer` (12–256px).
 64–256px, batch ≤ 4: `rd_pro__dungeon_map`, `rd_pro__spritesheet`, `rd_pro__fps_weapon`, `rd_pro__typography`.
 256×256-only, batch ≤ 4: `rd_pro__hexagonal_tiles`, `rd_pro__ui_panel`, `rd_pro__inventory_items`.
-Require an input image (64–256px, batch ≤ 4): `rd_pro__edit`, `rd_pro__pixelate`.
+Require an input image: `rd_pro__pixelate` (16–256px, batch ≤ 16), `rd_pro__edit` (64–256px, batch ≤ 4).
 
 **RD Plus — quality all-rounder** with the largest style library. 64–384px (low-res variants
 smaller), batch ≤ 16: `rd_plus__default`, `rd_plus__retro`, `rd_plus__watercolor`,
@@ -503,6 +504,33 @@ payload = {
 Creation requires exactly one reference image. `PATCH /v2/styles/{style_id}` updates the same
 fields (all optional; omit or use null to retain the current reference); `DELETE
 /v2/styles/{style_id}` removes it.
+
+## Assistant sessions (beta)
+
+A conversational layer over the whole generation API: describe what you want
+in plain language, and the assistant picks the model, style, size, and
+settings, proposes a **plan with an exact price**, and generates once you
+approve — including multi-step work like "make a fox sprite, then animate it
+walking". Messages cost a flat $0.01 (auto-refunded if the turn fails),
+decisions are free, and approved plans bill each generation at the standard
+rates shown on the plan before you commit. Sessions idle out after 5 minutes
+(there's a free keep-alive ping); results live on in your account history
+with permanent URLs. An `auto_approve_budget_usd` setting lets unattended
+automations skip the approval round-trip under a hard per-plan spending cap.
+
+```python
+sid = post("/v1/assistant/sessions", {})["id"]
+turn = post(f"/v1/assistant/sessions/{sid}/messages",
+            {"message": "A 32x32 slime enemy with a bounce animation"})
+# poll GET /v1/assistant/sessions/{sid}/turns/{turn_id} -> plan proposed
+post(f"/v1/assistant/sessions/{sid}/decision", {"decision": "approve"})
+# poll again -> image events with hosted URLs + an honest summary
+```
+
+See [`ASSISTANT.md`](ASSISTANT.md) for the full contract (events, plan
+shape, refunds, concurrency) and
+[`12_assistant_session.py`](example-scripts/12_assistant_session.py) for a
+complete interactive client.
 
 ## Errors
 
