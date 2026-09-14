@@ -208,8 +208,8 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | `input_palette` | base64 | Constrain output colors to a palette image. Add `return_pre_palette` to also get the un-quantized image. |
 | `remove_bg` | bool | Transparent output. Add `return_non_bg_removed` to also get the original. |
 | `tile_x`, `tile_y` | bool | Seamless tiling on either axis. |
-| `frames_duration` | int | Animation styles: `4`, `6`, `8`, `10`, `12`, or `16`. |
-| `return_spritesheet` | bool | Animations: return a PNG spritesheet instead of a GIF. |
+| `frames_duration` | int | Animation styles: `4`, `6`, `8`, `10`, `12`, or `16`. Ignored by `rd_advanced_animation__rotate` (always 8 views). |
+| `return_spritesheet` | bool | Animations: return a PNG spritesheet instead of a GIF (for `rd_advanced_animation__rotate`, the 3×3 direction sheet). |
 | `upscale_output_factor` | int | `1` (default) = native pixel size; higher = nearest-neighbor upscaled PNGs. |
 | `bypass_prompt_expansion` | bool | Skip the automatic LLM prompt enrichment. |
 | `include_downloadable_data` | bool | Include structured extras (e.g. `rd_pro__inventory_items` returns an item-atlas JSON). |
@@ -316,6 +316,16 @@ results. Actions: `walking`, `idle`, `jump`, `crouch`, `attack`, `destroy`, `cus
 (describe any motion), `subtle_motion` (ambient scene motion). See
 [`05_animation.py`](example-scripts/05_animation.py).
 
+**Rotate** (`rd_advanced_animation__rotate`) is the odd one out: instead of motion it generates
+the other seven directional views of the uploaded subject. `input_image` is required
+(32–256px, multiples of 8), the `prompt` is an *optional* short description of the subject,
+`remove_bg` and `input_palette` work as usual, and `frames_duration` is ignored. The default
+output is an 8-frame GIF that turns the subject a full circle; `return_spritesheet: true`
+returns a 3×3 PNG sheet instead (each cell the input size, center cell empty, and every view
+faces the center of the sheet: top = front view, bottom = back view, left/right = side views,
+corners = diagonals). It is the same layout as `rd_animation__8_dir_rotation`, so both feed
+the same per-direction workflows. Costs `0.10`.
+
 Three field-tested rules that prevent most animation failures:
 
 1. **Send the native-resolution frame.** A 96px sprite exported at 4× display scale is 384px
@@ -354,6 +364,18 @@ payload = {
     "num_images": 1,
     "frames_duration": 8,
     "input_image": start_frame_base64,   # required
+}
+
+# 8 directional views of a sprite you already have (prompt optional)
+payload = {
+    "prompt": "",
+    "prompt_style": "rd_advanced_animation__rotate",
+    "width": 64,
+    "height": 64,
+    "num_images": 1,
+    "input_image": sprite_base64,        # required, 32-256px, multiples of 8
+    "remove_bg": True,
+    "return_spritesheet": True,          # 3x3 direction sheet; omit for the GIF
 }
 ```
 
@@ -409,7 +431,7 @@ and free; these formulas are current at the time of writing:
 - **Low-res styles** (`mc_*`, `low_res`, `classic`, `skill_icon`, `topdown_item`, tile variants):
   `max(0.02, (w*h + 13700) / 600000) * num_images`
 - **`rd_pro`:** `0.18 * num_images`
-- **Advanced animations:** `0.14` (`custom_action` and `subtle_motion`: `0.25`)
+- **Advanced animations:** `0.14` (`custom_action` and `subtle_motion`: `0.25`; `rotate`: `0.10`)
 - **Animations:** `0.07` (`any_animation` and `8_dir_rotation`: `0.25`)
 - **Tilesets** (`rd_tile__tileset` / `_advanced`): `0.10`
 

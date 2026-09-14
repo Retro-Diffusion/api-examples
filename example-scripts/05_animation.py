@@ -8,6 +8,11 @@ Actions: walking, idle, jump, crouch, attack, destroy, custom_action (describe
 any motion), subtle_motion (ambient life for scenes). frames_duration accepts
 4, 6, 8, 10, 12, or 16.
 
+rd_advanced_animation__rotate is different: it generates the other 7 directional
+views of the uploaded sprite (prompt optional, frames_duration ignored) and
+returns a GIF turning the subject a full circle, or a 3x3 direction sheet with
+"return_spritesheet": True.
+
 This script generates a start frame, then animates it. Because animation can
 take a little longer, it uses the async submit-and-poll flow.
 
@@ -46,3 +51,5 @@ walk = generate_async(
 print(f"Saved {save_images(walk, 'output_anim_walk')}  (an animated GIF)")
 
 # Tip: add "return_spritesheet": True to get a PNG spritesheet instead of a GIF.
+# Tip: swap prompt_style for "rd_advanced_animation__rotate" (prompt can be "") to get
+#      8 directional views of the same frame instead of motion.
