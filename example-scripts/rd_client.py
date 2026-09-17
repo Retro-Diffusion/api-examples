@@ -17,6 +17,7 @@ from __future__ import annotations
 import base64
 import os
 import time
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -136,11 +137,23 @@ def _headers(api_key: str) -> dict[str, str]:
     return {"X-RD-Token": api_key}
 
 
-def _submit_inference(payload: dict[str, Any], api_key: str) -> dict[str, Any]:
-    """Submit exactly one inference request without replay or version fallback."""
+def _submit_inference(
+    payload: dict[str, Any],
+    api_key: str,
+    idempotency_key: str | None = None,
+) -> dict[str, Any]:
+    """Submit one logical inference without replay or version fallback."""
+    headers = _headers(api_key)
+    use_idempotency = not payload.get("check_cost") and (
+        API_VERSION == "v2" or payload.get("async") or payload.get("async_process")
+    )
+    if use_idempotency:
+        key = idempotency_key or str(uuid.uuid4())
+        headers["Idempotency-Key"] = key
+        print(f"  admission key {key} (save it until task_id is received)")
     response = requests.post(
         f"{API_BASE_URL}/inferences",
-        headers=_headers(api_key),
+        headers=headers,
         json=payload,
         timeout=300,
     )
@@ -172,20 +185,29 @@ def _poll_task(task_id: str, api_key: str, poll_seconds: float) -> dict[str, Any
         raise RuntimeError("The inference task failed without a valid error.")
 
 
-def generate(payload: dict[str, Any], api_key: str | None = None) -> dict[str, Any]:
+def generate(
+    payload: dict[str, Any],
+    api_key: str | None = None,
+    *,
+    idempotency_key: str | None = None,
+) -> dict[str, Any]:
     """Submit one inference and return its result; v2 polls the accepted task.
 
     Raises a helpful error if the request fails.
     """
     api_key = api_key or get_api_key()
-    response = _submit_inference(payload, api_key)
+    response = _submit_inference(payload, api_key, idempotency_key)
     if API_VERSION == "v2" and response.get("status") == "accepted":
         return _poll_task(str(response["task_id"]), api_key, 2.0)
     return response
 
 
 def generate_async(
-    payload: dict[str, Any], api_key: str | None = None, poll_seconds: float = 2.0
+    payload: dict[str, Any],
+    api_key: str | None = None,
+    poll_seconds: float = 2.0,
+    *,
+    idempotency_key: str | None = None,
 ) -> dict[str, Any]:
     """Submit an async job and poll until it finishes, returning the final result.
 
@@ -193,7 +215,9 @@ def generate_async(
     open for.
     """
     api_key = api_key or get_api_key()
-    accepted = _submit_inference({**payload, "async": True}, api_key)
+    accepted = _submit_inference(
+        {**payload, "async": True}, api_key, idempotency_key
+    )
     task_id = accepted["task_id"]
     print(f"  queued task {task_id}")
     return _poll_task(str(task_id), api_key, poll_seconds)
@@ -212,10 +236,9 @@ def list_tasks(
 ) -> list[dict[str, Any]]:
     """GET /v2/inferences/tasks — your most recent async jobs, newest first.
 
-    Recovery path: if a submission response was lost (timeout, disconnect)
-    before the task_id arrived, the job was still accepted and charged. Find
-    it here instead of re-submitting and being charged twice, then keep
-    polling it via GET /v2/inferences/tasks/{task_id}.
+    Recovery fallback when the original idempotency key is unavailable: find
+    the accepted task here instead of blindly re-submitting, then keep polling
+    it via GET /v2/inferences/tasks/{task_id}.
     """
     api_key = api_key or get_api_key()
     params: dict[str, Any] = {"limit": max(1, min(limit, 100))}

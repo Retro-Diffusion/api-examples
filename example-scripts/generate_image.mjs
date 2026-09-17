@@ -7,6 +7,7 @@
  *   node generate_image.mjs
  */
 import { writeFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 
 const API_KEY = process.env.RD_API_KEY;
 const API_VERSION = process.env.RD_API_VERSION ?? 'v2';
@@ -19,11 +20,15 @@ if (!['v1', 'v2'].includes(API_VERSION)) {
   process.exit(1);
 }
 
+const idempotencyKey = process.env.RD_IDEMPOTENCY_KEY || randomUUID();
+if (API_VERSION === 'v2') console.log(`Admission key: ${idempotencyKey} (save until task_id is received)`);
+
 const response = await fetch(`https://api.retrodiffusion.ai/${API_VERSION}/inferences`, {
   method: 'POST',
   headers: {
     'X-RD-Token': API_KEY,
     'Content-Type': 'application/json',
+    ...(API_VERSION === 'v2' ? { 'Idempotency-Key': idempotencyKey } : {}),
   },
   body: JSON.stringify({
     prompt: "A cozy wizard's tower on a hill at sunset, warm window light",

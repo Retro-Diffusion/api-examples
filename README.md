@@ -74,10 +74,13 @@ Create a key, make sure you have balance, then send a request:
 ```python
 import base64
 import time
+import uuid
 import requests
 
 url = "https://api.retrodiffusion.ai/v2/inferences"
-headers = {"X-RD-Token": "YOUR_API_KEY"}
+idempotency_key = str(uuid.uuid4())  # persist before POST; reuse only with identical inputs
+print("Save this admission key until task_id is received:", idempotency_key)
+headers = {"X-RD-Token": "YOUR_API_KEY", "Idempotency-Key": idempotency_key}
 payload = {
     "prompt": "A really cool corgi wearing sunglasses",  # describe the SUBJECT only
     "prompt_style": "rd_plus__default",                  # the style handles the pixel-art look
@@ -114,14 +117,14 @@ print(f"Cost: ${data['balance_cost']}   Remaining: ${data['remaining_balance']}"
 The POST returns an accepted task immediately:
 
 ```json
-{"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
+{"status": "accepted", "task_id": "8d24e990-...", "request_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
 ```
 
 When the task succeeds, its `result` has the generation response (null fields are omitted):
 
 ```json
 {
-  "created_at": "2026-07-08T15:04:05",
+  "created_at": 1783523045,
   "balance_cost": 0.058,
   "base64_images": ["iVBORw0KGgo..."],
   "model": "rd_plus",
@@ -197,8 +200,8 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `prompt` | string | **Required.** Describe the subject — never write "pixel art". |
-| `prompt_style` | string | **Required.** A style id (see above). |
+| `prompt` | string | Defaults to empty. Required only when the selected style's `prompt_requirement` says so; image-driven styles may accept an empty prompt. |
+| `prompt_style` | string | Style id (see above). Send it to select a style. |
 | `width`, `height` | int | **Required.** 12–512 overall; each style enforces tighter limits (most top out at 256 or 384; several RD Pro styles go down to 12). |
 | `num_images` | int | **Required.** Batch size — up to 16 for most styles (including the 12px-capable RD Pro styles), 4 for other RD Pro styles, 1 for animations. |
 | `seed` | int | Optional. Same seed + settings ≈ same image. Omit for random. |
@@ -241,10 +244,19 @@ Check your balance any time: `GET /v2/inferences/credits` → `{"credits": 0, "b
 
 V2 always accepts generation jobs immediately and requires polling. The optional `"async": true`
 field is retained for source compatibility. See [`07_async_batch.py`](example-scripts/07_async_batch.py).
+Persist a unique `Idempotency-Key` (1–256 visible ASCII characters) before every paid logical
+submission. If the admission response is uncertain, retry identical inputs with that same key.
+Once a task id is known, poll it instead of submitting again. Do not use this header for
+`check_cost`, edit-tool, or Pixel Fixer requests.
 
 ```python
-import time, requests
-headers = {"X-RD-Token": "YOUR_API_KEY"}
+import time, uuid, requests
+idempotency_key = str(uuid.uuid4())
+print("Save this admission key until task_id is received:", idempotency_key)
+headers = {
+    "X-RD-Token": "YOUR_API_KEY",
+    "Idempotency-Key": idempotency_key,
+}
 
 start = requests.post(
     "https://api.retrodiffusion.ai/v2/inferences",
@@ -252,7 +264,7 @@ start = requests.post(
     json={"prompt": "A really cool corgi", "prompt_style": "rd_pro__default",
           "width": 256, "height": 256, "num_images": 1, "async": True},
 ).json()
-# -> {"status": "accepted", "task_id": "8d24...", "message": "Inference accepted. Poll ..."}
+# -> {"status": "accepted", "task_id": "8d24...", "request_id": "8d24...", "message": "Inference accepted. Poll ..."}
 
 task_id = start["task_id"]
 while True:
@@ -271,9 +283,11 @@ while True:
 
 ### Recovering after a lost submission response
 
-If the first response never reaches you (edge timeout, disconnect, crash), the job was still
-accepted and charged — re-submitting charges again. List your recent jobs and resume polling
-instead: `GET /v2/inferences/tasks?limit=20&status=running` returns your tasks newest first
+If the first response never reaches you (edge timeout, disconnect, crash), retry the exact same
+request with its persisted `Idempotency-Key`; the API returns the original task without charging
+again. Reusing the key with different inputs returns `409 idempotency_conflict`. If the original
+key is unavailable, list recent jobs and resume polling instead:
+`GET /v2/inferences/tasks?limit=20&status=running` returns your tasks newest first
 (`status` is optional: `pending` / `running` / `succeeded` / `failed`). See
 [`11_recover_async_tasks.py`](example-scripts/11_recover_async_tasks.py).
 
@@ -582,6 +596,7 @@ across versions.
 | `402` | V2 account cannot fund the request. |
 | `403` | Valid token without permission. V1 retains legacy credits behavior. |
 | `404` | Task or style not found (or not owned by this key). |
+| `409` | Idempotency key reused with different inputs or another resource conflict. |
 | `422` | Request body failed validation (wrong types, missing required fields). |
 | `429` | Rate limited — respect the `Retry-After` header. |
 | `500` | Unexpected internal failure. |
