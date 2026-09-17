@@ -345,6 +345,58 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "idempotency_async_required",
+      "description": "Idempotency async required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Idempotency async required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "idempotency_backend_unavailable",
+      "description": "Idempotency backend unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Idempotency backend unavailable.",
+      "retryable": false,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "idempotency_conflict",
+      "description": "Idempotency conflict.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Idempotency conflict.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "idempotency_fault_not_supported",
+      "description": "Idempotency fault not supported.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Idempotency fault not supported.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "image_too_large",
       "description": "Image too large.",
       "details_schema": null,
@@ -489,6 +541,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "invalid_idempotency_key",
+      "description": "Invalid idempotency key.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid idempotency key.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "invalid_image",
       "description": "Invalid image.",
       "details_schema": null,
@@ -606,6 +671,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "invalid_source_media",
+      "description": "One or more source images are invalid.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "One or more source images are invalid.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "invalid_stats_date_range",
       "description": "Invalid stats date range.",
       "details_schema": null,
@@ -705,6 +783,19 @@
         "edit"
       ],
       "message": "Missing expansion.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "missing_input",
+      "description": "Required generation input is missing.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Required generation input is missing.",
       "retryable": false,
       "status_code": 400
     },

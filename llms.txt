@@ -11,18 +11,20 @@ MCP setup guides for every client (Claude Code + plugin, Cursor, VS Code, Windsu
 
 ## Generate images
 POST /v2/inferences  (Content-Type: application/json)
-Required fields: prompt (string — describe the SUBJECT only, never write "pixel art"; styling comes from prompt_style), prompt_style (string style id), width (int), height (int), num_images (int).
+Required fields: width (int), height (int), num_images (int). Send prompt_style to select a style. prompt defaults to an empty string and is required only when the selected style's prompt_requirement says so; image-driven styles may accept an empty prompt.
 Optional fields: seed (int, reproducible), input_image (base64 PNG string, NO "data:image/png;base64," prefix, RGB without transparency) + strength (float 0-1, default 0.75 — how much to change the input), reference_images (array of base64, RD Pro styles only, up to 9, guides style/content without redrawing), input_palette (base64, constrains output colors), remove_bg (bool, transparent output), tile_x / tile_y (bool, seamless tiling), frames_duration (int 4|6|8|10|12|16, animation styles; ignored by rd_advanced_animation__rotate), return_spritesheet (bool, animations: PNG spritesheet instead of GIF; for rd_advanced_animation__rotate the 3x3 direction sheet), upscale_output_factor (int, 1 = native pixel size), bypass_prompt_expansion (bool, skip automatic LLM prompt enrichment), include_downloadable_data (bool, extra structured assets e.g. item atlas JSON), check_cost (bool, FREE dry run: returns price, generates nothing, charges nothing), async (bool, accepted for source compatibility; v2 generation is always async).
 The "negative" field exists but is a placeholder — current models ignore it. Do not rely on it.
 Size limits: the API validates 12x12 to 512x512, but each style enforces tighter limits (current styles top out at 384x384; several RD Pro styles go down to 12x12) — use the per-style limits in the catalog below or from the selector.
+Before a paid submission, persist a unique Idempotency-Key (1-256 visible ASCII characters). Reuse that key only with identical inputs when the admission response is uncertain. Once task_id is known, poll that task instead of submitting again. Do not send Idempotency-Key on check_cost requests or edit/pixel-fixer routes.
 
 ### Example: minimal request
 POST /v2/inferences
+Headers: X-RD-Token: <key>, Idempotency-Key: <persisted-generation-key>
 {"prompt": "A knight resting by a campfire in a forest clearing at night", "prompt_style": "rd_fast__default", "width": 128, "height": 128, "num_images": 1, "seed": 77}
 ### Example: accepted response
-{"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
+{"status": "accepted", "task_id": "8d24e990-...", "request_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
 Poll the task. When it succeeds, `result` contains the generation response:
-{"created_at": "2026-07-08T15:04:05", "balance_cost": 0.019, "base64_images": ["iVBORw0KGgo..."], "model": "rd_fast", "remaining_balance": 100.75}
+{"created_at": 1783523045, "balance_cost": 0.019, "base64_images": ["iVBORw0KGgo..."], "model": "rd_fast", "remaining_balance": 100.75, "request_id": "8d24e990-...", "outputs_retained_until": 1783609445}
 base64_images entries are raw base64 PNG (or GIF for animation styles). Decode and write to disk. Add "upload_outputs": true to receive hosted URLs in "output_urls" instead. Large results (notably multi-frame animations) are delivered as hosted output_urls automatically with base64_images empty — always handle both fields, exactly like the edit tools.
 
 ### Example: img2img
@@ -41,10 +43,10 @@ base64_images entries are raw base64 PNG (or GIF for animation styles). Decode a
 
 ## Async jobs (required for every v2 generation)
 POST /v2/inferences (the optional "async": true field is retained for source compatibility)
--> {"status": "accepted", "task_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
+-> {"status": "accepted", "task_id": "8d24e990-...", "request_id": "8d24e990-...", "message": "Inference accepted. Poll GET /v2/inferences/tasks/{task_id} for status."}
 Poll GET /v2/inferences/tasks/{task_id} (same X-RD-Token) every ~2s:
 -> {"status": "pending" | "running" | "succeeded" | "failed", "task_id": "...", "result": <same shape as sync response, when succeeded>, "error": {"status_code": 400, "detail": "..."} when failed}
-List recent jobs (recovery after a lost submission response — job was accepted+charged, don't resubmit):
+After a lost submission response, retry identical inputs with the persisted Idempotency-Key. If the key is unavailable, list recent jobs and resume polling instead of blindly resubmitting:
 GET /v2/inferences/tasks?limit=20 (optional &status=pending|running|succeeded|failed), newest first:
 -> {"tasks": [{"task_id": "...", "status": "running", "created_at": ..., "updated_at": ..., "result": null, "error": null}, ...]}
 
@@ -57,7 +59,7 @@ Advanced animations (INPUT_IMAGE_REQUIRED, 32-256px matching your start frame, b
 Animations (prompt-driven, GIF output, batch=1 unless noted): rd_animation__four_angle_walking (48x48), rd_animation__four_angle_walking_idle (48x48), rd_animation__small_sprites (32x32, batch<=16), rd_animation__vfx (24-96px square), rd_animation__any_animation (64x64, refs<=9), rd_animation__big_animation (128x128, refs<=9), rd_animation__8_dir_rotation (80x80, refs<=5), rd_animation__battle_sprites (64x64).
 Tilesets: rd_tile__tileset (16-32px tile, batch=1), rd_tile__tileset_advanced (16-32px, batch=1, extra_prompt + extra_input_image), rd_tile__single_tile (16-64px), rd_tile__tile_variation (16-128px, INPUT_IMAGE_REQUIRED), rd_tile__tile_object (16-96px), rd_tile__scene_object (64-384px).
 User styles: user__<name>_<id> (created via /v2/styles or the My Styles page).
-Live discovery: GET /v2/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|rd_mini, ?tab=tab:image|tab:animation|tab:advanced-animation|tab:tileset). Each item: {"prompt_style", "name", "description", "required_model", "required_tab", "min_width", "max_width", "min_height", "max_height", "max_number_of_images", "require_input_image", "supports_reference_images", "example_prompt"}.
+Live discovery: GET /v2/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|rd_mini, ?tab=tab:image|tab:animation|tab:advanced-animation|tab:tileset). Each item: {"prompt_style", "name", "description", "required_model", "required_tab", "min_width", "max_width", "min_height", "max_height", "max_number_of_images", "require_input_image", "prompt_requirement", "supports_frames_duration", "supports_reference_images", "example_prompt"}.
 
 ## Costs (USD per request; verify with check_cost — it is free)
 rd_fast: max(0.015, (w*h+100000)/6000000) * num_images; rd_plus: max(0.025, (w*h+50000)/2000000) * num_images; low-res styles (mc_*, low_res, classic, skill_icon, topdown_item, tile variants): max(0.02, (w*h+13700)/600000) * num_images; rd_pro: 0.18 * num_images; rd_advanced_animation: 0.14 (custom_action and subtle_motion: 0.25; rotate: 0.10); rd_animation: 0.07 (any_animation and 8_dir_rotation: 0.25); rd_tile__tileset(_advanced): 0.10.
@@ -95,7 +97,7 @@ GET /sessions/{id} -> {"status", "settings", "message_count", "spent_usd", "bank
 Errors: 400 empty/oversized message, bad attachment, or insufficient balance; 409 turn running / plan pending / no plan pending; 410 session expired. Full guide: ASSISTANT.md; runnable client: example-scripts/12_assistant_session.py.
 
 ## Status & errors
-GET /v2/status (no auth) -> {"status": {"rd_fast": "ok", "rd_pro": "ok", "rd_plus": "ok", "animations": "ok", "background_removal": "ok"}, "updated_at": ...}. Check before bulk runs.
+GET /v2/status (no auth) -> {"status": {"rd_fast": "ok", "rd_pro": "ok", "rd_plus": "ok", "animations": "ok", "background_removal": "ok"}, "updated_at": 1789681864}. updated_at is Unix seconds. Check before bulk runs.
 V1 error shapes: {"detail": {"code": "inference_failed", "message": "Unable to run inference."}}, {"detail": [{"msg": "Not enough balance."}]}, or {"detail":"Not Found"}.
 V2 error shape: {"error":{"code":"inference_failed","message":"Unable to run inference.","request_id":"..."}}. Validation may add safe details.issues.
 V2 status codes: 400 semantic input; 401 invalid credentials; 402 insufficient balance; 403 permission; 404 concealed/missing; 409 conflict; 413 size; 422 schema; 429 rate limit; 500 unexpected; 502 provider failure; 503 unavailable; 504 timeout.
@@ -115,4 +117,4 @@ Animation input rules (these prevent the most common failures):
 - Animations fail/time out more often than stills: v2 returns an accepted task, so poll it to a terminal state. Retry only after a confirmed terminal failure (failed runs are auto-refunded); if the submission response was lost, recover the accepted task with GET /v2/inferences/tasks instead of re-submitting and risking a duplicate charge.
 
 ## Agent best practices
-1) Pick a prompt_style from the catalog above (or GET /v2/styles/selector for live limits). 2) POST with "check_cost": true to verify price — free. 3) Generate; v2 always returns an accepted task for real generation requests. 4) Poll GET /v2/inferences/tasks/{task_id} until the task reaches succeeded or failed; the optional "async": true field is retained only for source compatibility. 5) Reuse the same seed to iterate on a composition; change only the prompt. 6) Base64 images are raw strings — never include a data: URI prefix. 7) Prompts describe the subject; the style handles pixel-art rendering — rich concrete visual descriptions ("a squat round flask of glowing crimson liquid, cork stopper, bright highlight on the upper-left rim") outperform terse ones ("a potion"). 8) For a consistent character across images, generate once with RD Pro, then pass that output as reference_images in follow-up requests — a text description alone is never a substitute for the actual reference. 9) Style ids are opaque strings with no uniform format (rd_fast styles may appear as "default:rd_flux") — take them verbatim from the catalog/selector and never infer capabilities from an id's prefix. 10) Verify results programmatically where vision models cannot: transparency is checked from the alpha channel (vision models see composited backdrops, not alpha), and output dimensions are checked from the decoded image.
+1) Pick a prompt_style from the catalog above (or GET /v2/styles/selector for live limits). 2) POST with "check_cost": true to verify price — free. 3) Persist an Idempotency-Key, submit once logically, and reuse that key only to recover an uncertain admission of identical inputs. 4) Poll GET /v2/inferences/tasks/{task_id} until the task reaches succeeded or failed; the optional "async": true field is retained only for source compatibility. 5) Reuse the same seed to iterate on a composition; change only the prompt. 6) Base64 images are raw strings — never include a data: URI prefix. 7) Prompts describe the subject; the style handles pixel-art rendering — rich concrete visual descriptions ("a squat round flask of glowing crimson liquid, cork stopper, bright highlight on the upper-left rim") outperform terse ones ("a potion"). 8) For a consistent character across images, generate once with RD Pro, then pass that output as reference_images in follow-up requests — a text description alone is never a substitute for the actual reference. 9) Style ids are opaque strings with no uniform format (rd_fast styles may appear as "default:rd_flux") — take them verbatim from the catalog/selector and never infer capabilities from an id's prefix. 10) Verify results programmatically where vision models cannot: transparency is checked from the alpha channel (vision models see composited backdrops, not alpha), and output dimensions are checked from the decoded image.

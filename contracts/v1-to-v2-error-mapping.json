@@ -105,6 +105,10 @@
       "code": "billing_canary_unavailable",
       "status_code": 403
     },
+    "billing_failed": {
+      "code": "billing_failed",
+      "status_code": 500
+    },
     "builtin_tool_contract_managed": {
       "code": "builtin_tool_contract_managed",
       "status_code": 400
@@ -132,6 +136,14 @@
     "edit_failed": {
       "code": "edit_failed",
       "status_code": 500
+    },
+    "edit_task_admission_failed": {
+      "code": "edit_task_admission_failed",
+      "status_code": 500
+    },
+    "edit_task_not_found": {
+      "code": "edit_task_not_found",
+      "status_code": 404
     },
     "edit_tool_estimate_failed": {
       "code": "edit_tool_estimate_failed",
@@ -161,6 +173,10 @@
       "code": "forbidden",
       "status_code": 403
     },
+    "fraud_detector_unavailable": {
+      "code": "fraud_detector_unavailable",
+      "status_code": 503
+    },
     "gallery_image_dimensions_too_large": {
       "code": "gallery_image_dimensions_too_large",
       "status_code": 400
@@ -173,9 +189,33 @@
       "code": "gallery_upload_failed",
       "status_code": 500
     },
+    "generation_failed": {
+      "code": "generation_failed",
+      "status_code": 500
+    },
+    "generation_rejected": {
+      "code": "generation_rejected",
+      "status_code": 403
+    },
     "gone": {
       "code": "gone",
       "status_code": 410
+    },
+    "idempotency_async_required": {
+      "code": "idempotency_async_required",
+      "status_code": 400
+    },
+    "idempotency_backend_unavailable": {
+      "code": "idempotency_backend_unavailable",
+      "status_code": 503
+    },
+    "idempotency_conflict": {
+      "code": "idempotency_conflict",
+      "status_code": 409
+    },
+    "idempotency_fault_not_supported": {
+      "code": "idempotency_fault_not_supported",
+      "status_code": 400
     },
     "image_too_large": {
       "code": "image_too_large",
@@ -188,6 +228,10 @@
     "inference_not_found": {
       "code": "inference_not_found",
       "status_code": 404
+    },
+    "insufficient_balance": {
+      "code": "insufficient_balance",
+      "status_code": 400
     },
     "internal_error": {
       "code": "internal_error",
@@ -223,6 +267,10 @@
     },
     "invalid_gallery_image": {
       "code": "invalid_gallery_image",
+      "status_code": 400
+    },
+    "invalid_idempotency_key": {
+      "code": "invalid_idempotency_key",
       "status_code": 400
     },
     "invalid_image": {
@@ -265,8 +313,16 @@
       "code": "invalid_seam_width",
       "status_code": 400
     },
+    "invalid_source_media": {
+      "code": "invalid_source_media",
+      "status_code": 400
+    },
     "invalid_stats_date_range": {
       "code": "invalid_stats_date_range",
+      "status_code": 400
+    },
+    "invalid_style_dimensions": {
+      "code": "invalid_style_dimensions",
       "status_code": 400
     },
     "invalid_token": {
@@ -311,6 +367,10 @@
     },
     "missing_expansion": {
       "code": "missing_expansion",
+      "status_code": 400
+    },
+    "missing_input": {
+      "code": "missing_input",
       "status_code": 400
     },
     "missing_mask": {

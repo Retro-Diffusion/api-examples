@@ -2,6 +2,7 @@ import importlib.util
 import json
 import unittest
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -68,6 +69,34 @@ class ErrorParserTests(unittest.TestCase):
         self.assertNotIn("[object Object]", str(error))
 
 
+class InferenceAdmissionTests(unittest.TestCase):
+    @patch.object(rd_client.requests, "post")
+    def test_paid_v2_submission_uses_caller_idempotency_key(self, post: Mock):
+        post.return_value.ok = True
+        post.return_value.json.return_value = {"status": "accepted", "task_id": "task-1"}
+
+        rd_client._submit_inference(
+            {"width": 64, "height": 64, "num_images": 1},
+            "rdpk-test",
+            "saved-key",
+        )
+
+        self.assertEqual(post.call_args.kwargs["headers"]["Idempotency-Key"], "saved-key")
+
+    @patch.object(rd_client.requests, "post")
+    def test_cost_check_does_not_send_idempotency_key(self, post: Mock):
+        post.return_value.ok = True
+        post.return_value.json.return_value = {"balance_cost": 0.01}
+
+        rd_client._submit_inference(
+            {"width": 64, "height": 64, "num_images": 1, "check_cost": True},
+            "rdpk-test",
+            "unused-key",
+        )
+
+        self.assertNotIn("Idempotency-Key", post.call_args.kwargs["headers"])
+
+
 class ContractArtifactTests(unittest.TestCase):
     def test_v2_openapi_and_catalog_use_the_canonical_error_contract(self):
         openapi = json.loads((ROOT / "contracts" / "v2" / "openapi.json").read_text())
@@ -101,6 +130,27 @@ class ContractArtifactTests(unittest.TestCase):
             create_style["properties"]["reference_images"]["maxItems"],
             1,
         )
+        inference = openapi["components"]["schemas"]["ExternalInferenceInputNeo"]
+        self.assertEqual(inference["properties"]["prompt"]["default"], "")
+        self.assertNotIn("prompt", inference["required"])
+        selector = openapi["components"]["schemas"]["ExternalStyleSelectorItem"]
+        self.assertIn("prompt_requirement", selector["properties"])
+        self.assertIn("supports_frames_duration", selector["properties"])
+        status = openapi["components"]["schemas"]["PublicStatusResponse"]
+        self.assertEqual(status["properties"]["updated_at"]["type"], "integer")
+        inference_headers = {
+            parameter["name"]
+            for parameter in openapi["paths"]["/inferences"]["post"]["parameters"]
+        }
+        self.assertIn("Idempotency-Key", inference_headers)
+        self.assertTrue(
+            {
+                "invalid_idempotency_key",
+                "idempotency_async_required",
+                "idempotency_conflict",
+                "idempotency_backend_unavailable",
+            }.issubset(codes)
+        )
 
     def test_llms_summary_matches_v2_auth_and_async_contracts(self):
         llms = (ROOT / "llms.txt").read_text()
@@ -108,7 +158,7 @@ class ContractArtifactTests(unittest.TestCase):
         self.assertIn("Invalid token on this endpoint -> 401 invalid_token.", llms)
         self.assertNotIn("Invalid token on this endpoint -> 403.", llms)
         self.assertIn(
-            "v2 always returns an accepted task for real generation requests.",
+            "v2 generation is always async",
             llms,
         )
         self.assertIn("Poll GET /v2/inferences/tasks/{task_id}", llms)
@@ -116,6 +166,9 @@ class ContractArtifactTests(unittest.TestCase):
             "recover the accepted task with GET /v2/inferences/tasks",
             llms,
         )
+        self.assertIn("persist a unique Idempotency-Key", llms)
+        self.assertIn('"supports_frames_duration"', llms)
+        self.assertIn("updated_at is Unix seconds", llms)
         self.assertIn('"reference_images": ["<base64>"] (exactly 1, required)', llms)
 
 
