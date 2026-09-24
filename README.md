@@ -592,7 +592,8 @@ post(f"/v2/lowpoly/assets/{asset_id}/export", {"target": "godot"})  # -> hosted 
 
 Exports cover Godot, Unity, Unreal, three.js and Blender (`.glb`), Blockbench
 (`.bbmodel`), Minecraft (resource pack), OBJ, the texture atlas, a turntable
-sheet, and animation GIFs or sprite sheets. See [`LOW_POLY.md`](LOW_POLY.md) for
+sheet, and animation GIFs, sprite sheets or 1024px MP4 videos (.glb and .bbmodel
+include every animation). See [`LOW_POLY.md`](LOW_POLY.md) for
 the full contract and [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py)
 for a complete client.
 

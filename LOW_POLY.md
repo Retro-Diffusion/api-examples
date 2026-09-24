@@ -109,13 +109,14 @@ download URL. Exports are built on first request and reused after that.
 
 | target | File |
 | --- | --- |
-| `godot`, `unity`, `unreal`, `web`, `blender` | `.glb` (glTF 2.0, one node per part, nearest-filtered atlas) |
-| `blockbench` | `.bbmodel` Blockbench project |
+| `godot`, `unity`, `unreal`, `web`, `blender` | `.glb` (glTF 2.0, one node per part, nearest-filtered atlas; animated models get a bone node tree and every animation as a glTF animation) |
+| `blockbench` | `.bbmodel` Blockbench project (animated models: bone groups plus every animation) |
 | `obj` | zip of `.obj` + `.mtl` + atlas `.png` |
 | `minecraft` | Java resource-pack zip (box parts only; best with the blocky style) |
 | `atlas` | texture atlas `.png` |
 | `turntable` | 8-view turntable sprite sheet `.png` |
 | `gif`, `sheet` | an animation as a GIF or sprite sheet (needs `animation`) |
+| `mp4` | an animation as a 1024x1024, 30 fps H.264 video; loops repeat to at least 4 seconds (needs `animation`) |
 
 ## Errors
 

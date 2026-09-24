@@ -2403,7 +2403,7 @@
         "additionalProperties": false,
         "properties": {
           "animation": {
-            "description": "Required for the gif and sheet targets.",
+            "description": "Required for the gif, sheet and mp4 targets.",
             "title": "Animation",
             "type": "string"
           },
