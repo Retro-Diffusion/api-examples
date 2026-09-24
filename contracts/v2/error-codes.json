@@ -697,6 +697,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "invalid_stats_surface",
+      "description": "Invalid stats surface.",
+      "details_schema": null,
+      "endpoint_families": [
+        "public-api"
+      ],
+      "message": "Invalid stats surface.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "invalid_token",
       "description": "Invalid or missing X-RD-Token header.",
       "details_schema": null,
@@ -900,6 +913,19 @@
         "lowpoly"
       ],
       "message": "Lowpoly invalid export target.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_palette",
+      "description": "Lowpoly invalid palette.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid palette.",
       "retryable": false,
       "status_code": 400
     },

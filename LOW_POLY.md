@@ -74,7 +74,7 @@ request returns the same job instead of charging again. A model runs one job at 
 time, and an account runs a few at once (`429 lowpoly_too_many_jobs` otherwise).
 
 ```text
-POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, custom_id?}
+POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, input_palette?, custom_id?}
 POST /lowpoly/assets/{id}/revise   {prompt, version?, mode?, reference_images?, custom_id?}
 POST /lowpoly/assets/{id}/animate  {prompt, version?, mode?, animation?, custom_id?}
 GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, error?}
@@ -83,6 +83,11 @@ GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, re
 Prompts are at most 250 characters. `reference_images` are base64 PNG, JPEG or WEBP
 (data URIs are fine), at most 4 and 8 MB each; several views of the same object
 work best.
+
+`input_palette` is a palette image (base64, like `input_palette` on `/inferences`, e.g. a
+Lospec palette PNG): the model is built with only its colors (up to 256; bigger images
+are reduced), and every texture pixel is locked to them. Revisions and animations keep
+the palette. An unreadable image returns `400 lowpoly_invalid_palette`.
 
 ## Versions and animations
 
@@ -136,7 +141,7 @@ download URL. Exports are built on first request and reused after that.
 | `minecraft` | Java resource-pack zip (box parts only; best with the blocky style). Boxes tilted at angles vanilla models can't express use free element rotation (Minecraft 1.21.11+) |
 | `atlas` | texture atlas `.png` |
 | `turntable` | 8-view turntable sprite sheet `.png` |
-| `gif`, `sheet` | an animation as a GIF or sprite sheet (needs `animation`) |
+| `gif`, `sheet` | an animation as a GIF or sprite sheet; omit `animation` to get every animation in one zip |
 | `mp4` | an animation as a 1024x1024, 30 fps H.264 video; loops repeat to at least 4 seconds (needs `animation`) |
 
 ## Examples
