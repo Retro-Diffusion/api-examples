@@ -8,7 +8,27 @@ animate it, and export it for your engine or modeling tool.
 Base URL: `https://api.retrodiffusion.ai/v2/lowpoly` (also `/v1/lowpoly`). Authenticate
 with the `X-RD-Token` header, like every other endpoint.
 
-Runnable client: [`example-scripts/13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py).
+<table>
+  <tr>
+    <td><img src="images/lowpoly-corgi.gif" width="250" alt="Low-poly corgi in sunglasses rocking out"></td>
+    <td><img src="images/lowpoly-crow.gif" width="250" alt="Low-poly crow character dancing"></td>
+    <td><img src="images/lowpoly-alien.gif" width="250" alt="Low-poly alien brute throwing a fireball"></td>
+  </tr>
+  <tr>
+    <td><img src="images/lowpoly-car.gif" width="250" alt="Low-poly red sports car driving"></td>
+    <td><img src="images/lowpoly-ruin.gif" width="250" alt="Low-poly stone ruin with a floating crystal"></td>
+    <td><img src="images/lowpoly-swamp-hut.gif" width="250" alt="Low-poly swamp hut lifting its roof"></td>
+  </tr>
+</table>
+
+Runnable clients:
+
+- [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py): prompt → model → animation → Godot export
+- [`14_lowpoly_from_references.py`](example-scripts/14_lowpoly_from_references.py): reference photos → blocky
+  model → revision → Blockbench and Minecraft exports
+- [`lowpoly_model.mjs`](example-scripts/lowpoly_model.mjs): Node.js, no dependencies → `.glb` + MP4
+
+Step-by-step requests for every endpoint are in [Examples](#examples).
 
 ## Sizes and prices
 
@@ -33,8 +53,9 @@ the export targets as JSON.
 
 - `rd_lowpoly__detailed` (default): free-form low-poly shapes (boxes, cylinders,
   spheres, extrusions).
-- `rd_lowpoly__blocky`: boxes only, like a Minecraft model. Best for Blockbench and
-  Minecraft exports.
+- `rd_lowpoly__blocky`: boxes only, like a Minecraft model. Boxes stay rectangular but
+  may be tilted to any angle (a windshield, a roof). Best for Blockbench and Minecraft
+  exports.
 
 The style list can grow; `GET /lowpoly/pricing` returns the current styles (`id`, `name`,
 `description`, `appearance`). Sending a Low-Poly style to `/inferences` returns
@@ -112,11 +133,98 @@ download URL. Exports are built on first request and reused after that.
 | `godot`, `unity`, `unreal`, `web`, `blender` | `.glb` (glTF 2.0, one node per part, nearest-filtered atlas; animated models get a bone node tree and every animation as a glTF animation) |
 | `blockbench` | `.bbmodel` Blockbench project (animated models: bone groups plus every animation) |
 | `obj` | zip of `.obj` + `.mtl` + atlas `.png` |
-| `minecraft` | Java resource-pack zip (box parts only; best with the blocky style) |
+| `minecraft` | Java resource-pack zip (box parts only; best with the blocky style). Boxes tilted at angles vanilla models can't express use free element rotation (Minecraft 1.21.11+) |
 | `atlas` | texture atlas `.png` |
 | `turntable` | 8-view turntable sprite sheet `.png` |
 | `gif`, `sheet` | an animation as a GIF or sprite sheet (needs `animation`) |
 | `mp4` | an animation as a 1024x1024, 30 fps H.264 video; loops repeat to at least 4 seconds (needs `animation`) |
+
+## Examples
+
+Every call below uses `X-RD-Token: YOUR_API_KEY`. Paid calls (generate, revise, animate)
+take an `Idempotency-Key`: generate one per call, persist it, and reuse it only to retry
+that same call.
+
+**Build a model from a prompt** (`size` "auto" picks the size from the prompt):
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/generate \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"prompt": "a mossy stone well with a little wooden roof", "size": "auto", "style": "rd_lowpoly__detailed"}'
+```
+
+```json
+{"status": "accepted", "task_id": "3f1c...", "request_id": "3f1c...", "asset_id": "5b0c...",
+ "operation": "generate", "cost": 0.5, "size": 32, "size_source": "auto", "message": "..."}
+```
+
+**Poll the job** every 10-20 seconds until it succeeds (the model is in `result`) or fails
+(refunded):
+
+```bash
+curl https://api.retrodiffusion.ai/v2/lowpoly/tasks/3f1c... -H "X-RD-Token: YOUR_API_KEY"
+```
+
+**Build from reference images** (base64 or data URIs; several views of one object work best).
+A prompt is optional; image-only requests default to size 64:
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/generate \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"reference_images": ["data:image/png;base64,iVBOR...", "data:image/png;base64,iVBOR..."],
+       "prompt": "a red sports car", "style": "rd_lowpoly__blocky", "size": 64}'
+```
+
+**Revise** (saves a new version; `version` picks which one to change, default the newest):
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../revise \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"prompt": "make the roof red and add a bucket on a rope"}'
+```
+
+**Animate**, then **change that animation** (send its name; it keeps the name and costs the
+same). The succeeded task's `animation` is the new animation's name:
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../animate \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"prompt": "the bucket swings in the wind"}'
+# ... task succeeded: {"status": "succeeded", "animation": "bucket_swing", "result": {...}}
+
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../animate \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"prompt": "swing harder, then settle", "animation": "bucket_swing"}'
+```
+
+**Export** (free; the first request builds the file, later ones return it at once):
+
+```bash
+# a .glb for Godot / Unity / Unreal / three.js / Blender, with every animation
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../export \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -d '{"target": "godot"}'
+# -> {"target": "godot", "version": 1, "url": "https://...", "filename": "a-mossy-stone-well-with-a-little-wooden.glb", "content_type": "model/gltf-binary"}
+
+# one animation as a 1024px MP4 (or "gif" / "sheet")
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../export \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -d '{"target": "mp4", "animation": "bucket_swing"}'
+
+# Blockbench project and a Minecraft Java resource pack (best with the blocky style)
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../export -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -d '{"target": "blockbench"}'
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../export -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" -d '{"target": "minecraft"}'
+```
+
+**Free helpers:**
+
+```bash
+# price a job before running it (the size "auto" would pick, and what it costs)
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/estimate -H "X-RD-Token: YOUR_API_KEY" \
+  -H "Content-Type: application/json" -d '{"operation": "generate", "prompt": "a castle with a moat", "size": "auto"}'
+# prices, styles, limits and export targets
+curl https://api.retrodiffusion.ai/v2/lowpoly/pricing -H "X-RD-Token: YOUR_API_KEY"
+# your models, newest first (page with before_id)
+curl "https://api.retrodiffusion.ai/v2/lowpoly/assets?limit=20" -H "X-RD-Token: YOUR_API_KEY"
+```
 
 ## Errors
 

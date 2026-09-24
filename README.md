@@ -4,7 +4,7 @@
 
 # Retro Diffusion API
 
-Generate pixel art — images, animations, and tilesets — over a simple HTTP API.
+Generate pixel art — images, animations, tilesets, and **low-poly 3D models** — over a simple HTTP API.
 
 <table>
   <tr>
@@ -17,7 +17,15 @@ Generate pixel art — images, animations, and tilesets — over a simple HTTP A
     <td><img src="images/anim-subtle-motion.gif" width="250" alt="Animated lakeside scene"></td>
     <td><img src="images/anim-vfx.gif" width="250" alt="Animated explosion effect"></td>
   </tr>
+  <tr>
+    <td><img src="images/lowpoly-corgi.gif" width="250" alt="Low-poly 3D corgi"></td>
+    <td><img src="images/lowpoly-car.gif" width="250" alt="Low-poly 3D sports car"></td>
+    <td><img src="images/lowpoly-swamp-hut.gif" width="250" alt="Low-poly 3D swamp hut"></td>
+  </tr>
 </table>
+
+**New: [Low-Poly 3D models](#low-poly-3d-models)** — prompt or reference images in, an animated,
+pixel-textured 3D model out, ready for Godot, Unity, Unreal, Blender, Blockbench or Minecraft.
 
 **📖 Full reference:** **https://www.retrodiffusion.ai/app/guide/api** — every endpoint and
 field, an interactive style explorer, live pricing, and MCP setup. This repo holds runnable
@@ -58,6 +66,8 @@ python example-scripts/01_generate_image.py
 | [`10_pixel_fixer.py`](example-scripts/10_pixel_fixer.py) | Restore an enlarged or softened image to its native pixel grid |
 | [`12_assistant_session.py`](example-scripts/12_assistant_session.py) | Talk to the assistant: describe a goal, approve its priced plan, collect results |
 | [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py) | Build a low-poly 3D model, animate it, and export it for Godot |
+| [`14_lowpoly_from_references.py`](example-scripts/14_lowpoly_from_references.py) | Reference photos → blocky 3D model → revise → Blockbench + Minecraft exports |
+| [`lowpoly_model.mjs`](example-scripts/lowpoly_model.mjs) | A 3D model, an animation, a `.glb` and an MP4 from Node.js (no dependencies) |
 | [`generate_image.mjs`](example-scripts/generate_image.mjs) | The basic request from Node.js (no dependencies) |
 
 **Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
@@ -135,6 +145,118 @@ When the task succeeds, its `result` has the generation response (null fields ar
 
 `base64_images` entries are raw base64 — PNG normally, GIF for animation styles. Decode and
 write them to disk. Set `"upload_outputs": true` to receive hosted URLs in `output_urls` instead.
+
+## Low-Poly 3D models
+
+Turn a prompt, up to 4 reference images, or both into a **real low-poly 3D model with
+hand-painted pixel-art textures**. Every texture pixel is the same size on every face, so
+it reads as pixel art from any angle. Revise it, animate it (rigging is automatic and
+free), and export it for your engine or modeling tool.
+
+<table>
+  <tr>
+    <td><img src="images/lowpoly-corgi.gif" width="250" alt="Low-poly corgi in sunglasses rocking out"></td>
+    <td><img src="images/lowpoly-crow.gif" width="250" alt="Low-poly crow character dancing"></td>
+    <td><img src="images/lowpoly-alien.gif" width="250" alt="Low-poly alien brute throwing a fireball"></td>
+  </tr>
+  <tr>
+    <td><img src="images/lowpoly-car.gif" width="250" alt="Low-poly red sports car driving"></td>
+    <td><img src="images/lowpoly-ruin.gif" width="250" alt="Low-poly stone ruin with a floating crystal"></td>
+    <td><img src="images/lowpoly-swamp-hut.gif" width="250" alt="Low-poly swamp hut lifting its roof"></td>
+  </tr>
+</table>
+
+Base URL `https://api.retrodiffusion.ai/v2/lowpoly`, same `X-RD-Token` header. Jobs take
+a few minutes, so generate, revise and animate return a `task_id` to poll.
+
+```python
+import time
+import uuid
+import requests
+
+API = "https://api.retrodiffusion.ai/v2/lowpoly"
+HEADERS = {"X-RD-Token": "YOUR_API_KEY"}
+
+def paid(path, body):
+    # A fresh key per call; persist it and reuse it only to retry that same call (never charges twice).
+    headers = {**HEADERS, "Idempotency-Key": str(uuid.uuid4())}
+    response = requests.post(f"{API}{path}", headers=headers, json=body)
+    response.raise_for_status()
+    return response.json()
+
+def wait(task_id):
+    while True:  # jobs usually take 1-5 minutes (up to ~15 at size 256)
+        task = requests.get(f"{API}/tasks/{task_id}", headers=HEADERS).json()
+        if task["status"] == "succeeded":
+            return task
+        if task["status"] == "failed":
+            raise RuntimeError(task["error"])  # failed jobs are refunded
+        time.sleep(15)
+
+# 1) Build a model. "auto" picks the size from the prompt (a coin is small, a castle is large).
+job = paid("/generate", {"prompt": "a cute corgi wearing sunglasses", "size": "auto"})
+model = wait(job["task_id"])["result"]
+asset_id = model["asset_id"]
+print(model["versions"][-1]["render_url"])  # a preview render; turntable_url has 4 views
+
+# 2) Animate it. The first animation rigs the model, for free.
+anim = wait(paid(f"/assets/{asset_id}/animate", {"prompt": "rocks out to music"})["task_id"])["animation"]
+
+# 3) Export (free). The .glb carries every animation; mp4 is a 1024px video of one.
+for body in ({"target": "godot"}, {"target": "mp4", "animation": anim}):
+    file = requests.post(f"{API}/assets/{asset_id}/export", headers=HEADERS, json=body).json()
+    print(file["filename"], file["url"])
+```
+
+The same first step with curl:
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/generate \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -d '{"prompt": "a mossy stone well with a little wooden roof", "size": "auto"}'
+# -> 202 {"task_id": "...", "asset_id": "...", "cost": 0.5, "size": 32, ...}
+
+curl https://api.retrodiffusion.ai/v2/lowpoly/tasks/TASK_ID -H "X-RD-Token: YOUR_API_KEY"
+# -> {"status": "running", ...} ... then {"status": "succeeded", "result": {"asset_id": ..., "versions": [...]}}
+```
+
+More things to send:
+
+```python
+# From reference images (several views of one object work best), in the blocky style:
+# boxes only, tilted where needed - it maps 1:1 onto Blockbench and Minecraft.
+paid("/generate", {"reference_images": [front_b64, side_b64], "style": "rd_lowpoly__blocky", "size": 64})
+
+# Revise: saves a new version (the old ones stay; "version" picks which one to change).
+paid(f"/assets/{asset_id}/revise", {"prompt": "make the roof red and add a chimney"})
+
+# Change an existing animation instead of adding one: send its name. Same price, keeps the name.
+paid(f"/assets/{asset_id}/animate", {"prompt": "slower, with a bigger jump", "animation": "hop"})
+
+# Free price check before anything paid:
+requests.post(f"{API}/estimate", headers=HEADERS, json={"operation": "generate", "prompt": "a castle", "size": "auto"})
+# -> {"operation": "generate", "size": 128, "size_source": "auto", "cost": 1.2}
+```
+
+| Size (texels) | Typical subject | Generate | Revise | Animate |
+| --- | --- | --- | --- | --- |
+| 16 | coin, potion, key | $0.25 | $0.20 | $0.15 |
+| 32 | sword, chair, chest | $0.50 | $0.35 | $0.25 |
+| 64 | character, creature, vehicle | $0.85 | $0.65 | $0.35 |
+| 128 | building, large vehicle | $1.20 | $0.90 | $0.50 |
+| 256 | landmark or scene | $3.00 | $1.50 | $1.00 |
+
+**Exports** (free, cached): Godot, Unity, Unreal, three.js and Blender (`.glb` with every
+animation), Blockbench (`.bbmodel` with every animation), Minecraft Java (resource pack),
+OBJ, the texture atlas, an 8-view turntable sheet, and any animation as a GIF, sprite sheet
+or 1024px MP4.
+
+Runnable clients: [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py) (prompt → model →
+animation → Godot), [`14_lowpoly_from_references.py`](example-scripts/14_lowpoly_from_references.py)
+(reference photos → blocky model → Blockbench + Minecraft) and
+[`lowpoly_model.mjs`](example-scripts/lowpoly_model.mjs) (Node.js). Full contract, response
+shapes and errors: [`LOW_POLY.md`](LOW_POLY.md).
 
 ## Models
 
@@ -449,6 +571,8 @@ and free; these formulas are current at the time of writing:
 - **Advanced animations:** `0.14` (`custom_action` and `subtle_motion`: `0.25`; `rotate`: `0.10`)
 - **Animations:** `0.07` (`any_animation` and `8_dir_rotation`: `0.25`)
 - **Tilesets** (`rd_tile__tileset` / `_advanced`): `0.10`
+- **Low-Poly 3D models:** by size, generate `0.25`-`3.00`, revise `0.20`-`1.50`, animate `0.15`-`1.00`
+  (table in [Low-Poly 3D models](#low-poly-3d-models); free estimate: `POST /v2/lowpoly/estimate`)
 
 Credits cannot be purchased through the API. Keep long runs alive with auto-refill (Payment
 Methods), or ask about monthly invoicing for teams/enterprise via
@@ -571,31 +695,6 @@ See [`ASSISTANT.md`](ASSISTANT.md) for the full contract (events, plan
 shape, refunds, concurrency) and
 [`12_assistant_session.py`](example-scripts/12_assistant_session.py) for a
 complete interactive client.
-
-## Low-Poly 3D models
-
-Low-Poly builds real low-poly 3D models with pixel-art textures from a prompt,
-up to 4 reference images, or both, then revises, animates and exports them. Size
-is the model's largest dimension in texels (16, 32, 64, 128, 256, or `"auto"`);
-generate costs $0.25-$3.00, revise $0.20-$1.50, animate $0.15-$1.00, and the
-first animation rigs the model for free. Jobs take minutes, so they return a
-`task_id` to poll.
-
-```python
-job = post("/v2/lowpoly/generate", {"prompt": "a mossy stone well", "size": "auto"})
-# poll GET /v2/lowpoly/tasks/{task_id} every 10-20 s -> result: the model and its versions
-post(f"/v2/lowpoly/assets/{asset_id}/animate", {"prompt": "a bucket swinging in the wind"})
-# change that animation later: send its name as "animation" (same price, keeps its name)
-post(f"/v2/lowpoly/assets/{asset_id}/animate", {"prompt": "swing harder", "animation": "bucket_swing"})
-post(f"/v2/lowpoly/assets/{asset_id}/export", {"target": "godot"})  # -> hosted .glb URL
-```
-
-Exports cover Godot, Unity, Unreal, three.js and Blender (`.glb`), Blockbench
-(`.bbmodel`), Minecraft (resource pack), OBJ, the texture atlas, a turntable
-sheet, and animation GIFs, sprite sheets or 1024px MP4 videos (.glb and .bbmodel
-include every animation). See [`LOW_POLY.md`](LOW_POLY.md) for
-the full contract and [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py)
-for a complete client.
 
 ## Errors
 
