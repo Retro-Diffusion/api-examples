@@ -737,6 +737,331 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_admission_failed",
+      "description": "Lowpoly admission failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly admission failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_animate_failed",
+      "description": "Lowpoly animate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly animate failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_animation_not_found",
+      "description": "Lowpoly animation not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly animation not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_busy",
+      "description": "Lowpoly asset busy.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset busy.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_not_found",
+      "description": "Lowpoly asset not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_not_ready",
+      "description": "Lowpoly asset not ready.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset not ready.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_required",
+      "description": "Lowpoly asset required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_estimate_failed",
+      "description": "Lowpoly estimate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly estimate failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_export_error",
+      "description": "Lowpoly export error.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly export error.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_export_failed",
+      "description": "Lowpoly export failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly export failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_failed",
+      "description": "Lowpoly failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_generate_failed",
+      "description": "Lowpoly generate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly generate failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_export_target",
+      "description": "Lowpoly invalid export target.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid export target.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_reference_image",
+      "description": "Lowpoly invalid reference image.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid reference image.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_style",
+      "description": "Lowpoly invalid style.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid style.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_prompt_required",
+      "description": "Lowpoly prompt required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly prompt required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_reference_image_too_large",
+      "description": "Lowpoly reference image too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly reference image too large.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_revise_failed",
+      "description": "Lowpoly revise failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly revise failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_size_failed",
+      "description": "Lowpoly size failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly size failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_style_not_supported",
+      "description": "Lowpoly style not supported.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly style not supported.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_task_not_found",
+      "description": "Lowpoly task not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly task not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_timeout",
+      "description": "Lowpoly timeout.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly timeout.",
+      "retryable": true,
+      "status_code": 504
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_too_many_jobs",
+      "description": "Lowpoly too many jobs.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly too many jobs.",
+      "retryable": true,
+      "status_code": 429
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_unavailable",
+      "description": "Lowpoly unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly unavailable.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_version_not_found",
+      "description": "Lowpoly version not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly version not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "managed_checkout_unavailable",
       "description": "Managed checkout unavailable.",
       "details_schema": null,

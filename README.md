@@ -57,12 +57,13 @@ python example-scripts/01_generate_image.py
 | [`09_edit_tools.py`](example-scripts/09_edit_tools.py) | Discover, estimate, and run any canvas edit tool |
 | [`10_pixel_fixer.py`](example-scripts/10_pixel_fixer.py) | Restore an enlarged or softened image to its native pixel grid |
 | [`12_assistant_session.py`](example-scripts/12_assistant_session.py) | Talk to the assistant: describe a goal, approve its priced plan, collect results |
+| [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py) | Build a low-poly 3D model, animate it, and export it for Godot |
 | [`generate_image.mjs`](example-scripts/generate_image.mjs) | The basic request from Node.js (no dependencies) |
 
 **Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
 it's a complete, verified plain-text summary of this API. Agents with MCP support can instead
 connect to the hosted MCP server at `https://mcp.retrodiffusion.ai/mcp` (header
-`Authorization: Bearer YOUR_API_KEY`) — 18 typed tools covering generation, Pixel Fixer, free cost estimates,
+`Authorization: Bearer YOUR_API_KEY`) — 29 typed tools covering generation, Low-Poly 3D models, Pixel Fixer, free cost estimates,
 async jobs for animations and batches, the canvas edit tools, custom styles, and service health.
 Per-client setup guides live in the
 [retro-diffusion-mcp repo](https://github.com/Retro-Diffusion/retro-diffusion-mcp).
@@ -553,6 +554,9 @@ rates shown on the plan before you commit. Sessions idle out after 5 minutes
 (there's a free keep-alive ping); results live on in your account history
 with permanent URLs. An `auto_approve_budget_usd` setting lets unattended
 automations skip the approval round-trip under a hard per-plan spending cap.
+The assistant makes 2D pixel art by default and Low-Poly 3D models when the
+message asks for 3D; it can then revise and animate those models (3D results
+arrive as `asset3d` events).
 
 ```python
 sid = post("/v1/assistant/sessions", {})["id"]
@@ -567,6 +571,30 @@ See [`ASSISTANT.md`](ASSISTANT.md) for the full contract (events, plan
 shape, refunds, concurrency) and
 [`12_assistant_session.py`](example-scripts/12_assistant_session.py) for a
 complete interactive client.
+
+## Low-Poly 3D models
+
+Low-Poly builds real low-poly 3D models with pixel-art textures from a prompt,
+up to 4 reference images, or both, then revises, animates and exports them. Size
+is the model's largest dimension in texels (16, 32, 64, 128, 256, or `"auto"`);
+generate costs $0.25-$3.00, revise $0.20-$1.50, animate $0.15-$1.00, and the
+first animation rigs the model for free. Jobs take minutes, so they return a
+`task_id` to poll.
+
+```python
+job = post("/v2/lowpoly/generate", {"prompt": "a mossy stone well", "size": "auto"})
+# poll GET /v2/lowpoly/tasks/{task_id} every 10-20 s -> result: the model and its versions
+post(f"/v2/lowpoly/assets/{asset_id}/animate", {"prompt": "a bucket swinging in the wind"})
+# change that animation later: send its name as "animation" (same price, keeps its name)
+post(f"/v2/lowpoly/assets/{asset_id}/animate", {"prompt": "swing harder", "animation": "bucket_swing"})
+post(f"/v2/lowpoly/assets/{asset_id}/export", {"target": "godot"})  # -> hosted .glb URL
+```
+
+Exports cover Godot, Unity, Unreal, three.js and Blender (`.glb`), Blockbench
+(`.bbmodel`), Minecraft (resource pack), OBJ, the texture atlas, a turntable
+sheet, and animation GIFs or sprite sheets. See [`LOW_POLY.md`](LOW_POLY.md) for
+the full contract and [`13_lowpoly_model.py`](example-scripts/13_lowpoly_model.py)
+for a complete client.
 
 ## Errors
 

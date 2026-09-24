@@ -353,6 +353,106 @@
       "code": "invoice_payment_processing",
       "status_code": 409
     },
+    "lowpoly_admission_failed": {
+      "code": "lowpoly_admission_failed",
+      "status_code": 500
+    },
+    "lowpoly_animate_failed": {
+      "code": "lowpoly_animate_failed",
+      "status_code": 400
+    },
+    "lowpoly_animation_not_found": {
+      "code": "lowpoly_animation_not_found",
+      "status_code": 404
+    },
+    "lowpoly_asset_busy": {
+      "code": "lowpoly_asset_busy",
+      "status_code": 409
+    },
+    "lowpoly_asset_not_found": {
+      "code": "lowpoly_asset_not_found",
+      "status_code": 404
+    },
+    "lowpoly_asset_not_ready": {
+      "code": "lowpoly_asset_not_ready",
+      "status_code": 409
+    },
+    "lowpoly_asset_required": {
+      "code": "lowpoly_asset_required",
+      "status_code": 400
+    },
+    "lowpoly_estimate_failed": {
+      "code": "lowpoly_estimate_failed",
+      "status_code": 500
+    },
+    "lowpoly_export_error": {
+      "code": "lowpoly_export_error",
+      "status_code": 500
+    },
+    "lowpoly_export_failed": {
+      "code": "lowpoly_export_failed",
+      "status_code": 400
+    },
+    "lowpoly_failed": {
+      "code": "lowpoly_failed",
+      "status_code": 500
+    },
+    "lowpoly_generate_failed": {
+      "code": "lowpoly_generate_failed",
+      "status_code": 400
+    },
+    "lowpoly_invalid_export_target": {
+      "code": "lowpoly_invalid_export_target",
+      "status_code": 400
+    },
+    "lowpoly_invalid_reference_image": {
+      "code": "lowpoly_invalid_reference_image",
+      "status_code": 400
+    },
+    "lowpoly_invalid_style": {
+      "code": "lowpoly_invalid_style",
+      "status_code": 400
+    },
+    "lowpoly_prompt_required": {
+      "code": "lowpoly_prompt_required",
+      "status_code": 400
+    },
+    "lowpoly_reference_image_too_large": {
+      "code": "lowpoly_reference_image_too_large",
+      "status_code": 400
+    },
+    "lowpoly_revise_failed": {
+      "code": "lowpoly_revise_failed",
+      "status_code": 400
+    },
+    "lowpoly_size_failed": {
+      "code": "lowpoly_size_failed",
+      "status_code": 500
+    },
+    "lowpoly_style_not_supported": {
+      "code": "lowpoly_style_not_supported",
+      "status_code": 400
+    },
+    "lowpoly_task_not_found": {
+      "code": "lowpoly_task_not_found",
+      "status_code": 404
+    },
+    "lowpoly_timeout": {
+      "code": "lowpoly_timeout",
+      "status_code": 504
+    },
+    "lowpoly_too_many_jobs": {
+      "code": "lowpoly_too_many_jobs",
+      "status_code": 429
+    },
+    "lowpoly_unavailable": {
+      "code": "lowpoly_unavailable",
+      "status_code": 503
+    },
+    "lowpoly_version_not_found": {
+      "code": "lowpoly_version_not_found",
+      "status_code": 404
+    },
     "managed_checkout_unavailable": {
       "code": "managed_checkout_unavailable",
       "status_code": 503

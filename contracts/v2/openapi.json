@@ -157,6 +157,10 @@
       },
       "AssistantBankImageRead": {
         "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
           "desc": {
             "default": "",
             "title": "Desc",
@@ -2189,6 +2193,705 @@
           "txt2pal"
         ],
         "title": "InferenceType"
+      },
+      "LowPolyAnimateInput": {
+        "additionalProperties": false,
+        "properties": {
+          "animation": {
+            "description": "Name of an existing animation on that version to change instead of adding a new one. It keeps its name; the prompt describes what should change.",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Animation",
+            "type": "string"
+          },
+          "custom_id": {
+            "maxLength": 128,
+            "title": "Custom Id",
+            "type": "string"
+          },
+          "mode": {
+            "default": "quality",
+            "enum": [
+              "quality",
+              "fast"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "The motion to add (or the change to make), up to 250 characters.",
+            "title": "Prompt",
+            "type": "string"
+          },
+          "version": {
+            "description": "Version to animate (default: the newest).",
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "LowPolyAnimateInput",
+        "type": "object"
+      },
+      "LowPolyAssetList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LowPolyAssetRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_before_id": {
+            "title": "Next Before Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "LowPolyAssetList",
+        "type": "object"
+      },
+      "LowPolyAssetRead": {
+        "properties": {
+          "active_task_id": {
+            "title": "Active Task Id",
+            "type": "string"
+          },
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "title": "Error",
+            "type": "string"
+          },
+          "inference_id": {
+            "title": "Inference Id",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "size_source": {
+            "title": "Size Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "style": {
+            "title": "Style",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "versions": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/LowPolyVersionRead"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "asset_id",
+          "status",
+          "style",
+          "size",
+          "size_source",
+          "mode"
+        ],
+        "title": "LowPolyAssetRead",
+        "type": "object"
+      },
+      "LowPolyEstimateInput": {
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "operation": {
+            "default": "generate",
+            "enum": [
+              "generate",
+              "revise",
+              "animate"
+            ],
+            "title": "Operation",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "enum": [
+                  "auto"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Size"
+          }
+        },
+        "title": "LowPolyEstimateInput",
+        "type": "object"
+      },
+      "LowPolyEstimateOutput": {
+        "properties": {
+          "cost": {
+            "title": "Cost",
+            "type": "number"
+          },
+          "includes_rig": {
+            "default": false,
+            "title": "Includes Rig",
+            "type": "boolean"
+          },
+          "operation": {
+            "title": "Operation",
+            "type": "string"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "size_source": {
+            "title": "Size Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation",
+          "size",
+          "size_source",
+          "cost"
+        ],
+        "title": "LowPolyEstimateOutput",
+        "type": "object"
+      },
+      "LowPolyExportInput": {
+        "additionalProperties": false,
+        "properties": {
+          "animation": {
+            "description": "Required for the gif and sheet targets.",
+            "title": "Animation",
+            "type": "string"
+          },
+          "target": {
+            "description": "Export target id (see GET /lowpoly/pricing export_targets).",
+            "title": "Target",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "title": "LowPolyExportInput",
+        "type": "object"
+      },
+      "LowPolyExportOutput": {
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target",
+          "version",
+          "url",
+          "filename",
+          "content_type"
+        ],
+        "title": "LowPolyExportOutput",
+        "type": "object"
+      },
+      "LowPolyExportTargetRead": {
+        "properties": {
+          "extension": {
+            "title": "Extension",
+            "type": "string"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "needs_animation": {
+            "title": "Needs Animation",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "group",
+          "extension",
+          "needs_animation"
+        ],
+        "title": "LowPolyExportTargetRead",
+        "type": "object"
+      },
+      "LowPolyGenerateInput": {
+        "additionalProperties": false,
+        "properties": {
+          "custom_id": {
+            "description": "Idempotency key for retries.",
+            "maxLength": 128,
+            "title": "Custom Id",
+            "type": "string"
+          },
+          "mode": {
+            "default": "quality",
+            "enum": [
+              "quality",
+              "fast"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "What to build, up to 250 characters.",
+            "title": "Prompt",
+            "type": "string"
+          },
+          "reference_images": {
+            "description": "Up to 4 base64 images (PNG, JPEG or WEBP).",
+            "items": {
+              "type": "string"
+            },
+            "title": "Reference Images",
+            "type": "array"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "enum": [
+                  "auto"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "default": "auto",
+            "description": "Cube size in texels (16, 32, 64, 128, 256) or 'auto'. Auto reads the prompt; requests with only reference images default to 64.",
+            "title": "Size"
+          },
+          "style": {
+            "default": "rd_lowpoly__detailed",
+            "description": "A Low-Poly style id from GET /lowpoly/pricing (rd_lowpoly__detailed, rd_lowpoly__blocky, ...).",
+            "maxLength": 64,
+            "title": "Style",
+            "type": "string"
+          }
+        },
+        "title": "LowPolyGenerateInput",
+        "type": "object"
+      },
+      "LowPolyPricingRead": {
+        "properties": {
+          "default_size": {
+            "title": "Default Size",
+            "type": "integer"
+          },
+          "export_targets": {
+            "items": {
+              "$ref": "#/components/schemas/LowPolyExportTargetRead"
+            },
+            "title": "Export Targets",
+            "type": "array"
+          },
+          "max_reference_images": {
+            "title": "Max Reference Images",
+            "type": "integer"
+          },
+          "prices": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "title": "Prices",
+            "type": "object"
+          },
+          "prompt_max": {
+            "title": "Prompt Max",
+            "type": "integer"
+          },
+          "rig_cost": {
+            "default": 0.0,
+            "title": "Rig Cost",
+            "type": "number"
+          },
+          "sizes": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Sizes",
+            "type": "array"
+          },
+          "styles": {
+            "items": {
+              "$ref": "#/components/schemas/LowPolyStyleRead"
+            },
+            "title": "Styles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sizes",
+          "default_size",
+          "prices",
+          "styles",
+          "prompt_max",
+          "max_reference_images",
+          "export_targets"
+        ],
+        "title": "LowPolyPricingRead",
+        "type": "object"
+      },
+      "LowPolyReviseInput": {
+        "additionalProperties": false,
+        "properties": {
+          "custom_id": {
+            "maxLength": 128,
+            "title": "Custom Id",
+            "type": "string"
+          },
+          "mode": {
+            "default": "quality",
+            "enum": [
+              "quality",
+              "fast"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "What should change, up to 250 characters.",
+            "title": "Prompt",
+            "type": "string"
+          },
+          "reference_images": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reference Images",
+            "type": "array"
+          },
+          "version": {
+            "description": "Version to revise (default: the newest).",
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "LowPolyReviseInput",
+        "type": "object"
+      },
+      "LowPolySizeInput": {
+        "properties": {
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "LowPolySizeInput",
+        "type": "object"
+      },
+      "LowPolySizeOutput": {
+        "properties": {
+          "confidence": {
+            "default": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "price": {
+            "title": "Price",
+            "type": "number"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "size",
+          "source",
+          "price"
+        ],
+        "title": "LowPolySizeOutput",
+        "type": "object"
+      },
+      "LowPolyStyleRead": {
+        "properties": {
+          "appearance": {
+            "default": "complex",
+            "title": "Appearance",
+            "type": "string"
+          },
+          "banner_color": {
+            "title": "Banner Color",
+            "type": "string"
+          },
+          "banner_text": {
+            "title": "Banner Text",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "show_new_badge": {
+            "default": false,
+            "title": "Show New Badge",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "title": "LowPolyStyleRead",
+        "type": "object"
+      },
+      "LowPolyTaskAccepted": {
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "cost": {
+            "title": "Cost",
+            "type": "number"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "operation": {
+            "title": "Operation",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "size_source": {
+            "title": "Size Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "accepted",
+            "title": "Status",
+            "type": "string"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id",
+          "request_id",
+          "asset_id",
+          "operation",
+          "cost",
+          "size",
+          "message"
+        ],
+        "title": "LowPolyTaskAccepted",
+        "type": "object"
+      },
+      "LowPolyTaskRead": {
+        "properties": {
+          "animation": {
+            "title": "Animation",
+            "type": "string"
+          },
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "title": "Error",
+            "type": "object"
+          },
+          "operation": {
+            "title": "Operation",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/LowPolyAssetRead"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "task_id"
+        ],
+        "title": "LowPolyTaskRead",
+        "type": "object"
+      },
+      "LowPolyVersionRead": {
+        "properties": {
+          "animations": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Animations",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "render_url": {
+            "title": "Render Url",
+            "type": "string"
+          },
+          "rigged": {
+            "default": false,
+            "title": "Rigged",
+            "type": "boolean"
+          },
+          "scene_url": {
+            "description": "Viewer payload (JSON) for the interactive 3D view.",
+            "title": "Scene Url",
+            "type": "string"
+          },
+          "stats": {
+            "default": {},
+            "title": "Stats",
+            "type": "object"
+          },
+          "turntable_url": {
+            "title": "Turntable Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "kind",
+          "render_url"
+        ],
+        "title": "LowPolyVersionRead",
+        "type": "object"
       },
       "NeoArtStyleType": {
         "description": "Types of Neo Art Styles for differentiation and filtering",
@@ -7918,6 +8621,3004 @@
         ]
       }
     },
+    "/lowpoly/assets": {
+      "get": {
+        "operationId": "list_assets_lowpoly_assets_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Return assets older than this asset_id.",
+            "in": "query",
+            "name": "before_id",
+            "required": false,
+            "schema": {
+              "description": "Return assets older than this asset_id.",
+              "title": "Before Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The asset behind a history entry.",
+            "in": "query",
+            "name": "inference_id",
+            "required": false,
+            "schema": {
+              "description": "The asset behind a history entry.",
+              "title": "Inference Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyAssetList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List Assets",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/assets/{asset_id}": {
+      "delete": {
+        "operationId": "delete_asset_lowpoly_assets__asset_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete Asset",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      },
+      "get": {
+        "operationId": "get_asset_lowpoly_assets__asset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyAssetRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Asset",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/assets/{asset_id}/animate": {
+      "post": {
+        "description": "Add an animation to a version. The first animation rigs the model (free).",
+        "operationId": "animate_lowpoly_assets__asset_id__animate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolyAnimateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyTaskAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Animate",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/assets/{asset_id}/export": {
+      "post": {
+        "description": "Build (or reuse) an export for an engine or tool and return its download URL. Free.",
+        "operationId": "export_lowpoly_assets__asset_id__export_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolyExportInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyExportOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Export",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/assets/{asset_id}/revise": {
+      "post": {
+        "description": "Change a model. The result is saved as a new version.",
+        "operationId": "revise_lowpoly_assets__asset_id__revise_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolyReviseInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyTaskAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Revise",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/assets/{asset_id}/versions/{number}/scene": {
+      "get": {
+        "description": "Viewer payload for the interactive 3D view (same content as the version's scene_url).",
+        "operationId": "get_scene_lowpoly_assets__asset_id__versions__number__scene_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Scene",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/estimate": {
+      "post": {
+        "description": "Price a generate, revise or animate job without starting it. Free.",
+        "operationId": "estimate_lowpoly_estimate_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolyEstimateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyEstimateOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Estimate",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/generate": {
+      "post": {
+        "description": "Start building a 3D model from a prompt and/or reference images. Poll GET /lowpoly/tasks/{task_id}.",
+        "operationId": "generate_lowpoly_generate_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolyGenerateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyTaskAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Generate",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/pricing": {
+      "get": {
+        "description": "Sizes, prices per operation, styles, limits and export targets.",
+        "operationId": "get_pricing_lowpoly_pricing_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyPricingRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Pricing",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/size": {
+      "post": {
+        "description": "Pick a size for a prompt (what 'auto' would choose). Free.",
+        "operationId": "suggest_size_lowpoly_size_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolySizeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolySizeOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Suggest Size",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/tasks/{task_id}": {
+      "get": {
+        "operationId": "get_task_lowpoly_tasks__task_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyTaskRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Task",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
     "/pixel-fixer/neural": {
       "post": {
         "operationId": "run_neural_pixel_fixer_pixel_fixer_neural_post",
@@ -9961,6 +13662,149 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_animate_failed",
+      "description": "Lowpoly animate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly animate failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_required",
+      "description": "Lowpoly asset required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_export_failed",
+      "description": "Lowpoly export failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly export failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_generate_failed",
+      "description": "Lowpoly generate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly generate failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_export_target",
+      "description": "Lowpoly invalid export target.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid export target.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_reference_image",
+      "description": "Lowpoly invalid reference image.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid reference image.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_prompt_required",
+      "description": "Lowpoly prompt required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly prompt required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_reference_image_too_large",
+      "description": "Lowpoly reference image too large.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly reference image too large.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_revise_failed",
+      "description": "Lowpoly revise failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly revise failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_style_not_supported",
+      "description": "Lowpoly style not supported.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly style not supported.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_invalid_style",
+      "description": "Lowpoly invalid style.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly invalid style.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "invalid_authentication",
       "description": "Authentication is required.",
       "details_schema": null,
@@ -10120,6 +13964,58 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_asset_not_found",
+      "description": "Lowpoly asset not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_task_not_found",
+      "description": "Lowpoly task not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly task not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_version_not_found",
+      "description": "Lowpoly version not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly version not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_animation_not_found",
+      "description": "Lowpoly animation not found.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly animation not found.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "method_not_allowed",
       "description": "Method not allowed.",
       "details_schema": null,
@@ -10231,6 +14127,32 @@
         "public-api"
       ],
       "message": "Usage already refunded.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_busy",
+      "description": "Lowpoly asset busy.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset busy.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_asset_not_ready",
+      "description": "Lowpoly asset not ready.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly asset not ready.",
       "retryable": false,
       "status_code": 409
     },
@@ -10374,6 +14296,19 @@
         "public-api"
       ],
       "message": "Too many requests.",
+      "retryable": true,
+      "status_code": 429
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_too_many_jobs",
+      "description": "Lowpoly too many jobs.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly too many jobs.",
       "retryable": true,
       "status_code": 429
     },
@@ -10657,6 +14592,71 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_admission_failed",
+      "description": "Lowpoly admission failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly admission failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_estimate_failed",
+      "description": "Lowpoly estimate failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly estimate failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_export_error",
+      "description": "Lowpoly export error.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly export error.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_failed",
+      "description": "Lowpoly failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_size_failed",
+      "description": "Lowpoly size failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly size failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "background_removal_failed",
       "description": "Background removal failed.",
       "details_schema": null,
@@ -10757,6 +14757,32 @@
       "message": "The service is temporarily unavailable.",
       "retryable": true,
       "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_unavailable",
+      "description": "Lowpoly unavailable.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly unavailable.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_timeout",
+      "description": "Lowpoly timeout.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly timeout.",
+      "retryable": true,
+      "status_code": 504
     },
     {
       "aliases": [],

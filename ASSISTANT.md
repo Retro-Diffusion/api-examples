@@ -10,6 +10,10 @@ sets of items, variants of one image, edits chained onto earlier outputs.
 It is the same assistant that powers the chat widget on
 [retrodiffusion.ai](https://www.retrodiffusion.ai), exposed for programs.
 
+It makes **2D pixel art by default**. It builds **Low-Poly 3D models** only
+when the message asks for 3D ("a 3D model of…", "low poly", "for
+Blender/Godot/Unity"); see [3D models](#3d-models) below.
+
 Auth is the usual API key header on every request:
 
 ```http
@@ -117,6 +121,7 @@ chat:
 | `plan` | `plan` | A priced plan was proposed (shape below). |
 | `plan_status` | `status` | `executing`, `completed`, `partial`, `failed`, `denied`, `superseded`, `auto_approved`. |
 | `image` | `ref`, `url`, `format`, `width`, `height`, `title`, `cost` | A finished output (hosted URL; `format` is `png` or `gif`). |
+| `asset3d` | `ref`, `url`, `scene_url`, `asset_id`, `version`, `operation`, `animations`, `animation`, `size`, `style`, `title`, `cost` | A finished Low-Poly 3D model (`url` is its render; see [3D models](#3d-models)). |
 | `note` | `label`, `question`, `answer` | An automatic quality-check note about a result. |
 | `error` | `message` | Something went wrong (the turn will end `failed`). |
 
@@ -153,6 +158,27 @@ Both return **202** with a new `turn_id` to poll. Approve executes the plan
 (images arrive as `image` events, then a closing summary `message`); deny
 with feedback usually produces a revised plan in the same turn. Denying is
 free either way.
+
+## 3D models
+
+Ask for 3D and the plan contains `kind: "lowpoly"` steps, priced by model
+size exactly like the [Low-Poly API](LOW_POLY.md) (generate $0.25–$3.00,
+revise $0.20–$1.50, animate $0.15–$1.00; rigging is free):
+
+```json
+{"kind": "lowpoly", "title": "Lantern", "model": "Low-Poly 3D",
+ "detail": "Detailed · generate · 32³", "cost": 0.5, "input": null, "refs": []}
+```
+
+- A finished model arrives as an `asset3d` event and enters the bank as a
+  `3d` ref (`img_N`, with its `asset_id` and `version`). Later messages can
+  revise it ("make the handle longer": a new version), animate it ("make it
+  swing"), or change one of its animations ("make the swing slower": the
+  animation is updated in place and keeps its name).
+- A 3D model is never an input for 2D steps, and 2D animation styles never
+  animate it.
+- Use the `asset_id` with the [Low-Poly API](LOW_POLY.md) to export the model
+  (`POST /v2/lowpoly/assets/{asset_id}/export`, free).
 
 ## Failure behavior
 
