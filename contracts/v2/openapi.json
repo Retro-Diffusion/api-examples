@@ -2339,7 +2339,8 @@
             "enum": [
               "generate",
               "revise",
-              "animate"
+              "animate",
+              "split"
             ],
             "title": "Operation",
             "type": "string"
@@ -2762,6 +2763,38 @@
         "title": "LowPolySizeOutput",
         "type": "object"
       },
+      "LowPolySplitInput": {
+        "additionalProperties": false,
+        "properties": {
+          "custom_id": {
+            "maxLength": 128,
+            "title": "Custom Id",
+            "type": "string"
+          },
+          "mode": {
+            "default": "quality",
+            "enum": [
+              "quality",
+              "fast"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "How to split, up to 250 characters (optional). Without one, every separate object that makes sense becomes its own model.",
+            "title": "Prompt",
+            "type": "string"
+          },
+          "version": {
+            "description": "Version to split (default: the newest).",
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "title": "LowPolySplitInput",
+        "type": "object"
+      },
       "LowPolyStyleRead": {
         "properties": {
           "appearance": {
@@ -2877,6 +2910,14 @@
           "operation": {
             "title": "Operation",
             "type": "string"
+          },
+          "pieces": {
+            "description": "split: the new models, one per object (each is also a new history item).",
+            "items": {
+              "$ref": "#/components/schemas/LowPolyAssetRead"
+            },
+            "title": "Pieces",
+            "type": "array"
           },
           "result": {
             "$ref": "#/components/schemas/LowPolyAssetRead"
@@ -8957,6 +8998,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -9198,6 +9240,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -9444,6 +9487,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -9712,6 +9756,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -9971,6 +10016,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -10230,6 +10276,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -10498,6 +10545,276 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
+          "lowpoly_style_not_supported",
+          "lowpoly_task_not_found",
+          "lowpoly_timeout",
+          "lowpoly_too_many_jobs",
+          "lowpoly_unavailable",
+          "lowpoly_version_not_found",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/lowpoly/assets/{asset_id}/split": {
+      "post": {
+        "description": "Break a model into separate models (a desk scene into the desk, a candle, each book, ...). Each piece\nis a new model and history item, turned to face the front, with its own atlas, rig and animations.\nThe prompt (optional) says how to split. The task result lists the pieces.",
+        "operationId": "split_lowpoly_assets__asset_id__split_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "title": "Asset Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LowPolySplitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowPolyTaskAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Split",
+        "tags": [
+          "lowpoly"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "forbidden",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_stats_surface",
+          "invalid_token",
+          "lowpoly_admission_failed",
+          "lowpoly_animate_failed",
+          "lowpoly_animation_not_found",
+          "lowpoly_asset_busy",
+          "lowpoly_asset_not_found",
+          "lowpoly_asset_not_ready",
+          "lowpoly_asset_required",
+          "lowpoly_delete_animation_failed",
+          "lowpoly_estimate_failed",
+          "lowpoly_export_error",
+          "lowpoly_export_failed",
+          "lowpoly_failed",
+          "lowpoly_generate_failed",
+          "lowpoly_invalid_export_target",
+          "lowpoly_invalid_palette",
+          "lowpoly_invalid_reference_image",
+          "lowpoly_invalid_style",
+          "lowpoly_prompt_required",
+          "lowpoly_recolor_failed",
+          "lowpoly_recolor_input_required",
+          "lowpoly_reference_image_too_large",
+          "lowpoly_revise_failed",
+          "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -10765,6 +11082,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -11021,6 +11339,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -11051,7 +11370,7 @@
     },
     "/lowpoly/estimate": {
       "post": {
-        "description": "Price a generate, revise or animate job without starting it. Free.",
+        "description": "Price a generate, revise, animate or split job without starting it. Free.",
         "operationId": "estimate_lowpoly_estimate_post",
         "parameters": [
           {
@@ -11271,6 +11590,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -11530,6 +11850,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -11770,6 +12091,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -12020,6 +12342,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -12268,6 +12591,7 @@
           "lowpoly_reference_image_too_large",
           "lowpoly_revise_failed",
           "lowpoly_size_failed",
+          "lowpoly_split_failed",
           "lowpoly_style_not_supported",
           "lowpoly_task_not_found",
           "lowpoly_timeout",
@@ -14522,6 +14846,19 @@
         "lowpoly"
       ],
       "message": "Lowpoly revise failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_split_failed",
+      "description": "Lowpoly split failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly split failed.",
       "retryable": false,
       "status_code": 400
     },

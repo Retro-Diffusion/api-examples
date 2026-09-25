@@ -1049,6 +1049,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_split_failed",
+      "description": "Lowpoly split failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly split failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "lowpoly_style_not_supported",
       "description": "Lowpoly style not supported.",
       "details_schema": null,

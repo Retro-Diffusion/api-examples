@@ -36,13 +36,13 @@ A model's size is its largest dimension in texels. Pick a size or send `"auto"`:
 auto reads the prompt and picks the size that fits the object (a coin is small, a
 castle is large). Requests with only reference images default to 64.
 
-| Size | Typical subject | Generate | Revise | Animate |
-| --- | --- | --- | --- | --- |
-| 16 | small item: coin, potion, key | $0.25 | $0.20 | $0.15 |
-| 32 | prop or handheld: sword, chair, chest | $0.50 | $0.35 | $0.25 |
-| 64 | character, creature or vehicle | $0.85 | $0.65 | $0.35 |
-| 128 | building or large vehicle | $1.20 | $0.90 | $0.50 |
-| 256 | landmark or scene | $3.00 | $1.50 | $1.00 |
+| Size | Typical subject | Generate | Revise | Animate | Split |
+| --- | --- | --- | --- | --- | --- |
+| 16 | small item: coin, potion, key | $0.25 | $0.20 | $0.15 | $0.10 |
+| 32 | prop or handheld: sword, chair, chest | $0.50 | $0.35 | $0.25 | $0.10 |
+| 64 | character, creature or vehicle | $0.85 | $0.65 | $0.35 | $0.15 |
+| 128 | building or large vehicle | $1.20 | $0.90 | $0.50 | $0.20 |
+| 256 | landmark or scene | $3.00 | $1.50 | $1.00 | $0.25 |
 
 Rigging is free: it happens automatically with a model's first animation. Size
 suggestions, estimates, reads and exports are free. A failed job is refunded
@@ -66,7 +66,7 @@ the same.
 
 ## Jobs take minutes
 
-Generate, revise and animate are asynchronous. Each returns `202 Accepted` with a
+Generate, revise, animate and split are asynchronous. Each returns `202 Accepted` with a
 `task_id` and the model's `asset_id`; poll `GET /lowpoly/tasks/{task_id}` every 10-20
 seconds. Jobs usually take 1-5 minutes and can take up to 15 at size 256. Send an
 `Idempotency-Key` header (or `custom_id` in the body) on paid calls so a retried
@@ -77,7 +77,8 @@ time, and an account runs a few at once (`429 lowpoly_too_many_jobs` otherwise).
 POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, input_palette?, custom_id?}
 POST /lowpoly/assets/{id}/revise   {prompt, version?, mode?, reference_images?, custom_id?}
 POST /lowpoly/assets/{id}/animate  {prompt, version?, mode?, animation?, custom_id?}
-GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, error?}
+POST /lowpoly/assets/{id}/split    {prompt?, version?, mode?, custom_id?}
+GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, pieces?, error?}
 ```
 
 Prompts are at most 250 characters. `reference_images` are base64 PNG, JPEG or WEBP
@@ -127,6 +128,26 @@ is the model:
   ]
 }
 ```
+
+## Splitting a model into separate models
+
+`POST /lowpoly/assets/{id}/split` breaks a model into separate models: a desk with
+things on it becomes the desk, the candle, each book, the ink pot with its quill, the
+floating rune. Without a `prompt`, every separate object that makes sense becomes its
+own model. A prompt guides it: `"only the books"`, `"keep the candle on the desk"`,
+`"each drawer too"` (single copies of repeated or mirrored parts can become models).
+
+Each piece is a new model (with its own `asset_id` and history item) at version 1:
+
+* turned to face the front and standing centred on the ground, whatever angle it was
+  set down at in the scene;
+* with a texture atlas of only its own surfaces (recolors carry over exactly);
+* with the bones that move it and every animation it takes part in, for free;
+* a size from its own dimensions, so later revisions and animations are priced for it.
+
+The original model is unchanged. A succeeded task's `result` is the original and
+`pieces` lists the new models. A model that is a single object has nothing to split:
+the task fails with `lowpoly_split_failed` and is refunded.
 
 `GET /lowpoly/assets` lists your models (newest first, `limit`, `before_id`) and
 `GET /lowpoly/assets/{id}` returns one. `scene_url` is the payload for Retro
@@ -271,5 +292,5 @@ The ones you will see most:
 | 404 | `lowpoly_asset_not_found` | Unknown `asset_id` (or not yours) |
 | 409 | `lowpoly_asset_busy` | The model already has a job running |
 | 429 | `lowpoly_too_many_jobs` | Too many 3D jobs at once; retry when one finishes |
-| task | `lowpoly_generate_failed` / `lowpoly_revise_failed` / `lowpoly_animate_failed` | The job failed and was refunded |
+| task | `lowpoly_generate_failed` / `lowpoly_revise_failed` / `lowpoly_animate_failed` / `lowpoly_split_failed` | The job failed and was refunded |
 | task | `lowpoly_timeout` | The job ran too long and was refunded |
