@@ -971,6 +971,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_not_rigged",
+      "description": "Lowpoly not rigged.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly not rigged.",
+      "retryable": false,
+      "status_code": 409
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "lowpoly_prompt_required",
       "description": "Lowpoly prompt required.",
       "details_schema": null,
@@ -1017,6 +1030,19 @@
         "lowpoly"
       ],
       "message": "Lowpoly reference image too large.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_rerig_failed",
+      "description": "Lowpoly rerig failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly rerig failed.",
       "retryable": false,
       "status_code": 400
     },

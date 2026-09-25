@@ -44,7 +44,8 @@ castle is large). Requests with only reference images default to 64.
 | 128 | building or large vehicle | $1.20 | $0.90 | $0.50 | $0.20 |
 | 256 | landmark or scene | $3.00 | $1.50 | $1.00 | $0.25 |
 
-Rigging is free: it happens automatically with a model's first animation. Size
+Rigging is free: it happens automatically with a model's first animation. Re-rigging a
+rigged version costs the same as a split. Size
 suggestions, estimates, reads and exports are free. A failed job is refunded
 automatically. `GET /lowpoly/pricing` returns this table, the styles, the limits and
 the export targets as JSON.
@@ -61,8 +62,11 @@ The style list can grow; `GET /lowpoly/pricing` returns the current styles (`id`
 `description`, `appearance`). Sending a Low-Poly style to `/inferences` returns
 `400 lowpoly_style_not_supported`.
 
-`mode` is `quality` (default) or `fast` (about 3x quicker, simpler shapes). Both cost
-the same.
+`mode` is `auto` by default: each job runs in quality, or in fast (about 3x quicker) when
+the request is simple enough that it makes no difference - a plain object named in a
+few words ("a crate"), a small edit ("remove the text"), a simple motion ("spin
+slowly"). Detailed requests always get quality. Both cost the same. Send `quality` or
+`fast` to choose yourself.
 
 ## Jobs take minutes
 
@@ -78,6 +82,7 @@ POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images
 POST /lowpoly/assets/{id}/revise   {prompt, version?, mode?, reference_images?, custom_id?}
 POST /lowpoly/assets/{id}/animate  {prompt, version?, mode?, animation?, custom_id?}
 POST /lowpoly/assets/{id}/split    {prompt?, version?, custom_id?}
+POST /lowpoly/assets/{id}/rerig    {prompt?, version?, custom_id?}
 GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, pieces?, error?}
 ```
 
@@ -99,6 +104,12 @@ version they were made on and never create a version.
 `DELETE /lowpoly/assets/{id}/versions/{number}/animations/{name}` removes one animation
 from a version (free) and returns the model. The rig stays, so animating again needs no
 new rig.
+
+`POST /lowpoly/assets/{id}/rerig` rebuilds the skeleton of a rigged version, to move a
+pivot, add bones or fix what moves together (`{"prompt": "give the tail three bones"}`;
+the prompt is optional). The version is updated in place. Animations whose bones the new
+rig still has keep working, along with their effects; the rest are removed. A version
+without a rig returns `409 lowpoly_not_rigged`: its first animation rigs it for free.
 
 To change an existing animation instead of adding one, send its name as `animation`
 with a prompt describing the change (`{"prompt": "slower, with a bigger hop",
@@ -292,5 +303,5 @@ The ones you will see most:
 | 404 | `lowpoly_asset_not_found` | Unknown `asset_id` (or not yours) |
 | 409 | `lowpoly_asset_busy` | The model already has a job running |
 | 429 | `lowpoly_too_many_jobs` | Too many 3D jobs at once; retry when one finishes |
-| task | `lowpoly_generate_failed` / `lowpoly_revise_failed` / `lowpoly_animate_failed` / `lowpoly_split_failed` | The job failed and was refunded |
+| task | `lowpoly_generate_failed` / `lowpoly_revise_failed` / `lowpoly_animate_failed` / `lowpoly_split_failed` / `lowpoly_rerig_failed` | The job failed and was refunded |
 | task | `lowpoly_timeout` | The job ran too long and was refunded |

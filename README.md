@@ -73,7 +73,7 @@ python example-scripts/01_generate_image.py
 **Building an agent or LLM integration?** Paste [`llms.txt`](llms.txt) into your agent's context —
 it's a complete, verified plain-text summary of this API. Agents with MCP support can instead
 connect to the hosted MCP server at `https://mcp.retrodiffusion.ai/mcp` (header
-`Authorization: Bearer YOUR_API_KEY`) — 32 typed tools covering generation, Low-Poly 3D models, Pixel Fixer, free cost estimates,
+`Authorization: Bearer YOUR_API_KEY`) — 33 typed tools covering generation, Low-Poly 3D models, Pixel Fixer, free cost estimates,
 async jobs for animations and batches, the canvas edit tools, custom styles, and service health.
 Per-client setup guides live in the
 [retro-diffusion-mcp repo](https://github.com/Retro-Diffusion/retro-diffusion-mcp).
