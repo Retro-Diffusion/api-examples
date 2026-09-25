@@ -163,7 +163,7 @@ free either way.
 
 Ask for 3D and the plan contains `kind: "lowpoly"` steps, priced by model
 size exactly like the [Low-Poly API](LOW_POLY.md) (generate $0.25–$3.00,
-revise $0.20–$1.50, animate $0.15–$1.00; rigging is free):
+revise $0.20–$1.50, animate $0.15–$1.00, split $0.10–$0.25; rigging is free):
 
 ```json
 {"kind": "lowpoly", "title": "Lantern", "model": "Low-Poly 3D",
@@ -173,8 +173,10 @@ revise $0.20–$1.50, animate $0.15–$1.00; rigging is free):
 - A finished model arrives as an `asset3d` event and enters the bank as a
   `3d` ref (`img_N`, with its `asset_id` and `version`). Later messages can
   revise it ("make the handle longer": a new version), animate it ("make it
-  swing"), or change one of its animations ("make the swing slower": the
-  animation is updated in place and keeps its name).
+  swing"), change one of its animations ("make the swing slower": the
+  animation is updated in place and keeps its name), or split it into separate
+  models ("split the desk into its objects": one `asset3d` event and one new
+  `3d` ref per piece, each keeping the animations it was in).
 - A 3D model is never an input for 2D steps, and 2D animation styles never
   animate it.
 - Use the `asset_id` with the [Low-Poly API](LOW_POLY.md) to export the model

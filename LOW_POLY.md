@@ -77,7 +77,7 @@ time, and an account runs a few at once (`429 lowpoly_too_many_jobs` otherwise).
 POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, input_palette?, custom_id?}
 POST /lowpoly/assets/{id}/revise   {prompt, version?, mode?, reference_images?, custom_id?}
 POST /lowpoly/assets/{id}/animate  {prompt, version?, mode?, animation?, custom_id?}
-POST /lowpoly/assets/{id}/split    {prompt?, version?, mode?, custom_id?}
+POST /lowpoly/assets/{id}/split    {prompt?, version?, custom_id?}
 GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, pieces?, error?}
 ```
 
@@ -194,7 +194,7 @@ download URL. Exports are built on first request and reused after that.
 
 ## Examples
 
-Every call below uses `X-RD-Token: YOUR_API_KEY`. Paid calls (generate, revise, animate)
+Every call below uses `X-RD-Token: YOUR_API_KEY`. Paid calls (generate, revise, animate, split)
 take an `Idempotency-Key`: generate one per call, persist it, and reuse it only to retry
 that same call.
 

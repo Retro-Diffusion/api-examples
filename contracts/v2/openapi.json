@@ -2771,15 +2771,6 @@
             "title": "Custom Id",
             "type": "string"
           },
-          "mode": {
-            "default": "quality",
-            "enum": [
-              "quality",
-              "fast"
-            ],
-            "title": "Mode",
-            "type": "string"
-          },
           "prompt": {
             "description": "How to split, up to 250 characters (optional). Without one, every separate object that makes sense becomes its own model.",
             "title": "Prompt",
