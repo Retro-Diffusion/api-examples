@@ -95,6 +95,10 @@ A model starts at version 1. Each revision saves a new version, and you can revi
 or animate any version (`version`, default the newest). Animations attach to the
 version they were made on and never create a version.
 
+`DELETE /lowpoly/assets/{id}/versions/{number}/animations/{name}` removes one animation
+from a version (free) and returns the model. The rig stays, so animating again needs no
+new rig.
+
 To change an existing animation instead of adding one, send its name as `animation`
 with a prompt describing the change (`{"prompt": "slower, with a bigger hop",
 "animation": "hop"}`). It is updated in place, keeps its name, and costs the same

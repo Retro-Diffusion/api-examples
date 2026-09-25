@@ -841,6 +841,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_delete_animation_failed",
+      "description": "Lowpoly delete animation failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly delete animation failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "lowpoly_estimate_failed",
       "description": "Lowpoly estimate failed.",
       "details_schema": null,
