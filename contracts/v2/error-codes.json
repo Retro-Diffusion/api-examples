@@ -971,6 +971,32 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "lowpoly_recolor_failed",
+      "description": "Lowpoly recolor failed.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly recolor failed.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "lowpoly_recolor_input_required",
+      "description": "Lowpoly recolor input required.",
+      "details_schema": null,
+      "endpoint_families": [
+        "lowpoly"
+      ],
+      "message": "Lowpoly recolor input required.",
+      "retryable": false,
+      "status_code": 400
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "lowpoly_reference_image_too_large",
       "description": "Lowpoly reference image too large.",
       "details_schema": null,

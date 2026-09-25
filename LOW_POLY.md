@@ -128,6 +128,28 @@ is the model:
 `GET /lowpoly/assets/{id}` returns one. `scene_url` is the payload for Retro
 Diffusion's interactive web viewer; use exports for your own tools.
 
+## Recoloring
+
+`POST /lowpoly/assets/{id}/recolor` runs the image canvas's color tools on a model's
+texture atlas and saves the result as a new version (the response is the model). Later
+revisions and animations keep the new colors.
+
+| `tool` | Settings | Price |
+| --- | --- | --- |
+| `color_reducer` | `color_count` (2-256, omit for automatic), `dither_mode`, `dither_strength` | free |
+| `palette_converter` | `palette_image` (base64), `dither_mode`, `dither_strength` | free |
+| `color_style_transfer` | `reference_image` (base64) | $0.01 |
+
+`dither_mode` is `none` (default), `bayer_2x2`, `bayer_4x4` or `bayer_8x8`; `dither_strength`
+is 0-10 (default 5). `version` picks the version to recolor (default the newest). A reducer
+or converter also fixes the model's palette to the new colors, so revisions keep to them.
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../recolor \
+  -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json" \
+  -d '{"tool": "color_reducer", "color_count": 16, "dither_mode": "bayer_4x4"}'
+```
+
 ## Exports
 
 `POST /lowpoly/assets/{id}/export {target, version?, animation?}` returns a hosted
