@@ -167,6 +167,7 @@ download URL. Exports are built on first request and reused after that.
 | `minecraft` | Java resource-pack zip (box parts only; best with the blocky style). Boxes tilted at angles vanilla models can't express use free element rotation (Minecraft 1.21.11+) |
 | `atlas` | texture atlas `.png` |
 | `turntable` | 8-view turntable sprite sheet `.png` |
+| `axis_views` | zip of six `.png` views straight along +X, −X, +Y, −Y, +Z and −Z: orthographic, one pixel per texel, no antialiasing, colors snapped to the model's texture colors, transparent background |
 | `gif`, `sheet` | an animation as a GIF or sprite sheet; omit `animation` to get every animation in one zip |
 | `mp4` | an animation as a 1024x1024, 30 fps H.264 video; loops repeat to at least 4 seconds (needs `animation`) |
 
