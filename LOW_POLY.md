@@ -47,8 +47,10 @@ castle is large). Requests with only reference images default to 64.
 Rigging is free: it happens automatically with a model's first animation. Re-rigging a
 rigged version costs the same as a split. Size
 suggestions, estimates, reads and exports are free. A failed job is refunded
-automatically. `GET /lowpoly/pricing` returns this table, the styles, the limits and
-the export targets as JSON.
+automatically. These are the prices of the standard styles. Lite styles (below) cost a flat
+$0.10 per model at any size and $0.08 per revise, animate, split or re-rig.
+`GET /lowpoly/pricing` returns this table, the styles (each with its own prices), the limits
+and the export targets as JSON.
 
 ## Styles and modes
 
@@ -57,12 +59,18 @@ the export targets as JSON.
 - `rd_lowpoly__blocky`: boxes only, like a Minecraft model. Boxes stay rectangular but
   may be tilted to any angle (a windshield, a roof). Best for Blockbench and Minecraft
   exports.
+- `rd_lowpoly__detailed_lite` and `rd_lowpoly__blocky_lite`: Lite versions of the two, built
+  by a lighter model - simpler shapes and textures for $0.10 a model at any size. Good for
+  props, drafts and trying ideas. A Lite model stays Lite: its revisions, animations, splits
+  and re-rigs are made by the same lighter model for $0.08 each. Lite styles ignore `mode`.
 
-The style list can grow; `GET /lowpoly/pricing` returns the current styles (`id`, `name`,
-`description`, `appearance`). Sending a Low-Poly style to `/inferences` returns
+The style list can grow; `GET /lowpoly/pricing` returns the styles
+(`id`, `name`, `description`, `appearance`, `tier` - `standard` or `lite` - and `prices`, that
+style's price table). `POST /lowpoly/estimate` prices a generate in any style (`style`); other
+operations use the model's own. Sending a Low-Poly style to `/inferences` returns
 `400 lowpoly_style_not_supported`.
 
-`mode` is `auto` by default: each job runs in quality, or in fast (about 3x quicker) when
+`mode` (standard styles) is `auto` by default: each job runs in quality, or in fast (about 3x quicker) when
 the request is simple enough that it makes no difference - a plain object named in a
 few words ("a crate"), a small edit ("remove the text"), a simple motion ("spin
 slowly"). Detailed requests always get quality. Both cost the same. Send `quality` or
@@ -289,7 +297,7 @@ curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/5b0c.../export -H "
 **Free helpers:**
 
 ```bash
-# price a job before running it (the size "auto" would pick, and what it costs)
+# price a job before running it (the size "auto" would pick, and what it costs; "style" for a Lite price)
 curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/estimate -H "X-RD-Token: YOUR_API_KEY" \
   -H "Content-Type: application/json" -d '{"operation": "generate", "prompt": "a castle with a moat", "size": "auto"}'
 # prices, styles, limits and export targets

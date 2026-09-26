@@ -2211,7 +2211,7 @@
           },
           "mode": {
             "default": "auto",
-            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price.",
+            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price. Lite styles ignore it (their model always runs at one setting).",
             "enum": [
               "auto",
               "quality",
@@ -2365,6 +2365,12 @@
               }
             ],
             "title": "Size"
+          },
+          "style": {
+            "description": "generate: the style to price (default: the default style). Other operations use the model's own.",
+            "maxLength": 64,
+            "title": "Style",
+            "type": "string"
           }
         },
         "title": "LowPolyEstimateInput",
@@ -2510,7 +2516,7 @@
           },
           "mode": {
             "default": "auto",
-            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price.",
+            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price. Lite styles ignore it (their model always runs at one setting).",
             "enum": [
               "auto",
               "quality",
@@ -2558,7 +2564,7 @@
           },
           "style": {
             "default": "rd_lowpoly__detailed",
-            "description": "A Low-Poly style id from GET /lowpoly/pricing (rd_lowpoly__detailed, rd_lowpoly__blocky, ...).",
+            "description": "A Low-Poly style id from GET /lowpoly/pricing (rd_lowpoly__detailed, rd_lowpoly__blocky, ...). Lite styles (tier 'lite') cost less and are built by a lighter model; the model keeps its style's tier for everything done to it later.",
             "maxLength": 64,
             "title": "Style",
             "type": "string"
@@ -2591,6 +2597,7 @@
               },
               "type": "object"
             },
+            "description": "Standard styles' prices by operation and size; each style lists its own under styles.",
             "title": "Prices",
             "type": "object"
           },
@@ -2726,7 +2733,7 @@
           },
           "mode": {
             "default": "auto",
-            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price.",
+            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price. Lite styles ignore it (their model always runs at one setting).",
             "enum": [
               "auto",
               "quality",
@@ -2764,6 +2771,12 @@
         "properties": {
           "prompt": {
             "title": "Prompt",
+            "type": "string"
+          },
+          "style": {
+            "description": "Price the size for this style (default: the default style).",
+            "maxLength": 64,
+            "title": "Style",
             "type": "string"
           }
         },
@@ -2851,10 +2864,26 @@
             "title": "Name",
             "type": "string"
           },
+          "prices": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "description": "This style's prices by operation and size (lite styles cost less).",
+            "title": "Prices",
+            "type": "object"
+          },
           "show_new_badge": {
             "default": false,
             "title": "Show New Badge",
             "type": "boolean"
+          },
+          "tier": {
+            "default": "standard",
+            "title": "Tier",
+            "type": "string"
           }
         },
         "required": [
