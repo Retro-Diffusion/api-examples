@@ -2532,6 +2532,14 @@
             "title": "Reference Images",
             "type": "array"
           },
+          "reference_models": {
+            "description": "asset_ids of your own finished Low-Poly models to build into this one: each is placed exactly (same shapes and textures) where the prompt puts it, or adapted to fit. Images and models together: at most 4.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Reference Models",
+            "type": "array"
+          },
           "size": {
             "anyOf": [
               {

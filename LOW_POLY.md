@@ -78,7 +78,7 @@ request returns the same job instead of charging again. A model runs one job at 
 time, and an account runs a few at once (`429 lowpoly_too_many_jobs` otherwise).
 
 ```text
-POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, input_palette?, custom_id?}
+POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, reference_models?, input_palette?, custom_id?}
 POST /lowpoly/assets/{id}/revise   {prompt, version?, mode?, reference_images?, custom_id?}
 POST /lowpoly/assets/{id}/animate  {prompt, version?, mode?, animation?, custom_id?}
 POST /lowpoly/assets/{id}/split    {prompt?, version?, custom_id?}
@@ -89,6 +89,14 @@ GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, re
 Prompts are at most 250 characters. `reference_images` are base64 PNG, JPEG or WEBP
 (data URIs are fine), at most 4 and 8 MB each; several views of the same object
 work best.
+
+`reference_models` are `asset_id`s of your own finished models to build into the new one
+(`{"prompt": "a tavern with my table and chairs", "reference_models": ["5b0c...", "9e1f..."]}`).
+Each is used as the model itself, not a picture of it: it is placed exactly - same shapes,
+same textures, as many copies as the scene needs - where the prompt puts it, or adapted
+when the prompt asks for changes. Their newest version is used, without their rig or
+animations. Images and models together: at most 4. With `size: "auto"` the size is never
+smaller than the largest reference model's.
 
 `input_palette` is a palette image (base64, like `input_palette` on `/inferences`, e.g. a
 Lospec palette PNG): the model is built with only its colors (up to 256; bigger images
