@@ -94,6 +94,15 @@ POST /lowpoly/assets/{id}/rerig    {prompt?, version?, custom_id?}
 GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, pieces?, error?}
 ```
 
+Every Low-Poly call (generate, revise, animate, split, rerig, recolor, export) also
+appears in API Activity as `operation` `lowpoly.<action>` with the model's `asset_id`
+and `version` in `request`, and its outputs stay retrievable there for 24 hours.
+Responses carry an `X-RD-Request-ID` header (for jobs, the same value as `request_id`)
+for `GET /v2/inferences/requests/{request_id}`; if a client timed out before reading one,
+`GET /v2/inferences/requests?limit=20&cursor=...&status=...` lists recent calls as
+`{"items": [...], "next_cursor": "..."}` (see
+[API Activity](README.md#api-activity-every-calls-result-for-24-hours)).
+
 Prompts are at most 250 characters. `reference_images` are base64 PNG, JPEG or WEBP
 (data URIs are fine), at most 4 and 8 MB each; several views of the same object
 work best.

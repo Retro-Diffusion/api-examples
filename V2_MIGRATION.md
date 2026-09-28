@@ -43,5 +43,13 @@ poll at `GET /inferences/tasks/{task_id}`. Free `check_cost` requests remain
 immediate. Never retry a failed paid v2 request on v1. Roll back an integration
 by explicitly setting the version to v1.
 
+Every API call (generations, edit tools including edit tasks, Pixel Fixer,
+Low-Poly, and assistant requests) is recorded in API Activity, with outputs
+retrievable for 24 hours. Synchronous responses carry an `X-RD-Request-ID`
+header for `GET /v2/inferences/requests/{request_id}`, and
+`GET /v2/inferences/requests?limit=20&cursor=...&status=...` returns
+`{"items": [...], "next_cursor": "..."}` for the key's account, newest first,
+to recover results after a client timeout.
+
 There is no redirect, deprecation header, sunset date, or removal plan for v1.
 Any future retirement proposal would require a separate approved lifecycle plan.

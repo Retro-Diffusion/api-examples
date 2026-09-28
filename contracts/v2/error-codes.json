@@ -214,6 +214,32 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "edit_task_admission_failed",
+      "description": "Unable to start edit job.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Unable to start edit job.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "edit_task_not_found",
+      "description": "The requested edit job does not exist.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "The requested edit job does not exist.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "edit_tool_estimate_failed",
       "description": "Edit tool estimate failed.",
       "details_schema": null,

@@ -29,6 +29,12 @@ The response contains exactly one raw base64 PNG and no generation metadata:
 {"base64_images":["iVBORw0KGgo..."]}
 ```
 
+Every call also appears in API Activity, and its output stays retrievable for 24 hours. The
+response's `X-RD-Request-ID` header names that entry: `GET /v2/inferences/requests/{request_id}`
+returns it with a fresh signed output URL, and `GET /v2/inferences/requests` lists recent calls if
+a client timed out before reading the response (see
+[API Activity](README.md#api-activity-every-calls-result-for-24-hours)).
+
 Use the neural endpoint for neural reconstruction with optional target dimensions:
 
 ```http

@@ -64,9 +64,17 @@ authenticated call on the session refreshes the clock, and
 `POST .../keepalive` exists purely as a cheap ping (send one every couple of
 minutes if the human went to lunch). An expired session returns
 **410 Gone**; start a new one. Generated results are never lost to expiry —
-every generation is saved to the account's history and `/v1/inferences`
-activity like any other API call, and output URLs in events are permanent
-hosted URLs.
+every generation is saved to the account's history, and output URLs in events
+are permanent hosted URLs.
+
+Like every other API call, each message (`operation` `assistant.message`) and
+each generation the assistant runs appears in API Activity; generations carry
+`"via": "assistant"` and the `session_id` in `request`, and their outputs stay
+retrievable there for 24 hours. List them with
+`GET /v2/inferences/requests?limit=20&cursor=...&status=...` →
+`{"items": [...], "next_cursor": "..."}`, or read one with
+`GET /v2/inferences/requests/{request_id}` (see
+[API Activity](README.md#api-activity-every-calls-result-for-24-hours)).
 
 Create with optional settings:
 

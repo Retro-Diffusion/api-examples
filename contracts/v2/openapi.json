@@ -61,6 +61,26 @@
         "title": "ApiActivityOutputRead",
         "type": "object"
       },
+      "ApiActivityPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ApiActivityRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "title": "Next Cursor",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ApiActivityPage",
+        "type": "object"
+      },
       "ApiActivityRead": {
         "properties": {
           "balance_cost": {
@@ -98,6 +118,11 @@
               "async"
             ],
             "title": "Mode",
+            "type": "string"
+          },
+          "operation": {
+            "default": "inference",
+            "title": "Operation",
             "type": "string"
           },
           "output_status": {
@@ -1075,6 +1100,10 @@
             "title": "Remaining Credits",
             "type": "integer"
           },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
           "scheduledRegionJobId": {
             "title": "Scheduledregionjobid",
             "type": "integer"
@@ -1179,6 +1208,49 @@
           "scheduledRegionJobId"
         ],
         "title": "ExternalEditToolScheduledRegionStartOutput",
+        "type": "object"
+      },
+      "ExternalEditToolTaskRead": {
+        "description": "Status of an edit job started with POST /edit/tools/{tool_id}/tasks.\n\nWhen the job succeeds, result holds the hosted image in output_urls and\nbase64_images is empty.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "$ref": "#/components/schemas/V2AsyncTaskError"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ExternalEditToolRunOutput"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "running",
+              "succeeded",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "task_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ExternalEditToolTaskRead",
         "type": "object"
       },
       "ExternalInferenceInputNeo": {
@@ -5721,6 +5793,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -5984,6 +6058,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -6246,6 +6322,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -6508,6 +6586,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -6730,6 +6810,273 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
+          "edit_tool_estimate_failed",
+          "edit_tool_failed",
+          "email_update_failed",
+          "expansion_exceeds_context",
+          "forbidden",
+          "gallery_image_dimensions_too_large",
+          "gallery_image_file_too_large",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "image_too_large",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_dither_mode",
+          "invalid_expansion",
+          "invalid_gallery_image",
+          "invalid_idempotency_key",
+          "invalid_image",
+          "invalid_image_size",
+          "invalid_palette",
+          "invalid_pixel_fixer_image",
+          "invalid_region_plan",
+          "invalid_repair_window",
+          "invalid_rotation",
+          "invalid_seam_width",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_stats_surface",
+          "invalid_token",
+          "invalid_tool_function",
+          "invalid_tool_pipeline",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_expansion",
+          "missing_input",
+          "missing_mask",
+          "missing_palette",
+          "missing_prompt",
+          "missing_reference_image",
+          "missing_tile_direction",
+          "not_enough_balance",
+          "not_found",
+          "outpaint_failed",
+          "palette_too_large",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "scheduled_region_cancelled",
+          "scheduled_region_job_cancel_failed",
+          "scheduled_region_job_cancelled",
+          "scheduled_region_job_expired",
+          "scheduled_region_job_lookup_failed",
+          "scheduled_region_job_not_found",
+          "scheduled_region_job_not_runnable",
+          "scheduled_region_job_plan_mismatch",
+          "scheduled_region_job_start_failed",
+          "scheduled_region_not_supported",
+          "scheduled_region_plan_required",
+          "scheduled_region_required",
+          "scheduled_region_tile_rejected",
+          "scheduled_regions_not_supported",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "too_many_gallery_images",
+          "tool_not_found",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/edit/tasks/{task_id}": {
+      "get": {
+        "description": "Status of an edit job started with POST /edit/tools/{tool_id}/tasks.",
+        "operationId": "get_external_edit_tool_task_edit_tasks__task_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalEditToolTaskRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get External Edit Tool Task",
+        "tags": [
+          "edit"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "builtin_tool_contract_managed",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -6958,6 +7305,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -7230,6 +7579,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -7502,6 +7853,8 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -7774,6 +8127,283 @@
           "credits_lookup_failed",
           "durable_dispatch_unavailable",
           "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
+          "edit_tool_estimate_failed",
+          "edit_tool_failed",
+          "email_update_failed",
+          "expansion_exceeds_context",
+          "forbidden",
+          "gallery_image_dimensions_too_large",
+          "gallery_image_file_too_large",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "image_too_large",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_dither_mode",
+          "invalid_expansion",
+          "invalid_gallery_image",
+          "invalid_idempotency_key",
+          "invalid_image",
+          "invalid_image_size",
+          "invalid_palette",
+          "invalid_pixel_fixer_image",
+          "invalid_region_plan",
+          "invalid_repair_window",
+          "invalid_rotation",
+          "invalid_seam_width",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_stats_surface",
+          "invalid_token",
+          "invalid_tool_function",
+          "invalid_tool_pipeline",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_expansion",
+          "missing_input",
+          "missing_mask",
+          "missing_palette",
+          "missing_prompt",
+          "missing_reference_image",
+          "missing_tile_direction",
+          "not_enough_balance",
+          "not_found",
+          "outpaint_failed",
+          "palette_too_large",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "scheduled_region_cancelled",
+          "scheduled_region_job_cancel_failed",
+          "scheduled_region_job_cancelled",
+          "scheduled_region_job_expired",
+          "scheduled_region_job_lookup_failed",
+          "scheduled_region_job_not_found",
+          "scheduled_region_job_not_runnable",
+          "scheduled_region_job_plan_mismatch",
+          "scheduled_region_job_start_failed",
+          "scheduled_region_not_supported",
+          "scheduled_region_plan_required",
+          "scheduled_region_required",
+          "scheduled_region_tile_rejected",
+          "scheduled_regions_not_supported",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "too_many_gallery_images",
+          "tool_not_found",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/edit/tools/{tool_id}/tasks": {
+      "post": {
+        "description": "Start an edit tool run without holding the connection open.\n\nTakes the same body as POST /edit/tools/{tool_id} and returns 202 with a\ntask_id; poll GET /edit/tasks/{task_id} for the result. Input and balance\nare checked before the job is queued. Reusing a custom_id returns the\noriginal task instead of running (and charging) again.",
+        "operationId": "start_external_edit_tool_task_edit_tools__tool_id__tasks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tool_id",
+            "required": true,
+            "schema": {
+              "title": "Tool Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": true,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalEditToolRunInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalInferenceTaskAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start External Edit Tool Task",
+        "tags": [
+          "edit"
+        ],
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "builtin_tool_contract_managed",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "edit_failed",
+          "edit_task_admission_failed",
+          "edit_task_not_found",
           "edit_tool_estimate_failed",
           "edit_tool_failed",
           "email_update_failed",
@@ -8200,6 +8830,260 @@
           }
         },
         "summary": "Get Credits By Token",
+        "x-rd-error-codes": [
+          "account_deactivation_failed",
+          "admin_debug_only",
+          "animated_input_not_supported",
+          "api_activity_not_found",
+          "api_token_create_failed",
+          "api_token_revoke_failed",
+          "api_tokens_lookup_failed",
+          "background_removal_failed",
+          "bad_request",
+          "batch_gallery_folder_update_failed",
+          "batch_inference_not_found",
+          "conflict",
+          "credits_lookup_failed",
+          "durable_dispatch_unavailable",
+          "email_update_failed",
+          "empty_gallery_upload",
+          "forbidden",
+          "gallery_upload_failed",
+          "gone",
+          "idempotency_async_required",
+          "idempotency_backend_unavailable",
+          "idempotency_conflict",
+          "idempotency_fault_not_supported",
+          "inference_failed",
+          "internal_error",
+          "invalid_authentication",
+          "invalid_color_count",
+          "invalid_cursor",
+          "invalid_date_range",
+          "invalid_dimensions",
+          "invalid_idempotency_key",
+          "invalid_inference_update",
+          "invalid_region_plan",
+          "invalid_source_media",
+          "invalid_stats_date_range",
+          "invalid_stats_surface",
+          "invalid_token",
+          "managed_checkout_unavailable",
+          "method_not_allowed",
+          "missing_dimensions",
+          "missing_input",
+          "missing_prompt",
+          "not_enough_balance",
+          "not_found",
+          "payload_too_large",
+          "payment_debt_outstanding",
+          "payment_method_setup_failed",
+          "public_cover_upload_failed",
+          "rate_limited",
+          "request_timeout",
+          "service_unavailable",
+          "stripe_customer_rebuild_failed",
+          "style_not_found",
+          "upstream_failure",
+          "usage_already_refunded",
+          "validation_error",
+          "webhook_processing_failed"
+        ]
+      }
+    },
+    "/inferences/requests": {
+      "get": {
+        "description": "Recent API calls of this account (every API: generations, edit tools,\nPixel Fixer, Low-Poly, assistant), newest first. Outputs stay\nretrievable for 24 hours, so a client that timed out can still collect\nits results.",
+        "operationId": "list_external_api_activity_inferences_requests_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100.0,
+              "minimum": 1.0,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "title": "Cursor",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "queued",
+                "running",
+                "succeeded",
+                "failed"
+              ],
+              "title": "Status",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-RD-Token",
+            "required": false,
+            "schema": {
+              "title": "X-Rd-Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiActivityPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "405": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Method not allowed.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V2ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for support and log correlation.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List External Api Activity",
+        "tags": [
+          "api-activity"
+        ],
         "x-rd-error-codes": [
           "account_deactivation_failed",
           "admin_debug_only",
@@ -15369,6 +16253,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "edit_task_not_found",
+      "description": "The requested edit job does not exist.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "The requested edit job does not exist.",
+      "retryable": false,
+      "status_code": 404
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "not_found",
       "description": "Resource not found.",
       "details_schema": null,
@@ -15874,6 +16771,19 @@
         "edit"
       ],
       "message": "Edit failed.",
+      "retryable": false,
+      "status_code": 500
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "edit_task_admission_failed",
+      "description": "Unable to start edit job.",
+      "details_schema": null,
+      "endpoint_families": [
+        "edit"
+      ],
+      "message": "Unable to start edit job.",
       "retryable": false,
       "status_code": 500
     },

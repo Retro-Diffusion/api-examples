@@ -112,6 +112,123 @@ downloading `output_urls[0]`. The deprecated camelCase response fields remain
 available for existing clients, but new integrations should use the
 snake_case fields above.
 
+Every run, synchronous or task, appears in API Activity, and its output stays
+retrievable for 24 hours. The synchronous response carries an
+`X-RD-Request-ID` header: `GET /v2/inferences/requests/{request_id}` returns
+that run's status, cost, and fresh signed output URLs, even if your client
+timed out before reading the response. Without the id,
+`GET /v2/inferences/requests?limit=20&cursor=...&status=...` lists your recent
+calls newest first as `{"items": [...], "next_cursor": "..."}`; edit runs have
+`"operation": "edit_tool"` and the tool in `request.tool_id`. See
+[API Activity](README.md#api-activity-every-calls-result-for-24-hours).
+
+## Run a tool as a task (no long-held connection)
+
+`POST /edit/tools/{tool_id}` keeps the connection open until the image is
+ready. `inpainting`, `outpainting`, and `image_edit` usually take 20-40
+seconds. If your HTTP client, proxy, or gateway closes requests sooner, the
+run still completes and is charged, but you never receive the result. Use the
+task endpoints instead whenever your request timeout is under about 60
+seconds, and for every `inpainting` or `outpainting` call:
+
+- `POST /edit/tools/{tool_id}/tasks` takes the same body as the run endpoint
+  and returns `202` with a `task_id` right away.
+- `GET /edit/tasks/{task_id}` returns the task's `status`: `pending`,
+  `running`, `succeeded`, or `failed`.
+
+Input, size, and balance are checked before the job is queued. A bad request
+fails immediately with the same `4xx` error as the run endpoint, and nothing
+is charged. The charge is taken when the job starts and refunded
+automatically if it fails.
+
+On the task endpoint, `custom_id` works as an idempotency key. Sending the
+same `custom_id` again returns the original `task_id` without running or
+charging a second time, so a retry after a dropped connection is safe. Store
+the `custom_id` with your job before submitting it, and give every distinct
+job its own `custom_id` (also when retrying one that failed).
+
+```python
+import os
+import time
+import uuid
+
+import requests
+
+API = "https://api.retrodiffusion.ai/v1"
+HEADERS = {"X-RD-Token": os.environ["RD_API_KEY"]}
+
+custom_id = str(uuid.uuid4())  # save it with your job so a retry reuses it
+start = requests.post(
+    f"{API}/edit/tools/inpainting/tasks",
+    headers=HEADERS,
+    json={
+        "input_image": "<base64_png>",
+        "mask_image": "<base64_mask_png>",
+        "prompt": "replace the masked area with a red gem",
+        "custom_id": custom_id,
+    },
+    timeout=30,
+)
+start.raise_for_status()  # 202 Accepted
+task_id = start.json()["task_id"]
+
+while True:
+    response = requests.get(f"{API}/edit/tasks/{task_id}", headers=HEADERS, timeout=30)
+    response.raise_for_status()
+    task = response.json()
+    if task["status"] not in ("pending", "running"):
+        break
+    time.sleep(3)
+
+if task["status"] == "succeeded":
+    image_bytes = requests.get(task["result"]["output_urls"][0], timeout=60).content
+else:
+    print("failed:", task["error"])
+```
+
+The accepted response:
+
+```json
+{
+  "status": "accepted",
+  "task_id": "3f0c9b2e-...",
+  "request_id": "3f0c9b2e-...",
+  "message": "Edit accepted. Poll GET /v1/edit/tasks/{task_id} for status."
+}
+```
+
+A finished task. `created_at` and `updated_at` are Unix seconds, and `result`
+has the same fields as the run endpoint's response. Task results always come
+back as a hosted URL in `output_urls`, and `base64_images` is empty for every
+tool:
+
+```json
+{
+  "status": "succeeded",
+  "task_id": "3f0c9b2e-...",
+  "created_at": 1790611200,
+  "updated_at": 1790611229,
+  "result": {
+    "tool_id": "inpainting",
+    "inference_id": "...",
+    "balance_cost": 0.18,
+    "credit_cost": 20,
+    "charged": true,
+    "remaining_balance": 10.82,
+    "base64_images": [],
+    "output_urls": ["..."]
+  }
+}
+```
+
+A failed task is still returned with HTTP `200` and has an `error` object instead
+of `result`. On `/v2` that object is `{"status_code", "code", "message",
+"request_id"}`. On `/v1` it is the stored
+`{"status_code", "detail": {"code", "message", "request_id"}}`. An unknown
+`task_id`, or one that belongs to another account, returns `404
+edit_task_not_found`. Both endpoints are also available under `/v2`, which
+uses the canonical error envelope described in [V2_MIGRATION.md](V2_MIGRATION.md).
+
 ## A workflow worth knowing: consistent variants via `image_edit`
 
 To get the *same* image in several versions (seasons, day/night, weather, palettes,
@@ -135,7 +252,9 @@ Optional defaults and current limits are returned by the catalog's
 `api_fields` property.
 
 Every tool also accepts an optional `custom_id` for correlating the run with
-your queue. It is not an idempotency or deduplication key.
+your queue. On `POST /edit/tools/{tool_id}` it is not an idempotency or
+deduplication key. On the [task endpoint](#run-a-tool-as-a-task-no-long-held-connection)
+it is.
 
 | Tool ID | Additional fields |
 | --- | --- |
@@ -255,7 +374,11 @@ Stable application errors use the same shape as the generation API:
   is missing.
 - `500` means the tool failed temporarily on the server.
 
-Runs are non-idempotent `POST` requests, and paid runs are charged. Some free
-tools still require a minimum account value; check `is_free` and
-`requires_minimum_balance` in the catalog. If a request times out, check your
-inference history before submitting it again.
+`POST /edit/tools/{tool_id}` runs are non-idempotent, and paid runs are
+charged. Some free tools still require a minimum account value; check
+`is_free` and `requires_minimum_balance` in the catalog. If a run times out on
+your side, the server may still finish it and charge for it. Look it up in
+API Activity (`GET /v2/inferences/requests`) before submitting it again; its
+output stays retrievable there for 24 hours. Alternatively, use the
+[task endpoints](#run-a-tool-as-a-task-no-long-held-connection) with a
+`custom_id`, which makes retries safe.

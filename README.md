@@ -423,6 +423,33 @@ tasks = requests.get(
 # -> [{"task_id": "8d24...", "status": "running", "created_at": ..., "result": null, ...}, ...]
 ```
 
+### API Activity: every call's result for 24 hours
+
+Every API call appears in API Activity (Developer tools → API Activity on the site): generations,
+edit tools (including edit tasks), Pixel Fixer, Low-Poly 3D, and assistant requests. Outputs stay
+retrievable for 24 hours and request metadata for 30 days. Synchronous responses include an
+`X-RD-Request-ID` header; pass it to `GET /v2/inferences/requests/{request_id}` for the call's
+status, cost, and fresh 15-minute signed output URLs.
+
+If your client timed out before reading a response, list recent calls instead:
+`GET /v2/inferences/requests?limit=20&cursor=...&status=...` returns `{"items": [...],
+"next_cursor": "..."}` for your account, newest first. `limit` is 1–100 (default 20), `status` is
+optional (`queued` / `running` / `succeeded` / `failed`), and `next_cursor` goes back as `cursor`
+for the next page. Each item has the same shape as the single-request response, including
+`operation` (`inference`, `edit_tool`, `pixel_fixer.neural`, `lowpoly.generate`,
+`assistant.message`, ...).
+
+```python
+page = requests.get(
+    "https://api.retrodiffusion.ai/v2/inferences/requests",
+    headers={"X-RD-Token": "YOUR_API_KEY"},
+    params={"limit": 20, "status": "succeeded"},
+).json()
+# -> {"items": [{"request_id": "3f0c...", "operation": "edit_tool", "status": "succeeded",
+#      "request": {"tool_id": "inpainting", ...}, "outputs": [{"url": "https://...", ...}], ...}],
+#     "next_cursor": "..."}
+```
+
 ## Images in: img2img, references, and palettes
 
 All image inputs are **raw base64 with no `data:image/png;base64,` prefix**, RGB without
@@ -586,8 +613,18 @@ response fields use `snake_case`, matching `/v2/inferences`. See the
 [`09_edit_tools.py`](example-scripts/09_edit_tools.py) example.
 
 - `GET /v2/edit/tools` — the authoritative list of currently available tools, their fields, and costs.
-- `POST /v2/edit/tools/{tool_id}` — run a tool.
+- `POST /v2/edit/tools/{tool_id}` — run a tool and wait for the result.
+- `POST /v2/edit/tools/{tool_id}/tasks` — queue the same request and get a `task_id` back at once
+  (`202`). Poll `GET /v2/edit/tasks/{task_id}` until `status` is `succeeded` or `failed`.
 - `POST /v2/edit/tools/{tool_id}/estimate` — cost and time estimate without running.
+
+`inpainting`, `outpainting`, and `image_edit` take about 20-40 seconds. Use the task endpoints
+whenever your client, proxy, or gateway times out requests in under about 60 seconds. A
+dropped synchronous request still runs and is charged; its result can then only be recovered from
+[API Activity](#api-activity-every-calls-result-for-24-hours) within 24 hours. On the task
+endpoint, `custom_id` is an idempotency key: resubmitting with the same `custom_id` returns the
+original task without charging again. Task results arrive as a hosted URL in `output_urls`. See
+[running a tool as a task](EDIT_TOOLS.md#run-a-tool-as-a-task-no-long-held-connection).
 
 | Tool | Cost | Key inputs |
 | --- | --- | --- |
@@ -723,7 +760,7 @@ across versions.
 | `401` | Missing or invalid `X-RD-Token`. |
 | `402` | V2 account cannot fund the request. |
 | `403` | Valid token without permission. V1 retains legacy credits behavior. |
-| `404` | Task or style not found (or not owned by this key). |
+| `404` | Task, request, or style not found (or not owned by this key). |
 | `409` | Idempotency key reused with different inputs or another resource conflict. |
 | `422` | Request body failed validation (wrong types, missing required fields). |
 | `429` | Rate limited — respect the `Retry-After` header. |
