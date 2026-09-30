@@ -75,7 +75,7 @@ User styles: user__<name>_<id> (created via /v2/styles or the My Styles page).
 Live discovery: GET /v2/styles/selector (optional ?model=rd_fast|rd_plus|rd_pro|rd_mini, ?tab=tab:image|tab:animation|tab:advanced-animation|tab:tileset). Each item: {"prompt_style", "name", "description", "required_model", "required_tab", "min_width", "max_width", "min_height", "max_height", "max_number_of_images", "require_input_image", "prompt_requirement", "supports_frames_duration", "supports_reference_images", "example_prompt"}.
 
 ## Costs (USD per request; verify with check_cost — it is free)
-rd_fast: max(0.015, (w*h+100000)/6000000) * num_images; rd_plus: max(0.025, (w*h+50000)/2000000) * num_images; low-res styles (mc_*, low_res, classic, skill_icon, topdown_item, tile variants): max(0.02, (w*h+13700)/600000) * num_images; rd_pro: 0.18 * num_images; rd_advanced_animation: 0.14 (custom_action and subtle_motion: 0.25; rotate: 0.10); rd_animation: 0.07 (any_animation and 8_dir_rotation: 0.25); rd_tile__tileset(_advanced): 0.10.
+Image styles are flat per image at any size: rd_fast (and rd_mini__fast_*): 0.03 * num_images; rd_plus and rd_mini: 0.06 * num_images; rd_tile__single_tile, __tile_variation, __tile_object, __scene_object: 0.06 * num_images; rd_pro: 0.18 * num_images (fps_weapon: 0.25); rd_advanced_animation: 0.14 (custom_action and subtle_motion: 0.25; rotate: 0.10); rd_animation: 0.07 (any_animation, big_animation and 8_dir_rotation: 0.25); rd_tile__tileset(_advanced): 0.10.
 GET /v2/inferences/credits -> {"credits": 0, "balance": 100.75}. Balance is prepaid USD; charged before generation, auto-refunded on failure. Invalid token on this endpoint -> 401 invalid_token.
 
 ## Canvas edit tools (post-processing; canonical fields use snake_case)

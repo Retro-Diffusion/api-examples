@@ -587,16 +587,15 @@ payload = {
 
 ## Pricing
 
-Cost depends on style family, resolution, and image count. `check_cost` is always authoritative
+Cost depends on style family and image count (image styles are flat per image at any size). `check_cost` is always authoritative
 and free; these formulas are current at the time of writing:
 
-- **`rd_fast`:** `max(0.015, (w*h + 100000) / 6000000) * num_images`
-- **`rd_plus`:** `max(0.025, (w*h + 50000) / 2000000) * num_images`
-- **Low-res styles** (`mc_*`, `low_res`, `classic`, `skill_icon`, `topdown_item`, tile variants):
-  `max(0.02, (w*h + 13700) / 600000) * num_images`
-- **`rd_pro`:** `0.18 * num_images`
+- **`rd_fast`** (and `rd_mini__fast_*`): `0.03 * num_images`
+- **`rd_plus`** and **`rd_mini`:** `0.06 * num_images`
+- **Tiles** (`rd_tile__single_tile`, `tile_variation`, `tile_object`, `scene_object`): `0.06 * num_images`
+- **`rd_pro`:** `0.18 * num_images` (`fps_weapon`: `0.25 * num_images`)
 - **Advanced animations:** `0.14` (`custom_action` and `subtle_motion`: `0.25`; `rotate`: `0.10`)
-- **Animations:** `0.07` (`any_animation` and `8_dir_rotation`: `0.25`)
+- **Animations:** `0.07` (`any_animation`, `big_animation` and `8_dir_rotation`: `0.25`)
 - **Tilesets** (`rd_tile__tileset` / `_advanced`): `0.10`
 - **Low-Poly 3D models:** by size, generate `0.25`-`3.00`, revise `0.20`-`1.50`, animate `0.15`-`1.00`
   (table in [Low-Poly 3D models](#low-poly-3d-models); free estimate: `POST /v2/lowpoly/estimate`)
