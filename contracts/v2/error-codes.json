@@ -1465,6 +1465,32 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "provider_busy",
+      "description": "The generation provider is overloaded. Please try again in a few minutes.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "The generation provider is overloaded. Please try again in a few minutes.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "provider_timeout",
+      "description": "The generation provider took too long and the job was cancelled.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "The generation provider took too long and the job was cancelled.",
+      "retryable": true,
+      "status_code": 504
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "public_cover_upload_failed",
       "description": "Public cover upload failed.",
       "details_schema": null,

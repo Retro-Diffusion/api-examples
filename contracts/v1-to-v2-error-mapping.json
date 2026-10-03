@@ -321,6 +321,10 @@
       "code": "invalid_stats_date_range",
       "status_code": 400
     },
+    "invalid_stats_surface": {
+      "code": "invalid_stats_surface",
+      "status_code": 400
+    },
     "invalid_style_dimensions": {
       "code": "invalid_style_dimensions",
       "status_code": 400
@@ -381,6 +385,10 @@
       "code": "lowpoly_asset_required",
       "status_code": 400
     },
+    "lowpoly_delete_animation_failed": {
+      "code": "lowpoly_delete_animation_failed",
+      "status_code": 400
+    },
     "lowpoly_estimate_failed": {
       "code": "lowpoly_estimate_failed",
       "status_code": 500
@@ -405,6 +413,10 @@
       "code": "lowpoly_invalid_export_target",
       "status_code": 400
     },
+    "lowpoly_invalid_palette": {
+      "code": "lowpoly_invalid_palette",
+      "status_code": 400
+    },
     "lowpoly_invalid_reference_image": {
       "code": "lowpoly_invalid_reference_image",
       "status_code": 400
@@ -413,12 +425,28 @@
       "code": "lowpoly_invalid_style",
       "status_code": 400
     },
+    "lowpoly_not_rigged": {
+      "code": "lowpoly_not_rigged",
+      "status_code": 409
+    },
     "lowpoly_prompt_required": {
       "code": "lowpoly_prompt_required",
       "status_code": 400
     },
+    "lowpoly_recolor_failed": {
+      "code": "lowpoly_recolor_failed",
+      "status_code": 400
+    },
+    "lowpoly_recolor_input_required": {
+      "code": "lowpoly_recolor_input_required",
+      "status_code": 400
+    },
     "lowpoly_reference_image_too_large": {
       "code": "lowpoly_reference_image_too_large",
+      "status_code": 400
+    },
+    "lowpoly_rerig_failed": {
+      "code": "lowpoly_rerig_failed",
       "status_code": 400
     },
     "lowpoly_revise_failed": {
@@ -428,6 +456,10 @@
     "lowpoly_size_failed": {
       "code": "lowpoly_size_failed",
       "status_code": 500
+    },
+    "lowpoly_split_failed": {
+      "code": "lowpoly_split_failed",
+      "status_code": 400
     },
     "lowpoly_style_not_supported": {
       "code": "lowpoly_style_not_supported",
@@ -493,6 +525,10 @@
       "code": "missing_tile_direction",
       "status_code": 400
     },
+    "neural_style_unavailable": {
+      "code": "neural_style_unavailable",
+      "status_code": 503
+    },
     "neural_worker_not_ready": {
       "code": "neural_worker_not_ready",
       "status_code": 503
@@ -544,6 +580,14 @@
     "pixel_fixer_usage_unavailable": {
       "code": "pixel_fixer_usage_unavailable",
       "status_code": 503
+    },
+    "provider_busy": {
+      "code": "provider_busy",
+      "status_code": 503
+    },
+    "provider_timeout": {
+      "code": "provider_timeout",
+      "status_code": 504
     },
     "public_cover_upload_failed": {
       "code": "public_cover_upload_failed",

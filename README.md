@@ -326,7 +326,7 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | `prompt` | string | Defaults to empty. Required only when the selected style's `prompt_requirement` says so; image-driven styles may accept an empty prompt. |
 | `prompt_style` | string | Style id (see above). Send it to select a style. |
 | `width`, `height` | int | **Required.** 12–512 overall; each style enforces tighter limits (most top out at 256 or 384; several RD Pro styles go down to 12). |
-| `num_images` | int | **Required.** Batch size — up to 16 for most styles (including the 12px-capable RD Pro styles), 4 for other RD Pro styles, 1 for animations. |
+| `num_images` | int | **Required.** Batch size — up to 16 for most styles (including the 12px-capable RD Pro styles), 4 for other RD Pro styles, 1 for animations. Values outside 1 to the style's `max_number_of_images` are clamped into that range (and priced at the clamped count) rather than rejected. |
 | `seed` | int | Optional. Same seed + settings ≈ same image. Omit for random. |
 | `input_image` | base64 | Optional img2img source (raw base64, **no** `data:` prefix, RGB). |
 | `strength` | float | 0–1, default `0.75`. How much `input_image` changes: low = subtle, high = loose. |
@@ -488,7 +488,9 @@ output is an 8-frame GIF that turns the subject a full circle; `return_spriteshe
 returns a 3×3 PNG sheet instead (each cell the input size, center cell empty, and every view
 faces the center of the sheet: top = front view, bottom = back view, left/right = side views,
 corners = diagonals). It is the same layout as `rd_animation__8_dir_rotation`, so both feed
-the same per-direction workflows. Costs `0.10`.
+the same per-direction workflows. Costs `0.10`. Rotate runs on a single animation provider,
+so while that provider is overloaded a rotate task fails fast with `provider_busy` (refunded)
+instead of falling back; wait a few minutes and retry.
 
 Three field-tested rules that prevent most animation failures:
 
@@ -498,7 +500,8 @@ Three field-tested rules that prevent most animation failures:
 2. **Give motion room.** A sprite whose opaque pixels touch the canvas edge animates badly —
    pad it onto a larger transparent canvas first (e.g. 48×48 content onto 64×64).
 3. **Retry once on failure.** Animations fail/time out more often than stills; failed runs are
-   auto-refunded, so submit async and retry a failure once with identical parameters. Use
+   auto-refunded, so submit async and retry a failure once with identical parameters
+   (`provider_busy` means wait a few minutes first; see [Errors](#errors)). Use
    `frames_duration: 8` for loops (walking/idle), 6 for a snappy single action, 10–12 for
    flowing ambient motion. Transparency carries through: a transparent start frame yields a
    transparent GIF.
@@ -765,6 +768,16 @@ across versions.
 | `429` | Rate limited — respect the `Retry-After` header. |
 | `500` | Unexpected internal failure. |
 | `502/503/504` | V2 provider failure, temporary unavailability, or timeout. Retry only when safe. |
+
+Failed async tasks carry the same codes in `error` on `GET /v2/inferences/tasks/{task_id}`.
+Failed generations are always refunded. The generation failures you are most likely to see:
+
+| Code | Status | Meaning | Retry? |
+| --- | --- | --- | --- |
+| `inference_failed` | `502` | The generation failed. | Once, with identical parameters. |
+| `provider_busy` | `503` | The animation provider is overloaded and the job was rejected before it started. `rd_advanced_animation__rotate` has no alternate provider, so it sees this most. | Yes, after a few minutes. |
+| `provider_timeout` | `504` | The animation took too long and was cancelled. | Yes. |
+| `request_timeout` | `504` | The generation exceeded its execution deadline. | Yes. |
 
 Check `GET /v2/status` (no key required) before large batches.
 

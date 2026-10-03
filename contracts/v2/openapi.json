@@ -8666,6 +8666,8 @@
           "payload_too_large",
           "payment_debt_outstanding",
           "payment_method_setup_failed",
+          "provider_busy",
+          "provider_timeout",
           "public_cover_upload_failed",
           "rate_limited",
           "request_timeout",
@@ -8878,6 +8880,8 @@
           "payload_too_large",
           "payment_debt_outstanding",
           "payment_method_setup_failed",
+          "provider_busy",
+          "provider_timeout",
           "public_cover_upload_failed",
           "rate_limited",
           "request_timeout",
@@ -9132,6 +9136,8 @@
           "payload_too_large",
           "payment_debt_outstanding",
           "payment_method_setup_failed",
+          "provider_busy",
+          "provider_timeout",
           "public_cover_upload_failed",
           "rate_limited",
           "request_timeout",
@@ -9358,6 +9364,8 @@
           "payload_too_large",
           "payment_debt_outstanding",
           "payment_method_setup_failed",
+          "provider_busy",
+          "provider_timeout",
           "public_cover_upload_failed",
           "rate_limited",
           "request_timeout",
@@ -9528,6 +9536,8 @@
           "payload_too_large",
           "payment_debt_outstanding",
           "payment_method_setup_failed",
+          "provider_busy",
+          "provider_timeout",
           "public_cover_upload_failed",
           "rate_limited",
           "request_timeout",
@@ -9682,6 +9692,8 @@
           "payload_too_large",
           "payment_debt_outstanding",
           "payment_method_setup_failed",
+          "provider_busy",
+          "provider_timeout",
           "public_cover_upload_failed",
           "rate_limited",
           "request_timeout",
@@ -17129,6 +17141,19 @@
     {
       "aliases": [],
       "audience": "public",
+      "code": "provider_busy",
+      "description": "The generation provider is overloaded. Please try again in a few minutes.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "The generation provider is overloaded. Please try again in a few minutes.",
+      "retryable": true,
+      "status_code": 503
+    },
+    {
+      "aliases": [],
+      "audience": "public",
       "code": "service_unavailable",
       "description": "The service is temporarily unavailable.",
       "details_schema": null,
@@ -17162,6 +17187,19 @@
         "lowpoly"
       ],
       "message": "Lowpoly timeout.",
+      "retryable": true,
+      "status_code": 504
+    },
+    {
+      "aliases": [],
+      "audience": "public",
+      "code": "provider_timeout",
+      "description": "The generation provider took too long and the job was cancelled.",
+      "details_schema": null,
+      "endpoint_families": [
+        "inferences"
+      ],
+      "message": "The generation provider took too long and the job was cancelled.",
       "retryable": true,
       "status_code": 504
     },
