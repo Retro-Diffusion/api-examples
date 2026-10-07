@@ -235,7 +235,10 @@ instead of one model: a game-ready kit of modular tiles that snap together (terr
 walls, stairs, caves), laid out as an example level, plus objects placed in it. Generate one with
 `POST /lowpoly/generate {"prompt", "style": "rd_lowpoly__scene_detailed", "reference_images"?}`.
 A scene has no size choice, takes reference images (not 3D models) and no palette, and takes
-about 10 to 20 minutes. Its asset has `"kind": "kit"`; a scene can't be a 3D reference
+about 10 to 20 minutes. Its scale, in texels, is optional: `chunk_size` (one tile, 32-512),
+`player_height` (how tall a character is, 8-128) and `layer_height` (one storey, 16-256). Omitted
+ones are picked from the prompt; `POST /lowpoly/scene-settings {prompt, chunk_size?, player_height?,
+layer_height?}` shows what would be picked (free). Its asset has `"kind": "kit"`; a scene can't be a 3D reference
 (split its objects into models and use those).
 
 | Job | Request | Price |
