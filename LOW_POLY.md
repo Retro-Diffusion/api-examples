@@ -228,6 +228,44 @@ download URL. Exports are built on first request and reused after that.
 | `gif`, `sheet` | an animation as a GIF or sprite sheet; omit `animation` to get every animation in one zip |
 | `mp4` | an animation as a 1024x1024, 30 fps H.264 video; loops repeat to at least 4 seconds (needs `animation`) |
 
+## Scenes (environments)
+
+The styles `rd_lowpoly__scene_detailed` and `rd_lowpoly__scene_blocky` build a whole environment
+instead of one model: a game-ready kit of modular tiles that snap together (terrain, floors,
+walls, stairs, caves), laid out as an example level, plus objects placed in it. Generate one with
+`POST /lowpoly/generate {"prompt", "style": "rd_lowpoly__scene_detailed", "reference_images"?}`.
+A scene has no size choice, takes reference images (not 3D models) and no palette, and takes
+about 10 to 20 minutes. Its asset has `"kind": "kit"`; a scene can't be a 3D reference
+(split its objects into models and use those).
+
+| Job | Request | Price |
+| --- | --- | --- |
+| Generate | `POST /lowpoly/generate` with a scene style | $4.00 |
+| Extend (add tiles) | `POST /lowpoly/assets/{id}/extend {prompt, reference_images?}` | $1.50 |
+| Populate (make and place objects) | `POST /lowpoly/assets/{id}/populate {prompt?, reference_images?}` | $2.50 |
+| Edit tiles | `POST /lowpoly/assets/{id}/edit {prompt, tiles: [...]}` | $0.30 per tile |
+| Animate tiles / objects | `POST /lowpoly/assets/{id}/animate {prompt, tiles?: [...], objects?: [...]}` | $0.50 per tile or object |
+| Split objects into models | `POST /lowpoly/assets/{id}/split {objects?: [...]}` (empty: every object) | Free |
+
+Every scene job works on the newest version and saves a new one (split leaves the scene as it is
+and adds one model per object to your history). Tile and object ids are in the version's
+`stats` and in the viewer payload. Edit and animate list each piece in the task's `items`
+(`"tile:<id>"` / `"object:<id>"`); pieces that fail are not charged. A job selects at most 40
+tiles and 20 objects.
+
+Scene exports (`POST /lowpoly/assets/{id}/export {target}`, newest version):
+
+| target | File |
+| --- | --- |
+| `kit` | zip of every tile and object as `.glb`, their sockets, and the example level |
+| `level` | the whole scene as one `.glb` |
+| `tile_sheet` | a `.png` render of every tile |
+| `objects_sheet` | a `.png` render of every object |
+
+```bash
+curl -X POST https://api.retrodiffusion.ai/v2/lowpoly/assets/7c1e.../edit   -H "X-RD-Token: YOUR_API_KEY" -H "Content-Type: application/json"   -d '{"prompt": "more moss on the stones", "tiles": ["shore_edge", "bog"]}'
+```
+
 ## Examples
 
 Every call below uses `X-RD-Token: YOUR_API_KEY`. Paid calls (generate, revise, animate, split)
@@ -329,4 +367,7 @@ The ones you will see most:
 | 409 | `lowpoly_asset_busy` | The model already has a job running |
 | 429 | `lowpoly_too_many_jobs` | Too many 3D jobs at once; retry when one finishes |
 | task | `lowpoly_generate_failed` / `lowpoly_revise_failed` / `lowpoly_animate_failed` / `lowpoly_split_failed` / `lowpoly_rerig_failed` | The job failed and was refunded |
+| 400 | `lowpoly_scene_no_reference_models` / `lowpoly_reference_is_scene` | Scenes take reference images only, and a scene can't be a 3D reference |
+| 400 | `lowpoly_scene_only` / `lowpoly_not_for_scenes` | That job is for scenes only, or for models only |
+| 404 | `lowpoly_scene_item_not_found` | A tile or object id the scene doesn't have |
 | task | `lowpoly_timeout` | The job ran too long and was refunded |
