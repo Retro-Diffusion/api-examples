@@ -197,8 +197,8 @@ revisions and animations keep the new colors.
 
 | `tool` | Settings | Price |
 | --- | --- | --- |
-| `color_reducer` | `color_count` (2-256, omit for automatic), `dither_mode`, `dither_strength` | free |
-| `palette_converter` | `palette_image` (base64), `dither_mode`, `dither_strength` | free |
+| `color_reducer` | `color_count` (2-256, omit for automatic), `dither_mode`, `dither_strength` | $0.001 |
+| `palette_converter` | `palette_image` (base64), `dither_mode`, `dither_strength` | $0.001 |
 | `color_style_transfer` | `reference_image` (base64) | $0.01 |
 
 `dither_mode` is `none` (default), `bayer_2x2`, `bayer_4x4` or `bayer_8x8`; `dither_strength`

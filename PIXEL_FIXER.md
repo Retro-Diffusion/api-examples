@@ -1,8 +1,9 @@
 # Pixel Fixer API
 
 Pixel Fixer reconstructs enlarged, softened, AI-rendered, or compression-damaged pixel art at its
-detected native grid. It is authenticated with the same `X-RD-Token` API key as generation, but it
-does not spend account balance.
+detected native grid. It is authenticated with the same `X-RD-Token` API key as generation. Standard
+costs $0.002 per call and neural $0.005 per call, charged before the run and refunded automatically
+if the call fails.
 
 Use the standard endpoint for native Rust grid detection:
 
@@ -53,13 +54,14 @@ POST https://api.retrodiffusion.ai/v1/pixel-fixer/neural
   destinations are rejected. URL input bypasses the request-body limit, not the decoded-image or
   response limits.
 - Successful response JSON: at most 850,000 bytes. Larger reconstructed PNGs return HTTP 413.
-- Rate limit: 10 requests per minute per API token, shared by standard and neural.
+- Rate limit: 10 requests per minute per API token (120 once the account has made a purchase), shared by standard and neural.
 - Unknown request fields are rejected.
 
 Stable Pixel Fixer errors use the normal `detail.code` and `detail.message` envelope:
 
 | Status | Code |
 | --- | --- |
+| 400 (v1) / 402 (v2) | `not_enough_balance` |
 | 413 | `pixel_fixer_request_too_large` or `pixel_fixer_output_too_large` |
 | 422 | `invalid_pixel_fixer_image` |
 | 429 | `pixel_fixer_rate_limit_exceeded` |

@@ -636,11 +636,11 @@ original task without charging again. Task results arrive as a hosted URL in `ou
 | `seam_tiling` | $0.18 | `input_image`, `tile_x`, `tile_y`, `seam_width` |
 | `background_remover` | $0.01 | `input_image`, `transparency_threshold?`, `force_solid_pixels?` |
 | `color_style_transfer` | $0.01 | `input_image`, `extra_input_image` |
-| `color_reducer` | Free* | `input_image`, `color_count?`, `dither_mode?`, `dither_strength?` |
-| `palette_converter` | Free* | `input_image`, `input_palette`, `dither_mode?`, `dither_strength?` |
-| `k_centroid_downscale` | Free* | `input_image`, `width`, `height` |
-| `pixel_correction` | Free | `input_image` |
-| `rotate` | Free | `input_image`, `rotation_degrees?` |
+| `color_reducer` | $0.001 | `input_image`, `color_count?`, `dither_mode?`, `dither_strength?` |
+| `palette_converter` | $0.001 | `input_image`, `input_palette`, `dither_mode?`, `dither_strength?` |
+| `k_centroid_downscale` | $0.001 | `input_image`, `width`, `height` |
+| `pixel_correction` | $0.001 | `input_image` |
+| `rotate` | $0.001 | `input_image`, `rotation_degrees?` |
 
 For inpainting, use a same-size RGBA PNG mask with transparent protected
 pixels and opaque editable pixels. A true grayscale mask also works: black is
@@ -648,8 +648,9 @@ protected and values greater than `12` are editable. A fully opaque RGB/RGBA
 mask selects the entire image. See [the mask format guide](EDIT_TOOLS.md#inpainting-mask-format)
 for a complete example.
 
-\* Some free tools require a minimum account value; check `requires_minimum_balance` in
-`GET /v2/edit/tools`. Paid tools charge before running and refund on failure. Responses include
+Every tool charges before running and refunds automatically on failure; animated inputs are charged
+per frame. `GET /v2/edit/tools` and the estimate endpoint report the API price, and an account that
+cannot cover a run gets `402 not_enough_balance`. Responses include
 `base64_images`, `output_urls`, `balance_cost`, `charged`, and `remaining_balance`.
 
 > **The result may be in either field.** `image_edit`, `inpainting`, and `outpainting` normally
@@ -661,7 +662,7 @@ for a complete example.
 ## Pixel Fixer
 
 Pixel Fixer restores enlarged, softened, AI-rendered, or compressed pixel art to its detected
-native grid. It is free and returns only one raw base64 PNG:
+native grid for $0.002 per call (standard) or $0.005 (neural) and returns only one raw base64 PNG:
 
 ```python
 from rd_client import fix_pixel_art, image_to_base64, save_images
@@ -674,7 +675,8 @@ save_images(result, "fixed-sprite")
 - `POST /v2/pixel-fixer/neural` — neural reconstruction with optional positive target `width` and
   `height` values.
 - Both accept exactly one PNG/JPEG source as raw base64, a data URI, or a public HTTPS
-  `image_url`, cost nothing, and share a per-token limit of 10 requests per minute.
+  `image_url`, charge before running (refunded automatically if the call fails), and share a
+  per-token limit of 10 requests per minute (120 once the account has made a purchase).
 - Decoded sources may contain up to 16 megapixels. Base64 requests are capped at 900,000
   serialized bytes; URL downloads are capped at 20 MB and bypass that request-body limit.
 

@@ -1,6 +1,6 @@
 """Discover, estimate, and run one canvas edit tool.
 
-Set RD_API_KEY and optionally RD_EDIT_TOOL. The default tool is the free
+Set RD_API_KEY and optionally RD_EDIT_TOOL. The default tool is the $0.001
 pixel_correction operation. Inpainting needs MASK_IMAGE_PATH pointing to a
 same-size RGBA or grayscale mask. Some tools also need
 PALETTE_IMAGE_PATH, or REFERENCE_IMAGE_PATH.

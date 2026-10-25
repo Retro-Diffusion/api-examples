@@ -337,7 +337,7 @@ images only.
 
 Example payloads for every tool are available in
 [09_edit_tools.py](example-scripts/09_edit_tools.py). The script defaults to
-the free `pixel_correction` tool and estimates the cost before executing:
+the $0.001 `pixel_correction` tool and estimates the cost before executing:
 
 ```bash
 RD_API_KEY=YOUR_API_KEY python example-scripts/09_edit_tools.py
@@ -374,9 +374,12 @@ Stable application errors use the same shape as the generation API:
   is missing.
 - `500` means the tool failed temporarily on the server.
 
-`POST /edit/tools/{tool_id}` runs are non-idempotent, and paid runs are
-charged. Some free tools still require a minimum account value; check
-`is_free` and `requires_minimum_balance` in the catalog. If a run times out on
+`POST /edit/tools/{tool_id}` runs are non-idempotent, and every run is
+charged before it executes and refunded automatically if it fails. Color
+Reducer, Palette Converter, K-Centroid Downscale, Pixel Correction and Rotate
+cost $0.001 per run (animated inputs are charged per frame); the catalog and
+estimates report each tool's API price. An account that cannot cover a run
+gets `not_enough_balance` (HTTP 400 on v1, 402 on v2). If a run times out on
 your side, the server may still finish it and charge for it. Look it up in
 API Activity (`GET /v2/inferences/requests`) before submitting it again; its
 output stays retrievable there for 24 hours. Alternatively, use the
