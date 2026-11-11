@@ -634,7 +634,8 @@ response fields use `snake_case`, matching `/v2/inferences`. See the
   (`202`). Poll `GET /v2/edit/tasks/{task_id}` until `status` is `succeeded` or `failed`.
 - `POST /v2/edit/tools/{tool_id}/estimate` — cost and time estimate without running.
 
-`inpainting`, `outpainting`, and `image_edit` take about 20-40 seconds. Use the task endpoints
+`image_edit`, `inpainting`, `outpainting`, and `seam_tiling` run on RD Core (its default style) and usually take
+5-30 seconds. Use the task endpoints
 whenever your client, proxy, or gateway times out requests in under about 60 seconds. A
 dropped synchronous request still runs and is charged; its result can then only be recovered from
 [API Activity](#api-activity-every-calls-result-for-24-hours) within 24 hours. On the task
@@ -644,10 +645,10 @@ original task without charging again. Task results arrive as a hosted URL in `ou
 
 | Tool | Cost | Key inputs |
 | --- | --- | --- |
-| `image_edit` | $0.18 | `input_image` (≤256px), `prompt`, `seed?` |
-| `inpainting` | $0.18 | `input_image`, `prompt`, `mask_image` |
-| `outpainting` | $0.18 | `input_image`, `expand_left/right/top/bottom` |
-| `seam_tiling` | $0.18 | `input_image`, `tile_x`, `tile_y`, `seam_width` |
+| `image_edit` | $0.12 | `input_image` (≤256px), `prompt`, `seed?` |
+| `inpainting` | $0.12 | `input_image`, `prompt`, `mask_image` |
+| `outpainting` | $0.12 | `input_image`, `expand_left/right/top/bottom` |
+| `seam_tiling` | $0.12 | `input_image`, `tile_x`, `tile_y`, `seam_width` |
 | `background_remover` | $0.01 | `input_image`, `transparency_threshold?`, `force_solid_pixels?` |
 | `color_style_transfer` | $0.01 | `input_image`, `extra_input_image` |
 | `color_reducer` | $0.001 | `input_image`, `color_count?`, `dither_mode?`, `dither_strength?` |

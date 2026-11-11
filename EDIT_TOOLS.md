@@ -91,10 +91,10 @@ A successful response follows the regular inference API conventions:
 {
   "tool_id": "image_edit",
   "inference_id": "...",
-  "balance_cost": 0.18,
-  "credit_cost": 20,
+  "balance_cost": 0.12,
+  "credit_cost": 14,
   "charged": true,
-  "remaining_balance": 10.82,
+  "remaining_balance": 10.88,
   "remaining_credits": null,
   "base64_images": [],
   "output_urls": ["..."]
@@ -125,7 +125,7 @@ calls newest first as `{"items": [...], "next_cursor": "..."}`; edit runs have
 ## Run a tool as a task (no long-held connection)
 
 `POST /edit/tools/{tool_id}` keeps the connection open until the image is
-ready. `inpainting`, `outpainting`, and `image_edit` usually take 20-40
+ready. `inpainting`, `outpainting`, and `image_edit` usually take 5-30
 seconds. If your HTTP client, proxy, or gateway closes requests sooner, the
 run still completes and is charged, but you never receive the result. Use the
 task endpoints instead whenever your request timeout is under about 60
@@ -211,10 +211,10 @@ tool:
   "result": {
     "tool_id": "inpainting",
     "inference_id": "...",
-    "balance_cost": 0.18,
-    "credit_cost": 20,
+    "balance_cost": 0.12,
+    "credit_cost": 14,
     "charged": true,
-    "remaining_balance": 10.82,
+    "remaining_balance": 10.88,
     "base64_images": [],
     "output_urls": ["..."]
   }
