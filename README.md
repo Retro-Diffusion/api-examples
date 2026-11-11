@@ -58,6 +58,7 @@ python example-scripts/01_generate_image.py
 | [`02_check_cost.py`](example-scripts/02_check_cost.py) | Free price check before generating |
 | [`03_img2img.py`](example-scripts/03_img2img.py) | Transform an existing image with `input_image` + `strength` |
 | [`04_reference_images.py`](example-scripts/04_reference_images.py) | Keep a character consistent with RD Pro reference images |
+| [`15_rd_core_reference_images.py`](example-scripts/15_rd_core_reference_images.py) | Keep a character consistent with RD Core reference images ($0.10/image) |
 | [`05_animation.py`](example-scripts/05_animation.py) | Animate a start frame (advanced animations → GIF) |
 | [`06_tileset.py`](example-scripts/06_tileset.py) | Generate a wang-style tileset |
 | [`07_async_batch.py`](example-scripts/07_async_batch.py) | Fan out many generations with async jobs |
@@ -94,7 +95,7 @@ print("Save this admission key until task_id is received:", idempotency_key)
 headers = {"X-RD-Token": "YOUR_API_KEY", "Idempotency-Key": idempotency_key}
 payload = {
     "prompt": "A really cool corgi wearing sunglasses",  # describe the SUBJECT only
-    "prompt_style": "rd_plus__default",                  # the style handles the pixel-art look
+    "prompt_style": "rd_core__default",                  # the style handles the pixel-art look
     "width": 256,
     "height": 256,
     "num_images": 1,
@@ -275,6 +276,18 @@ The same prompt and seed across all four models:
   </tr>
 </table>
 
+**RD Core — fast and affordable, our newest model.** Roughly 90% of RD Pro's quality at a little over
+half the price: **$0.10/image flat at any size**, about **4x faster than RD Pro** (RD Pro averages
+over a minute). Any size from **12 to 512px** per side and any aspect ratio (e.g. `480x270`), up to
+**9 reference images** with fewer reference artifacts than RD Pro, strong perspective consistency for
+isometric, platformer, and top-down art, and up to **4 images per request**. No tiling. It is the first
+RD model that runs entirely on Retro Diffusion's own GPUs.
+12–512px: `rd_core__default`, `rd_core__painterly`, `rd_core__simple`, `rd_core__fantasy`,
+`rd_core__horror`, `rd_core__scifi`, `rd_core__isometric`, `rd_core__topdown`, `rd_core__platformer`.
+128–512px: `rd_core__dungeon_map`, `rd_core__spritesheet`, `rd_core__hexagonal_tiles`,
+`rd_core__inventory_items`. 64–512px: `rd_core__fps_weapon`, `rd_core__typography`.
+256×256 only: `rd_core__ui_panel`. See [`15_rd_core_reference_images.py`](example-scripts/15_rd_core_reference_images.py).
+
 **RD Pro — highest quality.** The professional-grade model: the cleanest pixel work, the most
 detailed prompt following, and support for up to **9 reference images** to keep a character or
 art style consistent. Best for hero assets and matching an existing look. `$0.18`/image.
@@ -285,7 +298,7 @@ Down to **12×12px** with **batch ≤ 16** (great for tiny sprites and icons): `
 256×256-only, batch ≤ 4: `rd_pro__hexagonal_tiles`, `rd_pro__ui_panel`, `rd_pro__inventory_items`.
 Require an input image: `rd_pro__pixelate` (16–256px, batch ≤ 16), `rd_pro__edit` (64–256px, batch ≤ 4).
 
-**RD Plus — quality all-rounder** with the largest style library. 64–384px (low-res variants
+**RD Plus (API only)** — retired from the website, still fully available here at the same price. A quality all-rounder with the largest style library. 64–384px (low-res variants
 smaller), batch ≤ 16: `rd_plus__default`, `rd_plus__retro`, `rd_plus__watercolor`,
 `rd_plus__textured`, `rd_plus__cartoon`, `rd_plus__ui_element`, `rd_plus__item_sheet`,
 `rd_plus__character_turnaround`, `rd_plus__environment`, `rd_plus__isometric`,
@@ -330,7 +343,7 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | `seed` | int | Optional. Same seed + settings ≈ same image. Omit for random. |
 | `input_image` | base64 | Optional img2img source (raw base64, **no** `data:` prefix, RGB). |
 | `strength` | float | 0–1, default `0.75`. How much `input_image` changes: low = subtle, high = loose. |
-| `reference_images` | base64[] | RD Pro styles only: up to 9 style/content references. |
+| `reference_images` | base64[] | RD Core and RD Pro styles only: up to 9 style/content references. |
 | `input_palette` | base64 | Constrain output colors to a palette image. Add `return_pre_palette` to also get the un-quantized image. |
 | `remove_bg` | bool | Transparent output. Add `return_non_bg_removed` to also get the original. |
 | `tile_x`, `tile_y` | bool | Seamless tiling on either axis. |
@@ -457,7 +470,7 @@ transparency, and palette images should stay well under 1 MB.
 
 - **img2img** — `input_image` + `strength` (0–1): low = subtle restyle, high = loose inspiration.
   See [`03_img2img.py`](example-scripts/03_img2img.py).
-- **Reference images** — RD Pro styles accept up to 9 `reference_images`. They guide *style and
+- **Reference images** — RD Core and RD Pro styles accept up to 9 `reference_images`. They guide *style and
   content* without being redrawn — the way to keep a consistent character across images. Generate
   the character once, then pass that output back as a reference. See
   [`04_reference_images.py`](example-scripts/04_reference_images.py).
@@ -546,7 +559,7 @@ payload = {
 }
 ```
 
-**Prompt-driven animations** produce ready-made sprite formats from just a prompt (transparent
+**Prompt-driven animations** (API only — the regular animation styles are retired from the website, still fully available here at the same prices) produce ready-made sprite formats from just a prompt (transparent
 GIF output, batch = 1):
 
 <table>
@@ -596,6 +609,7 @@ and free; these formulas are current at the time of writing:
 - **`rd_fast`** (and `rd_mini__fast_*`): `0.03 * num_images`
 - **`rd_plus`** and **`rd_mini`:** `0.06 * num_images`
 - **Tiles** (`rd_tile__single_tile`, `tile_variation`, `tile_object`, `scene_object`): `0.06 * num_images`
+- **`rd_core`:** `0.10 * num_images` (flat at any size)
 - **`rd_pro`:** `0.18 * num_images` (`fps_weapon`: `0.25 * num_images`)
 - **Advanced animations:** `0.14` (`custom_action` and `subtle_motion`: `0.25`; `rotate`: `0.10`)
 - **Animations:** `0.07` (`any_animation`, `big_animation` and `8_dir_rotation`: `0.25`)
