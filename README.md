@@ -360,7 +360,7 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | `frames_duration` | int | Animation styles: `4`, `6`, `8`, `10`, `12`, or `16`. Ignored by `rd_advanced_animation__rotate` (always 8 views). |
 | `return_spritesheet` | bool | Animations: return a PNG spritesheet instead of a GIF (for `rd_advanced_animation__rotate`, the 3×3 direction sheet). |
 | `upscale_output_factor` | int | `1` (default) = native pixel size; higher = nearest-neighbor upscaled PNGs. |
-| `bypass_prompt_expansion` | bool | Skip the automatic LLM prompt enrichment. |
+| `bypass_prompt_expansion` | bool | **Leave it off** (the default). It skips the prompt writer that turns your words into the captions each style was trained on, so results get clearly worse (off-style art, stray text in the image). Only for prompts already written in the style's own caption format. |
 | `include_downloadable_data` | bool | Include structured extras (e.g. `rd_pro__inventory_items` returns an item-atlas JSON). |
 | `check_cost` | bool | Free dry run — returns the price, generates nothing, charges nothing. |
 | `async` | bool | Accepted for source compatibility. V2 generation is always queued and polled. |
