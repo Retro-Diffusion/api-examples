@@ -20,7 +20,7 @@ for arg in sys.argv[1:]:
     if arg.startswith("tab:"):
         params["tab"] = arg
     else:
-        params["model"] = arg  # rd_fast | rd_plus | rd_pro | rd_mini
+        params["model"] = arg  # rd_lite | rd_core | rd_pro | rd_fast | rd_plus | rd_mini
 
 response = requests.get(
     f"{API_BASE_URL}/styles/selector",

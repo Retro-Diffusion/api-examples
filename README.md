@@ -95,7 +95,7 @@ print("Save this admission key until task_id is received:", idempotency_key)
 headers = {"X-RD-Token": "YOUR_API_KEY", "Idempotency-Key": idempotency_key}
 payload = {
     "prompt": "A really cool corgi wearing sunglasses",  # describe the SUBJECT only
-    "prompt_style": "rd_core__default",                  # the style handles the pixel-art look
+    "prompt_style": "rd_lite__default",                  # the style handles the pixel-art look
     "width": 256,
     "height": 256,
     "num_images": 1,
@@ -276,7 +276,16 @@ The same prompt and seed across all four models:
   </tr>
 </table>
 
-**RD Core — fast and affordable, our newest model.** Roughly 90% of RD Pro's quality at a little over
+**RD Lite — recommended for most stills, our newest model.** The RD Core styles on a lighter model:
+**$0.05/image flat at any size** in **about 6 seconds** (about 3x faster than RD Core, 10x faster than RD Pro),
+**12 to 512px** per side in any aspect ratio, **one reference image**, up to **4 images per request**, no tiling.
+Great for sprites, icons, items, quick drafts and lots of variations; it replaced RD Fast on the website with much
+cleaner pixels and better prompt following. Same style names as RD Core: `rd_lite__default`, `rd_lite__painterly`,
+`rd_lite__simple`, `rd_lite__fantasy`, `rd_lite__horror`, `rd_lite__scifi`, `rd_lite__isometric`,
+`rd_lite__topdown`, `rd_lite__platformer`, `rd_lite__dungeon_map`, `rd_lite__spritesheet`,
+`rd_lite__hexagonal_tiles`, `rd_lite__fps_weapon`, `rd_lite__typography`, `rd_lite__ui_panel`.
+
+**RD Core — better for complex scenes.** Roughly 90% of RD Pro's quality at a little over
 half the price: **$0.10/image flat at any size**, about **4x faster than RD Pro** (RD Pro averages
 over a minute). Any size from **12 to 512px** per side and any aspect ratio (e.g. `480x270`), up to
 **9 reference images** with fewer reference artifacts than RD Pro, strong perspective consistency for
@@ -306,7 +315,8 @@ smaller), batch ≤ 16: `rd_plus__default`, `rd_plus__retro`, `rd_plus__watercol
 `rd_plus__skill_icon`, `rd_plus__low_res`, `rd_plus__mc_item`, `rd_plus__mc_texture`,
 `rd_plus__topdown_item`.
 
-**RD Fast — fastest and cheapest**, great for drafting. 64–384px (low-res smaller), batch ≤ 16:
+**RD Fast (API only)** — replaced by RD Lite on the website, still fully available here at the same price;
+use it for batches over 4 or its 1-bit and Minecraft styles. 64–384px (low-res smaller), batch ≤ 16:
 `rd_fast__default`, `rd_fast__simple`, `rd_fast__detailed`, `rd_fast__retro`,
 `rd_fast__game_asset`, `rd_fast__portrait`, `rd_fast__texture`, `rd_fast__ui`,
 `rd_fast__item_sheet`, `rd_fast__character_turnaround`, `rd_fast__no_style`, `rd_fast__1_bit`,
@@ -343,7 +353,7 @@ RD Pro spans everything from typography to first-person weapons to full inventor
 | `seed` | int | Optional. Same seed + settings ≈ same image. Omit for random. |
 | `input_image` | base64 | Optional img2img source (raw base64, **no** `data:` prefix, RGB). |
 | `strength` | float | 0–1, default `0.75`. How much `input_image` changes: low = subtle, high = loose. |
-| `reference_images` | base64[] | RD Core and RD Pro styles only: up to 9 style/content references. |
+| `reference_images` | base64[] | RD Core and RD Pro styles: up to 9 style/content references; RD Lite styles: 1. |
 | `input_palette` | base64 | Constrain output colors to a palette image. Add `return_pre_palette` to also get the un-quantized image. |
 | `remove_bg` | bool | Transparent output. Add `return_non_bg_removed` to also get the original. |
 | `tile_x`, `tile_y` | bool | Seamless tiling on either axis. |
@@ -606,6 +616,7 @@ payload = {
 Cost depends on style family and image count (image styles are flat per image at any size). `check_cost` is always authoritative
 and free; these formulas are current at the time of writing:
 
+- **`rd_lite`:** `0.05 * num_images` (flat at any size)
 - **`rd_fast`** (and `rd_mini__fast_*`): `0.03 * num_images`
 - **`rd_plus`** and **`rd_mini`:** `0.06 * num_images`
 - **Tiles** (`rd_tile__single_tile`, `tile_variation`, `tile_object`, `scene_object`): `0.06 * num_images`
