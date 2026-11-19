@@ -70,12 +70,6 @@ style's price table). `POST /lowpoly/estimate` prices a generate in any style (`
 operations use the model's own. Sending a Low-Poly style to `/inferences` returns
 `400 lowpoly_style_not_supported`.
 
-`mode` (standard styles) is `auto` by default: each job runs in quality, or in fast (about 3x quicker) when
-the request is simple enough that it makes no difference - a plain object named in a
-few words ("a crate"), a small edit ("remove the text"), a simple motion ("spin
-slowly"). Detailed requests always get quality. Both cost the same. Send `quality` or
-`fast` to choose yourself.
-
 ## Jobs take minutes
 
 Generate, revise, animate and split are asynchronous. Each returns `202 Accepted` with a
@@ -86,9 +80,9 @@ request returns the same job instead of charging again. A model runs one job at 
 time, and an account runs a few at once (`429 lowpoly_too_many_jobs` otherwise).
 
 ```text
-POST /lowpoly/generate          {prompt?, size?, style?, mode?, reference_images?, reference_models?, input_palette?, custom_id?}
-POST /lowpoly/assets/{id}/revise   {prompt, version?, mode?, reference_images?, custom_id?}
-POST /lowpoly/assets/{id}/animate  {prompt, version?, mode?, animation?, custom_id?}
+POST /lowpoly/generate          {prompt?, size?, style?, reference_images?, reference_models?, input_palette?, custom_id?}
+POST /lowpoly/assets/{id}/revise   {prompt, version?, reference_images?, custom_id?}
+POST /lowpoly/assets/{id}/animate  {prompt, version?, animation?, custom_id?}
 POST /lowpoly/assets/{id}/split    {prompt?, version?, custom_id?}
 POST /lowpoly/assets/{id}/rerig    {prompt?, version?, custom_id?}
 GET  /lowpoly/tasks/{task_id}   -> {status: pending|running|succeeded|failed, result?, animation?, pieces?, error?}

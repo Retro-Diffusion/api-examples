@@ -2281,17 +2281,6 @@
             "title": "Custom Id",
             "type": "string"
           },
-          "mode": {
-            "default": "auto",
-            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price. Lite styles ignore it (their model always runs at one setting).",
-            "enum": [
-              "auto",
-              "quality",
-              "fast"
-            ],
-            "title": "Mode",
-            "type": "string"
-          },
           "prompt": {
             "description": "The motion to add (or the change to make), up to 250 characters.",
             "title": "Prompt",
@@ -2353,10 +2342,6 @@
             "title": "Inference Id",
             "type": "string"
           },
-          "mode": {
-            "title": "Mode",
-            "type": "string"
-          },
           "prompt": {
             "title": "Prompt",
             "type": "string"
@@ -2396,8 +2381,7 @@
           "status",
           "style",
           "size",
-          "size_source",
-          "mode"
+          "size_source"
         ],
         "title": "LowPolyAssetRead",
         "type": "object"
@@ -2584,17 +2568,6 @@
           "input_palette": {
             "description": "A palette image (base64 PNG, JPEG or WEBP, like input_palette on /inferences): the model is built with only its colors (up to 256; larger images are reduced). Revisions and animations keep the palette.",
             "title": "Input Palette",
-            "type": "string"
-          },
-          "mode": {
-            "default": "auto",
-            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price. Lite styles ignore it (their model always runs at one setting).",
-            "enum": [
-              "auto",
-              "quality",
-              "fast"
-            ],
-            "title": "Mode",
             "type": "string"
           },
           "prompt": {
@@ -2801,17 +2774,6 @@
           "custom_id": {
             "maxLength": 128,
             "title": "Custom Id",
-            "type": "string"
-          },
-          "mode": {
-            "default": "auto",
-            "description": "auto (default): chosen per request - quality, or fast for simple requests. Same price. Lite styles ignore it (their model always runs at one setting).",
-            "enum": [
-              "auto",
-              "quality",
-              "fast"
-            ],
-            "title": "Mode",
             "type": "string"
           },
           "prompt": {
